@@ -14,7 +14,7 @@ class CoursesTest < ApplicationSystemTestCase
     visit courses_url
     click_on "New course"
 
-    fill_in "Classroom", with: @course.classroom_id
+    fill_in "SchoolClass", with: @course.scool_class_id
     fill_in "End at", with: @course.end_at
     fill_in "Start at", with: @course.start_at
     fill_in "Term", with: @course.term
@@ -29,7 +29,7 @@ class CoursesTest < ApplicationSystemTestCase
     visit course_url(@course)
     click_on "Edit this course", match: :first
 
-    fill_in "Classroom", with: @course.classroom_id
+    fill_in "SchoolClass", with: @course.scool_class_id
     fill_in "End at", with: @course.end_at.to_s
     fill_in "Start at", with: @course.start_at.to_s
     fill_in "Term", with: @course.term

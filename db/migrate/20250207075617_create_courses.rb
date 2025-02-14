@@ -5,7 +5,7 @@ class CreateCourses < ActiveRecord::Migration[8.0]
       t.datetime :start_at, null: false
       t.datetime :end_at, null: false
       t.integer :week_day, null: false
-      t.references :classroom, null: false, foreign_key: true
+      t.references :scool_class, null: false, foreign_key: true
 
       t.timestamps
     end

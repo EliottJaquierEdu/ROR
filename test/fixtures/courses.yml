@@ -5,11 +5,11 @@ one:
   start_at: 2025-02-07 08:56:17
   end_at: 2025-02-07 08:56:17
   week_day: 1
-  classroom: one
+  scool_class: one
 
 two:
   term: MyString
   start_at: 2025-02-07 08:56:17
   end_at: 2025-02-07 08:56:17
   week_day: 1
-  classroom: two
+  scool_class: two

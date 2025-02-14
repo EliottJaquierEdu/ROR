@@ -1,5 +1,5 @@
 class Course < ApplicationRecord
-  belongs_to :classroom
+  belongs_to :scool_class
   belongs_to :subject
   has_many :examinations
 

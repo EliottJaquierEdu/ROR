@@ -1,6 +1,6 @@
-class CreateClassrooms < ActiveRecord::Migration[8.0]
+class CreateSchoolClasses < ActiveRecord::Migration[8.0]
   def change
-    create_table :classrooms do |t|
+    create_table :scool_classes do |t|
       t.string :uid
       t.string :name
       t.references :moment, null: false, foreign_key: true
