@@ -1,0 +1,99 @@
+@startuml
+
+class Address {
+  +integer id
+  +integer zip
+  +string town
+  +string street
+  +string number
+  +Person[] persons
+}
+
+class Person {
+  +string username
+  +string lastname
+  +string firstname
+  +string email
+  +string phone_number
+  +Address address
+}
+
+class Teacher {
+  +string iban
+  +TeacherStatus teacher_status
+  +Classroom[] classrooms
+}
+
+class Student {
+  +StudentStatus student_status
+  +Classroom[] classrooms
+  +Grade[] grades
+}
+
+class Classroom {
+  +string uid
+  +string name
+  +Room room
+  +Teacher master
+  +Student[] students
+  +Course[] courses
+}
+
+class Course {
+  +string term
+  +datetime start_at
+  +datetime end_at
+  +integer week_day
+  +Classroom classroom
+  +Subject subject
+  +Examination[] examinations
+}
+
+class Subject {
+  +string name
+  +Course[] courses
+}
+
+class Examination {
+  +string title
+  +datetime expected_date
+  +Course course
+  +Grade[] grades
+}
+
+class Grade {
+  +decimal value
+  +datetime effective_date
+  +Examination examination
+  +Student student
+}
+
+class Room {
+  +string name
+  +Classroom[] classrooms
+}
+
+class TeacherStatus {
+  +string status
+}
+
+class StudentStatus {
+  +string status
+}
+
+Address "1" o-- "0..*" Person
+Teacher "0..*" --o "1" TeacherStatus
+Student "0..*" --o "1" StudentStatus
+Classroom "0..*" -- "0..*" Person
+Classroom "0..*" --o "1" Room
+Classroom "0..*" --o "1" Person
+Classroom "1" o-- "0..*" Course
+Course "1" *-- "1" Subject
+Examination "1" *-- "1" Course
+Grade "1" *-- "1" Examination
+Grade "1" *-- "1" Student
+
+Teacher <|-- Person
+Student <|-- Person
+
+@enduml
