@@ -17,14 +17,21 @@ class Teacher < Person
   validates :iban, presence: true
 end
 ```
-
+## Models / schema modifications
+### Rename class to school_class
+We renamed the class model to school_class to avoid conflicts with the reserved keyword class.
+### Remove propotions_asserts
+We removed the propotions_asserts table because it was not useful for the project. 
+It was used to store which ruby functions to call to know if a student passed but we decided to store this information in the student model (more related to business logic).
 ## Authentification
-https://guides.rubyonrails.org/security.html
-Used the default recommanded by Rails : https://rubygems.org/gems/devise
-https://github.com/heartcombo/devise
+References :
+- https://guides.rubyonrails.org/security.html
+- https://www.reddit.com/r/rails/comments/10z34qx/what_is_used_for_authentication_in_rails_nowadays/
+- http://rawsyntax.com/blog/rails-authentication-plugins/
+Used the default recommended authentification system ([Device](https://github.com/heartcombo/devise)) by [Rails](https://rubygems.org/gems/devise) :
 
-https://www.reddit.com/r/rails/comments/10z34qx/what_is_used_for_authentication_in_rails_nowadays/
+Which approach to choose between *Add authentication to the people table* and *Create a separate users table for authentication*?
+- If all people are authenticated users → add Devise to people.
+- If some people don't have access / we need a scalable, modular architecture → separate users and people.
 
-http://rawsyntax.com/blog/rails-authentication-plugins/
-
-User will be devise's user (login), and person will be anyone on the website (teacher, student, admin, etc.) and can have an associated user.
+Because everyone in the application must be able to log in / people are closely linked to the authentication system, we chose to **add authentication to the people table**.
