@@ -17,7 +17,7 @@ class ClassroomsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create classroom" do
     assert_difference("Classroom.count") do
-      post classrooms_url, params: { classroom: { master: @classroom.master, moment_id: @classroom.moment_id, name: @classroom.name, room_id: @classroom.room_id, sector_id: @classroom.sector_id, uid: @classroom.uid } }
+      post classrooms_url, params: { classroom: { master: @classroom.master, moment_id: @classroom.moment_id, name: @classroom.name, room_id: @classroom.room_id, uid: @classroom.uid } }
     end
 
     assert_redirected_to classroom_url(Classroom.last)
@@ -34,7 +34,7 @@ class ClassroomsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update classroom" do
-    patch classroom_url(@classroom), params: { classroom: { master: @classroom.master, moment_id: @classroom.moment_id, name: @classroom.name, room_id: @classroom.room_id, sector_id: @classroom.sector_id, uid: @classroom.uid } }
+    patch classroom_url(@classroom), params: { classroom: { master: @classroom.master, moment_id: @classroom.moment_id, name: @classroom.name, room_id: @classroom.room_id, uid: @classroom.uid } }
     assert_redirected_to classroom_url(@classroom)
   end
 

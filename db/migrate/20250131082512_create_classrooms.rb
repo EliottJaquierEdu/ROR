@@ -6,7 +6,6 @@ class CreateClassrooms < ActiveRecord::Migration[8.0]
       t.references :moment, null: false, foreign_key: true
       t.references :room, null: false, foreign_key: true
       t.integer :master
-      t.references :sector, null: false, foreign_key: true
 
       t.timestamps
     end

@@ -65,6 +65,6 @@ class ClassroomsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def classroom_params
-      params.expect(classroom: [ :uid, :name, :moment_id, :room_id, :master, :sector_id ])
+      params.expect(classroom: [ :uid, :name, :moment_id, :room_id, :master ])
     end
 end

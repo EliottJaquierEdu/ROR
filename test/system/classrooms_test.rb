@@ -18,7 +18,6 @@ class ClassroomsTest < ApplicationSystemTestCase
     fill_in "Moment", with: @classroom.moment_id
     fill_in "Name", with: @classroom.name
     fill_in "Room", with: @classroom.room_id
-    fill_in "Sector", with: @classroom.sector_id
     fill_in "Uid", with: @classroom.uid
     click_on "Create Classroom"
 
@@ -34,7 +33,6 @@ class ClassroomsTest < ApplicationSystemTestCase
     fill_in "Moment", with: @classroom.moment_id
     fill_in "Name", with: @classroom.name
     fill_in "Room", with: @classroom.room_id
-    fill_in "Sector", with: @classroom.sector_id
     fill_in "Uid", with: @classroom.uid
     click_on "Update Classroom"
 

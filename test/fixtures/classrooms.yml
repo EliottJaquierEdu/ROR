@@ -6,7 +6,6 @@ one:
   moment: one
   room: one
   master: 1
-  sector: one
 
 two:
   uid: MyString
@@ -14,4 +13,3 @@ two:
   moment: two
   room: two
   master: 1
-  sector: two
