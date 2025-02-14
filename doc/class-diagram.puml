@@ -21,16 +21,16 @@ class Person {
 class Teacher {
   +string iban
   +TeacherStatus teacher_status
-  +Classroom[] classrooms
+  +SchoolClass[] scool_classes
 }
 
 class Student {
   +StudentStatus student_status
-  +Classroom[] classrooms
+  +SchoolClass[] scool_classes
   +Grade[] grades
 }
 
-class Classroom {
+class SchoolClass {
   +string uid
   +string name
   +Room room
@@ -44,7 +44,7 @@ class Course {
   +datetime start_at
   +datetime end_at
   +integer week_day
-  +Classroom classroom
+  +SchoolClass scool_class
   +Subject subject
   +Examination[] examinations
 }
@@ -70,7 +70,7 @@ class Grade {
 
 class Room {
   +string name
-  +Classroom[] classrooms
+  +SchoolClass[] scool_classes
 }
 
 class TeacherStatus {
@@ -84,10 +84,10 @@ class StudentStatus {
 Address "1" o-- "0..*" Person
 Teacher "0..*" --o "1" TeacherStatus
 Student "0..*" --o "1" StudentStatus
-Classroom "0..*" -- "0..*" Person
-Classroom "0..*" --o "1" Room
-Classroom "0..*" --o "1" Person
-Classroom "1" o-- "0..*" Course
+SchoolClass "0..*" -- "0..*" Person
+SchoolClass "0..*" --o "1" Room
+SchoolClass "0..*" --o "1" Person
+SchoolClass "1" o-- "0..*" Course
 Course "1" *-- "1" Subject
 Examination "1" *-- "1" Course
 Grade "1" *-- "1" Examination
