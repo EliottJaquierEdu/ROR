@@ -21,12 +21,12 @@ class Person {
 class Teacher {
   +string iban
   +TeacherStatus teacher_status
-  +SchoolClass[] scool_classes
+  +SchoolClass[] school_classes
 }
 
 class Student {
   +StudentStatus student_status
-  +SchoolClass[] scool_classes
+  +SchoolClass[] school_classes
   +Grade[] grades
 }
 
@@ -44,7 +44,7 @@ class Course {
   +datetime start_at
   +datetime end_at
   +integer week_day
-  +SchoolClass scool_class
+  +SchoolClass school_class
   +Subject subject
   +Examination[] examinations
 }
@@ -70,7 +70,7 @@ class Grade {
 
 class Room {
   +string name
-  +SchoolClass[] scool_classes
+  +SchoolClass[] school_classes
 }
 
 class TeacherStatus {
