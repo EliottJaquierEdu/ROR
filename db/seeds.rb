@@ -76,7 +76,6 @@ school_class_1 = SchoolClass.create!(
   master: teacher_1
 )
 school_class_2 = SchoolClass.create!(
-  uid: 'SC102',
   name: 'Class B',
   room: room_2,
   master: teacher_2
