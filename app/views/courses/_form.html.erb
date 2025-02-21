@@ -33,7 +33,7 @@
 
   <div>
     <%= form.label :school_class_id, style: "display: block" %>
-    <%= form.text_field :school_class_id %>
+    <%= form.collection_select :school_class_id, SchoolClass.all, :id, ->(sc) { "#{sc.name} (Year #{sc.year})" } %>
   </div>
 
   <div>

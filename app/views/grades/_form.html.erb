@@ -23,12 +23,12 @@
 
   <div>
     <%= form.label :student_id, style: "display: block" %>
-    <%= form.text_field :student_id %>
+    <%= form.collection_select :student_id, Student.all, :id, :full_name %>
   </div>
 
   <div>
     <%= form.label :examination_id, style: "display: block" %>
-    <%= form.text_field :examination_id %>
+    <%= form.collection_select :examination_id, Examination.all, :id, :title %>
   </div>
 
   <div>
