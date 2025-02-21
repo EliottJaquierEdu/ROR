@@ -88,6 +88,7 @@ SchoolClass "0..*" -- "0..*" Person
 SchoolClass "0..*" --o "1" Room
 SchoolClass "0..*" --o "1" Person
 SchoolClass "1" o-- "0..*" Course
+SchoolClass "0..*" --o "1" Teacher
 Course "1" *-- "1" Subject
 Examination "1" *-- "1" Course
 Grade "1" *-- "1" Examination
