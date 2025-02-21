@@ -2,7 +2,7 @@ require "application_system_test_case"
 
 class SchoolClassesTest < ApplicationSystemTestCase
   setup do
-    @scool_class = scool_classes(:one)
+    @school_class = school_classes(:one)
   end
 
   test "visiting the index" do
@@ -10,14 +10,14 @@ class SchoolClassesTest < ApplicationSystemTestCase
     assert_selector "h1", text: "SchoolClasses"
   end
 
-  test "should create scool_class" do
+  test "should create school_class" do
     visit scool_classes_url
-    click_on "New scool_class"
+    click_on "New school_class"
 
-    fill_in "Master", with: @scool_class.master
-    fill_in "Name", with: @scool_class.name
-    fill_in "Room", with: @scool_class.room_id
-    fill_in "Uid", with: @scool_class.uid
+    fill_in "Master", with: @school_class.master
+    fill_in "Name", with: @school_class.name
+    fill_in "Room", with: @school_class.room_id
+    fill_in "Uid", with: @school_class.uid
     click_on "Create SchoolClass"
 
     assert_text "SchoolClass was successfully created"
@@ -25,13 +25,13 @@ class SchoolClassesTest < ApplicationSystemTestCase
   end
 
   test "should update SchoolClass" do
-    visit scool_class_url(@scool_class)
-    click_on "Edit this scool_class", match: :first
+    visit scool_class_url(@school_class)
+    click_on "Edit this school_class", match: :first
 
-    fill_in "Master", with: @scool_class.master
-    fill_in "Name", with: @scool_class.name
-    fill_in "Room", with: @scool_class.room_id
-    fill_in "Uid", with: @scool_class.uid
+    fill_in "Master", with: @school_class.master
+    fill_in "Name", with: @school_class.name
+    fill_in "Room", with: @school_class.room_id
+    fill_in "Uid", with: @school_class.uid
     click_on "Update SchoolClass"
 
     assert_text "SchoolClass was successfully updated"
@@ -39,8 +39,8 @@ class SchoolClassesTest < ApplicationSystemTestCase
   end
 
   test "should destroy SchoolClass" do
-    visit scool_class_url(@scool_class)
-    click_on "Destroy this scool_class", match: :first
+    visit school_class_url(@school_class)
+    click_on "Destroy this school_class", match: :first
 
     assert_text "SchoolClass was successfully destroyed"
   end

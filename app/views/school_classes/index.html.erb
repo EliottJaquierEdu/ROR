@@ -4,13 +4,13 @@
 
 <h1>SchoolClasses</h1>
 
-<div id="scool_classes">
-  <% @scool_classes.each do |scool_class| %>
-    <%= render scool_class %>
+<div id="school_classes">
+  <% @school_classes.each do |school_class| %>
+    <%= render school_class %>
     <p>
-      <%= link_to "Show this scool_class", scool_class %>
+      <%= link_to "Show this school_class", school_class %>
     </p>
   <% end %>
 </div>
 
-<%= link_to "New scool_class", new_scool_class_path %>
+<%= link_to "New school_class", new_scool_class_path %>

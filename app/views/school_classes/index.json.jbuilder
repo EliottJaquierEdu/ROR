@@ -1,1 +1,1 @@
-json.array! @scool_classes, partial: "scool_classes/scool_class", as: :scool_class
+json.array! @school_classes, partial: "school_classes/school_class", as: :school_class

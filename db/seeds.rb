@@ -96,7 +96,7 @@ course_1 = Course.create!(
   start_at: DateTime.new(2025, 3, 1),
   end_at: DateTime.new(2025, 6, 1),
   week_day: 1,
-  scool_class: school_class_1,
+  school_class: school_class_1,
   subject: subject_1
 )
 course_2 = Course.create!(
@@ -104,7 +104,7 @@ course_2 = Course.create!(
   start_at: DateTime.new(2025, 9, 1),
   end_at: DateTime.new(2025, 12, 1),
   week_day: 3,
-  scool_class: school_class_2,
+  school_class: school_class_2,
   subject: subject_2
 )
 

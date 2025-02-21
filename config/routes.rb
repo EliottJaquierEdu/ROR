@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :subjects
   resources :courses
   resources :rooms
-  resources :scool_classes
+  resources :school_classes
   resources :people
   resources :addresses
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

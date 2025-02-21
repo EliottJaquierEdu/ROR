@@ -1,7 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  scool_class: one
+  school_class: one
 
 two:
-  scool_class: two
+  school_class: two
