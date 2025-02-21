@@ -1,2 +1,2 @@
-module SchoolClassesHelper
+module SchoolClassHelper
 end
