@@ -1,6 +1,6 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @person %>
+<%= render 'person', person: @person %>
 
 <div>
   <%= link_to "Edit this person", edit_person_path(@person) %> |
