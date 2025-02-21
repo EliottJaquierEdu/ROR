@@ -15,7 +15,6 @@ class SchoolClassesTest < ApplicationSystemTestCase
     click_on "New scool_class"
 
     fill_in "Master", with: @scool_class.master
-    fill_in "Moment", with: @scool_class.moment_id
     fill_in "Name", with: @scool_class.name
     fill_in "Room", with: @scool_class.room_id
     fill_in "Uid", with: @scool_class.uid
@@ -30,7 +29,6 @@ class SchoolClassesTest < ApplicationSystemTestCase
     click_on "Edit this scool_class", match: :first
 
     fill_in "Master", with: @scool_class.master
-    fill_in "Moment", with: @scool_class.moment_id
     fill_in "Name", with: @scool_class.name
     fill_in "Room", with: @scool_class.room_id
     fill_in "Uid", with: @scool_class.uid

@@ -3,13 +3,11 @@
 one:
   uid: MyString
   name: MyString
-  moment: one
   room: one
   master: 1
 
 two:
   uid: MyString
   name: MyString
-  moment: two
   room: two
   master: 1
