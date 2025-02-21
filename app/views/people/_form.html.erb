@@ -36,6 +36,27 @@
     <%= form.text_field :phone_number %>
   </div>
 
+  <div>
+    <%= form.label :type, style: "display: block" %>
+    <%= form.select :type, [['Simple Person', 'Person'], ['Student', 'Student'], ['Teacher', 'Teacher']], {},
+        { style: "display: block", onchange: "handleTypeChange(this.value)" } %>
+  </div>
+
+  <div id="student_status_field" style="display: none;">
+    <%= form.label :student_status_id, "Student Status", style: "display: block" %>
+    <%= form.collection_select :student_status_id, StudentStatus.all, :id, :status %>
+  </div>
+
+  <div id="teacher_fields" style="display: none;">
+    <%= form.label :teacher_status_id, "Teacher Status", style: "display: block" %>
+    <%= form.collection_select :teacher_status_id, TeachersStatus.all, :id, :status %>
+
+    <div>
+      <%= form.label :iban, "IBAN", style: "display: block" %>
+      <%= form.text_field :iban %>
+    </div>
+  </div>
+
   <fieldset>
     <legend>Address Information</legend>
     <%= form.fields_for :address do |address_form| %>
@@ -62,11 +83,24 @@
   </fieldset>
 
   <div>
-    <%= form.label :type, style: "display: block" %>
-    <%= form.select :type, [['Simple Person', 'Person'], ['Student', 'Student'], ['Teacher', 'Teacher']], {}, style: "display: block" %>
-  </div>
-
-  <div>
     <%= form.submit %>
   </div>
 <% end %>
+
+<script>
+function handleTypeChange(type) {
+  const studentFields = document.getElementById('student_status_field');
+  const teacherFields = document.getElementById('teacher_fields');
+
+  studentFields.style.display = type === 'Student' ? 'block' : 'none';
+  teacherFields.style.display = type === 'Teacher' ? 'block' : 'none';
+}
+
+// Call on page load to set initial state
+document.addEventListener('DOMContentLoaded', function() {
+  const typeSelect = document.querySelector('select[name="person[type]"]');
+  if (typeSelect) {
+    handleTypeChange(typeSelect.value);
+  }
+});
+</script>
