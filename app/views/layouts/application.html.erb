@@ -23,16 +23,23 @@
   </head>
 
   <body>
-  <!-- Header -->
   <header style="background-color: #f8f9fa; padding: 1rem; text-align: center; border-bottom: 1px solid #ddd;">
     <h1>School Management System</h1>
     <nav style="margin-top: 0.5rem;">
-      <%= link_to "Home", root_path, style: "margin-right: 1rem;" %>
-      <%= link_to "People", people_path, style: "margin-right: 1rem;" %>
-      <%= link_to "Students", people_path(type: 'Student'), style: "margin-right: 1rem;" %>
-      <%= link_to "Teachers", people_path(type: 'Teacher') %>
+      <%= link_to "Home", root_path %>
+      <%= link_to "People", people_path %>
+      <%= link_to "Students", people_path(type: "Student") %>
+      <%= link_to "Teachers", people_path(type: "Teacher") %>
+      <%= link_to "Addresses", addresses_path %>
+      <%= link_to "School Classes", school_classes_path %>
+      <%= link_to "Rooms", rooms_path %>
+      <%= link_to "Courses", courses_path %>
+      <%= link_to "Subjects", subjects_path %>
+      <%= link_to "Examinations", examinations_path %>
+      <%= link_to "Grades", grades_path %>
     </nav>
   </header>
+
 
   <%= yield %>
   </body>
