@@ -58,13 +58,6 @@
         <%= address_form.label :town, style: "display: block" %>
         <%= address_form.text_field :town %>
       </div>
-
-      <% if address_form.object.persisted? %>
-        <div>
-          <%= address_form.check_box :_destroy %>
-          <%= address_form.label :_destroy, "Remove this address" %>
-        </div>
-      <% end %>
     <% end %>
   </fieldset>
 
