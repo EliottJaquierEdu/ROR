@@ -5,6 +5,4 @@ class Person < ApplicationRecord
   belongs_to :address
 
   has_and_belongs_to_many :school_classes
-
-  enum role: { student: 0, teacher: 1 }
 end
