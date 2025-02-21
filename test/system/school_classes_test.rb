@@ -6,12 +6,12 @@ class SchoolClassesTest < ApplicationSystemTestCase
   end
 
   test "visiting the index" do
-    visit scool_classes_url
+    visit school_classes_url
     assert_selector "h1", text: "SchoolClasses"
   end
 
   test "should create school_class" do
-    visit scool_classes_url
+    visit school_classes_url
     click_on "New school_class"
 
     fill_in "Master", with: @school_class.master
@@ -25,7 +25,7 @@ class SchoolClassesTest < ApplicationSystemTestCase
   end
 
   test "should update SchoolClass" do
-    visit scool_class_url(@school_class)
+    visit school_class_url(@school_class)
     click_on "Edit this school_class", match: :first
 
     fill_in "Master", with: @school_class.master
