@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "School Data Manager" %></title>
+    <title><%= content_for?(:title) ? yield(:title) : "School Management System" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -23,6 +23,17 @@
   </head>
 
   <body>
-    <%= yield %>
+  <!-- Header -->
+  <header style="background-color: #f8f9fa; padding: 1rem; text-align: center; border-bottom: 1px solid #ddd;">
+    <h1>School Management System</h1>
+    <nav style="margin-top: 0.5rem;">
+      <%= link_to "Home", root_path, style: "margin-right: 1rem;" %>
+      <%= link_to "People", people_path, style: "margin-right: 1rem;" %>
+      <%= link_to "Students", people_path(type: 'Student'), style: "margin-right: 1rem;" %>
+      <%= link_to "Teachers", people_path(type: 'Teacher') %>
+    </nav>
+  </header>
+
+  <%= yield %>
   </body>
 </html>
