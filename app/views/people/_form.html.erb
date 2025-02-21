@@ -43,7 +43,7 @@
 
   <div>
     <%= form.label :type, style: "display: block" %>
-    <%= form.number_field :type %>
+    <%= form.select :type, [['Simple Person', 'Person'], ['Student', 'Student'], ['Teacher', 'Teacher']], {}, style: "display: block" %>
   </div>
 
   <div>
