@@ -1,5 +1,6 @@
 class Person < ApplicationRecord
-  belongs_to :address
+  has_one :address
+  accepts_nested_attributes_for :address, allow_destroy: true
 
   has_and_belongs_to_many :school_classes
 

@@ -3,7 +3,7 @@ class PeopleController < ApplicationController
 
   # GET /people or /people.json
   def index
-    @people = Person.all
+    @people = Person.includes(:address).all
   end
 
   # GET /people/1 or /people/1.json
@@ -13,6 +13,7 @@ class PeopleController < ApplicationController
   # GET /people/new
   def new
     @person = Person.new
+    @person.build_address
   end
 
   # GET /people/1/edit
@@ -22,10 +23,11 @@ class PeopleController < ApplicationController
   # POST /people or /people.json
   def create
     @person = Person.new(person_params)
+    @person.build_address if @person.address.nil?
 
     respond_to do |format|
       if @person.save
-        format.html { redirect_to @person, notice: "Person was successfully created." }
+        format.html { redirect_to person_url(@person), notice: "Person was successfully created." }
         format.json { render :show, status: :created, location: @person }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +40,7 @@ class PeopleController < ApplicationController
   def update
     respond_to do |format|
       if @person.update(person_params)
-        format.html { redirect_to @person, notice: "Person was successfully updated." }
+        format.html { redirect_to person_url(@person), notice: "Person was successfully updated." }
         format.json { render :show, status: :ok, location: @person }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -52,7 +54,7 @@ class PeopleController < ApplicationController
     @person.destroy!
 
     respond_to do |format|
-      format.html { redirect_to people_path, status: :see_other, notice: "Person was successfully destroyed." }
+      format.html { redirect_to people_url, notice: "Person was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -60,11 +62,12 @@ class PeopleController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_person
-      @person = Person.find(params.expect(:id))
+      @person = Person.includes(:address).find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def person_params
-      params.require(:person).permit(:username, :lastname, :firstname, :email, :phone_number, :address_id, :type)
+      params.require(:person).permit(:username, :lastname, :firstname, :email, :phone_number, :type,
+                                   address_attributes: [:id, :street, :number, :zip, :town, :_destroy])
     end
 end
