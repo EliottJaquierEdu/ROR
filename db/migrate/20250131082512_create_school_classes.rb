@@ -4,7 +4,7 @@ class CreateSchoolClasses < ActiveRecord::Migration[8.0]
       t.integer :year
       t.string :name
       t.references :room, null: false, foreign_key: true
-      t.integer :master
+      t.references :master, null: false, foreign_key: {to_table: :people}
 
       t.timestamps
     end

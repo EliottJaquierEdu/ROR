@@ -28,7 +28,7 @@
 
   <div>
     <%= form.label :master, style: "display: block" %>
-    <%= form.collection_select :master, Teacher.all, :id, :full_name %>
+    <%= form.collection_select :master_id, Teacher.all, :id, :full_name %>
   </div>
 
   <div>
