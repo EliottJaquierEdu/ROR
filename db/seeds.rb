@@ -96,14 +96,14 @@ room_2 = Room.create!(name: 'Room B')
 
 # Create School Classes
 school_class_1 = SchoolClass.create!(
-  uid: 'SC101',
+  year: 2024,
   name: 'Class A',
   room: room_1,
   master: teacher_1
 )
 
 school_class_2 = SchoolClass.create!(
-  uid: 'SC102',
+  year: 2025,
   name: 'Class B',
   room: room_2,
   master: teacher_2
