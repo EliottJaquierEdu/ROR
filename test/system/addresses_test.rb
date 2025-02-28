@@ -16,7 +16,7 @@ class AddressesTest < ApplicationSystemTestCase
 
     fill_in "Id", with: @address.id
     fill_in "Number", with: @address.number
-    fill_in "People", with: @address.people_id
+    fill_in "People", with: @address.person_id
     fill_in "Street", with: @address.street
     fill_in "Town", with: @address.town
     fill_in "Zip", with: @address.zip
@@ -32,7 +32,7 @@ class AddressesTest < ApplicationSystemTestCase
 
     fill_in "Id", with: @address.id
     fill_in "Number", with: @address.number
-    fill_in "People", with: @address.people_id
+    fill_in "People", with: @address.person_id
     fill_in "Street", with: @address.street
     fill_in "Town", with: @address.town
     fill_in "Zip", with: @address.zip
