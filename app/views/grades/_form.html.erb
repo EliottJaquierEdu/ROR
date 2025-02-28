@@ -22,8 +22,8 @@
   </div>
 
   <div>
-    <%= form.label :student_id, style: "display: block" %>
-    <%= form.collection_select :student_id, Student.all, :id, :full_name %>
+    <%= form.label :person_id, "Student", style: "display: block" %>
+    <%= form.collection_select :person_id, Student.all, :id, :full_name %>
   </div>
 
   <div>

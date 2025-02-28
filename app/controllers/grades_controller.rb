@@ -65,6 +65,6 @@ class GradesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def grade_params
-      params.expect(grade: [ :value, :effective_date, :student_id, :examination_id ])
+      params.expect(grade: [ :value, :effective_date, :person_id, :examination_id ])
     end
 end
