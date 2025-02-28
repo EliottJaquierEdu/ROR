@@ -31,7 +31,7 @@ class Student {
 }
 
 class SchoolClass {
-  +string uid
+  +number year
   +string name
   +Room room
   +Teacher master
