@@ -2,15 +2,54 @@
 
 <% content_for :title, "Rooms" %>
 
-<h1>Rooms</h1>
-
-<div id="rooms">
-  <% @rooms.each do |room| %>
-    <%= render room %>
-    <p>
-      <%= link_to "Show this room", room %>
-    </p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Rooms</h1>
+  <%= link_to new_room_path, class: "btn btn-primary" do %>
+    <i class="bi bi-plus-circle"></i> New room
   <% end %>
 </div>
 
-<%= link_to "New room", new_room_path %>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Classes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @rooms.each do |room| %>
+            <tr>
+              <td><%= room.name %></td>
+              <td>
+                <% if room.school_classes.any? %>
+                  <span class="badge bg-info"><%= room.school_classes.count %> classes</span>
+                <% else %>
+                  <span class="text-muted">No classes</span>
+                <% end %>
+              </td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <%= link_to room, class: "btn btn-outline-primary" do %>
+                    <i class="bi bi-eye"></i> View
+                  <% end %>
+                  <%= link_to edit_room_path(room), class: "btn btn-outline-secondary" do %>
+                    <i class="bi bi-pencil"></i> Edit
+                  <% end %>
+                  <%= button_to room, method: :delete, 
+                      class: "btn btn-outline-danger", 
+                      form: { data: { turbo_confirm: "Are you sure?" } } do %>
+                    <i class="bi bi-trash"></i> Delete
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
