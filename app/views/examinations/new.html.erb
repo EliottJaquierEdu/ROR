@@ -1,11 +1,14 @@
-<% content_for :title, "New examination" %>
+<% content_for :title, "New Examination" %>
 
-<h1>New examination</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>New Examination</h1>
+  <%= link_to examinations_path, class: "btn btn-outline-secondary" do %>
+    <i class="bi bi-arrow-left"></i> Back to examinations
+  <% end %>
+</div>
 
-<%= render "form", examination: @examination %>
-
-<br>
-
-<div>
-  <%= link_to "Back to examinations", examinations_path %>
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= render "form", examination: @examination %>
+  </div>
 </div>
