@@ -2,15 +2,67 @@
 
 <% content_for :title, "Courses" %>
 
-<h1>Courses</h1>
-
-<div id="courses">
-  <% @courses.each do |course| %>
-    <%= render course %>
-    <p>
-      <%= link_to "Show this course", course %>
-    </p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Courses</h1>
+  <%= link_to new_course_path, class: "btn btn-primary" do %>
+    <i class="bi bi-plus-circle"></i> New course
   <% end %>
 </div>
 
-<%= link_to "New course", new_course_path %>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Term</th>
+            <th>Day</th>
+            <th>Time</th>
+            <th>Class</th>
+            <th>Subject</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @courses.each do |course| %>
+            <tr>
+              <td><%= course.term %></td>
+              <td>
+                <% days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %>
+                <%= days[course.week_day - 1] if course.week_day.between?(1, 7) %>
+              </td>
+              <td>
+                <%= course.start_at&.strftime("%H:%M") %> - <%= course.end_at&.strftime("%H:%M") %>
+              </td>
+              <td>
+                <% if course.school_class %>
+                  <%= link_to "#{course.school_class.name} (Year #{course.school_class.year})", course.school_class %>
+                <% end %>
+              </td>
+              <td>
+                <% if course.subject %>
+                  <%= link_to course.subject.name, course.subject %>
+                <% end %>
+              </td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <%= link_to course, class: "btn btn-outline-primary" do %>
+                    <i class="bi bi-eye"></i> View
+                  <% end %>
+                  <%= link_to edit_course_path(course), class: "btn btn-outline-secondary" do %>
+                    <i class="bi bi-pencil"></i> Edit
+                  <% end %>
+                  <%= button_to course, method: :delete, 
+                      class: "btn btn-outline-danger", 
+                      form: { data: { turbo_confirm: "Are you sure?" } } do %>
+                    <i class="bi bi-trash"></i> Delete
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

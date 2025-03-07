@@ -1,12 +1,15 @@
-<% content_for :title, "Editing person" %>
+<% content_for :title, "Editing #{@person.firstname} #{@person.lastname}" %>
 
-<h1>Editing person</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Editing <%= @person.firstname %> <%= @person.lastname %></h1>
+  <div class="btn-group">
+    <%= link_to "Show", @person, class: "btn btn-outline-primary" %>
+    <%= link_to "Back", people_path, class: "btn btn-outline-secondary" %>
+  </div>
+</div>
 
-<%= render "form", person: @person %>
-
-<br>
-
-<div>
-  <%= link_to "Show this person", @person %> |
-  <%= link_to "Back to people", people_path %>
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= render "form", person: @person %>
+  </div>
 </div>

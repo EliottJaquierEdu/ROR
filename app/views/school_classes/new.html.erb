@@ -1,11 +1,14 @@
-<% content_for :title, "New school_class" %>
+<% content_for :title, "New School Class" %>
 
-<h1>New school_class</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>New School Class</h1>
+  <%= link_to school_classes_path, class: "btn btn-outline-secondary" do %>
+    <i class="bi bi-arrow-left"></i> Back to classes
+  <% end %>
+</div>
 
-<%= render "form", school_class: @school_class %>
-
-<br>
-
-<div>
-  <%= link_to "Back to school_classes", school_classes_path %>
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= render "form", school_class: @school_class %>
+  </div>
 </div>

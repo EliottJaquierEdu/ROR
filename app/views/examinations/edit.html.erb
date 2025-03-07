@@ -1,12 +1,19 @@
-<% content_for :title, "Editing examination" %>
+<% content_for :title, "Editing Examination" %>
 
-<h1>Editing examination</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Editing Examination</h1>
+  <div class="btn-group">
+    <%= link_to @examination, class: "btn btn-outline-primary" do %>
+      <i class="bi bi-eye"></i> View
+    <% end %>
+    <%= link_to examinations_path, class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left"></i> Back
+    <% end %>
+  </div>
+</div>
 
-<%= render "form", examination: @examination %>
-
-<br>
-
-<div>
-  <%= link_to "Show this examination", @examination %> |
-  <%= link_to "Back to examinations", examinations_path %>
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= render "form", examination: @examination %>
+  </div>
 </div>

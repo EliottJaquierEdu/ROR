@@ -1,9 +1,8 @@
-<%= form_with(model: person, scope: :person) do |form| %>
+<%= form_with(model: person, scope: :person, class: "needs-validation") do |form| %>
   <% if person.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h2>
-
-      <ul>
+    <div class="alert alert-danger">
+      <h5><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h5>
+      <ul class="mb-0">
         <% person.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -11,79 +10,98 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :username, style: "display: block" %>
-    <%= form.text_field :username %>
-  </div>
-
-  <div>
-    <%= form.label :lastname, style: "display: block" %>
-    <%= form.text_field :lastname %>
-  </div>
-
-  <div>
-    <%= form.label :firstname, style: "display: block" %>
-    <%= form.text_field :firstname %>
-  </div>
-
-  <div>
-    <%= form.label :email, style: "display: block" %>
-    <%= form.text_field :email %>
-  </div>
-
-  <div>
-    <%= form.label :phone_number, style: "display: block" %>
-    <%= form.text_field :phone_number %>
-  </div>
-
-  <div>
-    <%= form.label :type, style: "display: block" %>
-    <%= form.select :type, [['Simple Person', 'Person'], ['Student', 'Student'], ['Teacher', 'Teacher']], {},
-        { style: "display: block", onchange: "handleTypeChange(this.value)" } %>
-  </div>
-
-  <div id="student_status_field" style="display: none;">
-    <%= form.label :student_status_id, "Student Status", style: "display: block" %>
-    <%= form.collection_select :student_status_id, StudentStatus.all, :id, :status %>
-  </div>
-
-  <div id="teacher_fields" style="display: none;">
-    <%= form.label :teacher_status_id, "Teacher Status", style: "display: block" %>
-    <%= form.collection_select :teacher_status_id, TeachersStatus.all, :id, :status %>
-
-    <div>
-      <%= form.label :iban, "IBAN", style: "display: block" %>
-      <%= form.text_field :iban %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0">Personal Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.text_field :username, class: "form-control", placeholder: "Username" %>
+            <%= form.label :username %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.email_field :email, class: "form-control", placeholder: "Email" %>
+            <%= form.label :email %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.text_field :firstname, class: "form-control", placeholder: "First name" %>
+            <%= form.label :firstname %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.text_field :lastname, class: "form-control", placeholder: "Last name" %>
+            <%= form.label :lastname %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.telephone_field :phone_number, class: "form-control", placeholder: "Phone number" %>
+            <%= form.label :phone_number %>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <fieldset>
-    <legend>Address Information</legend>
-    <%= form.fields_for :address do |address_form| %>
-      <div>
-        <%= address_form.label :street, style: "display: block" %>
-        <%= address_form.text_field :street %>
+  <% if person.type == "Teacher" %>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Teacher Information</h5>
       </div>
-
-      <div>
-        <%= address_form.label :number, style: "display: block" %>
-        <%= address_form.text_field :number %>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <%= form.text_field :iban, class: "form-control", placeholder: "IBAN" %>
+              <%= form.label :iban %>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <%= form.collection_select :teacher_status_id, TeacherStatus.all, :id, :status, {}, { class: "form-select" } %>
+              <%= form.label :teacher_status_id, "Teacher Status" %>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
+  <% end %>
 
-      <div>
-        <%= address_form.label :zip, style: "display: block" %>
-        <%= address_form.number_field :zip %>
+  <% if person.type == "Student" %>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Student Information</h5>
       </div>
-
-      <div>
-        <%= address_form.label :town, style: "display: block" %>
-        <%= address_form.text_field :town %>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <%= form.collection_select :student_status_id, StudentStatus.all, :id, :status, {}, { class: "form-select" } %>
+              <%= form.label :student_status_id, "Student Status" %>
+            </div>
+          </div>
+        </div>
       </div>
-    <% end %>
-  </fieldset>
+    </div>
+  <% end %>
 
-  <div>
-    <%= form.submit %>
+  <%= render 'address_form', form: form %>
+
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", person.persisted? ? person : people_path, class: "btn btn-outline-secondary" %>
   </div>
 <% end %>
 
