@@ -1,11 +1,14 @@
-<% content_for :title, "New address" %>
+<% content_for :title, "New Address" %>
 
-<h1>New address</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>New Address</h1>
+  <%= link_to addresses_path, class: "btn btn-outline-secondary" do %>
+    <i class="bi bi-arrow-left"></i> Back to addresses
+  <% end %>
+</div>
 
-<%= render "form", address: @address %>
-
-<br>
-
-<div>
-  <%= link_to "Back to addresses", addresses_path %>
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= render "form", address: @address %>
+  </div>
 </div>
