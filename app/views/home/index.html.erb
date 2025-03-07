@@ -1,0 +1,39 @@
+<h1>Welcome to the School Management System</h1>
+
+<h2>Resources</h2>
+
+<div>
+  <h3>All People</h3>
+  <ul>
+    <% @people.each do |person| %>
+      <li>
+        <%= link_to person.full_name, person_path(person) %>
+        (<%= person.type || 'Person' %>)
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+<div>
+  <h3>Students</h3>
+  <ul>
+    <% @students.each do |student| %>
+      <li>
+        <%= link_to student.full_name, person_path(student) %>
+        (Student)
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+<div>
+  <h3>Teachers</h3>
+  <ul>
+    <% @teachers.each do |teacher| %>
+      <li>
+        <%= link_to teacher.full_name, person_path(teacher) %>
+        (Teacher)
+      </li>
+    <% end %>
+  </ul>
+</div>

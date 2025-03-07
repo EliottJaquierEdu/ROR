@@ -1,0 +1,10 @@
+  <div class="address-management">
+    <% if person.address %>
+      <%= link_to "Edit address", edit_address_path(person.address), class: "edit-link" %> |
+      <%= link_to "Delete address", address_path(person.address),
+          data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this address?" },
+          class: "delete-link" %>
+    <% else %>
+      <%= link_to "Add new address", new_address_path(person_id: person.id), class: "add-link" %>
+    <% end %>
+  </div>

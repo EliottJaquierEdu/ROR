@@ -1,0 +1,18 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "People" %>
+
+<h1>People</h1>
+
+<div id="people">
+  <% @people.each do |person| %>
+    <%= render 'person', person: person %>
+    <p>
+      <%= link_to "Show this person", person %> |
+      <%= link_to "Edit", edit_person_path(person) %> |
+      <%= button_to "Delete", person, method: :delete, data: { confirm: "Are you sure?" } %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "Create new person", new_person_path %>

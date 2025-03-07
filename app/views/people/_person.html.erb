@@ -1,0 +1,46 @@
+<div id="<%= dom_id person %>">
+  <p>
+    <strong>Username:</strong>
+    <%= person.username %>
+  </p>
+
+  <p>
+    <strong>Lastname:</strong>
+    <%= person.lastname %>
+  </p>
+
+  <p>
+    <strong>Firstname:</strong>
+    <%= person.firstname %>
+  </p>
+
+  <p>
+    <strong>Email:</strong>
+    <%= person.email %>
+  </p>
+
+  <p>
+    <strong>Phone number:</strong>
+    <%= person.phone_number %>
+  </p>
+
+  <p>
+    <strong>Address:</strong>
+    <% if person.address %>
+      <div class="address-details" style="margin-left: 20px;">
+        <div><strong>Street:</strong> <%= person.address.street %></div>
+        <div><strong>Number:</strong> <%= person.address.number %></div>
+        <div><strong>ZIP:</strong> <%= person.address.zip %></div>
+        <div><strong>Town:</strong> <%= person.address.town %></div>
+      </div>
+    <% else %>
+      No address specified
+    <% end %>
+  </p>
+
+  <p>
+    <strong>Type:</strong>
+    <%= person.type || "Person" %>
+  </p>
+
+</div>

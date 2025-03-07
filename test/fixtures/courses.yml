@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  term: MyString
+  start_at: 2025-02-07 08:56:17
+  end_at: 2025-02-07 08:56:17
+  week_day: 1
+  school_class: one
+
+two:
+  term: MyString
+  start_at: 2025-02-07 08:56:17
+  end_at: 2025-02-07 08:56:17
+  week_day: 1
+  school_class: two
