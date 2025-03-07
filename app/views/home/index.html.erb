@@ -1,39 +1,165 @@
-<h1>Welcome to the School Management System</h1>
+<% content_for :title, "School Management System" %>
 
-<h2>Resources</h2>
-
-<div>
-  <h3>All People</h3>
-  <ul>
-    <% @people.each do |person| %>
-      <li>
-        <%= link_to person.full_name, person_path(person) %>
-        (<%= person.type || 'Person' %>)
-      </li>
-    <% end %>
-  </ul>
+<div class="jumbotron bg-light p-5 mb-4 rounded shadow-sm">
+  <h1 class="display-4">Welcome to the School Management System</h1>
+  <p class="lead">Manage your school's students, teachers, classes, courses, and more with ease.</p>
+  <hr class="my-4">
+  <p>Use the navigation above to access different sections of the application.</p>
 </div>
 
-<div>
-  <h3>Students</h3>
-  <ul>
-    <% @students.each do |student| %>
-      <li>
-        <%= link_to student.full_name, person_path(student) %>
-        (Student)
-      </li>
-    <% end %>
-  </ul>
+<div class="row mb-4">
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-primary text-white">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0"><i class="bi bi-mortarboard"></i> Students</h5>
+          <span class="badge bg-light text-primary"><%= @students.count %></span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="list-group list-group-flush">
+          <% @students.take(5).each do |student| %>
+            <%= link_to person_path(student), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+              <%= student.full_name %>
+              <% if student.school_classes.any? %>
+                <span class="badge bg-info rounded-pill"><%= student.school_classes.count %> classes</span>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        <% if @students.count > 5 %>
+          <div class="text-center mt-3">
+            <%= link_to people_path(type: "Student"), class: "btn btn-sm btn-outline-primary" do %>
+              <i class="bi bi-list"></i> View all students
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-warning text-dark">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0"><i class="bi bi-person-workspace"></i> Teachers</h5>
+          <span class="badge bg-light text-warning"><%= @teachers.count %></span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="list-group list-group-flush">
+          <% @teachers.take(5).each do |teacher| %>
+            <%= link_to person_path(teacher), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+              <%= teacher.full_name %>
+              <% if teacher.school_classes.any? %>
+                <span class="badge bg-warning text-dark rounded-pill"><%= teacher.school_classes.count %> classes</span>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        <% if @teachers.count > 5 %>
+          <div class="text-center mt-3">
+            <%= link_to people_path(type: "Teacher"), class: "btn btn-sm btn-outline-warning" do %>
+              <i class="bi bi-list"></i> View all teachers
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-success text-white">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0"><i class="bi bi-building"></i> School Classes</h5>
+          <span class="badge bg-light text-success"><%= SchoolClass.count %></span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="list-group list-group-flush">
+          <% SchoolClass.order(:year, :name).take(5).each do |school_class| %>
+            <%= link_to school_class_path(school_class), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+              <%= "#{school_class.year}-#{school_class.name}" %>
+              <% if school_class.students.any? %>
+                <span class="badge bg-success rounded-pill"><%= school_class.students.count %> students</span>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        <% if SchoolClass.count > 5 %>
+          <div class="text-center mt-3">
+            <%= link_to school_classes_path, class: "btn btn-sm btn-outline-success" do %>
+              <i class="bi bi-list"></i> View all classes
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div>
-  <h3>Teachers</h3>
-  <ul>
-    <% @teachers.each do |teacher| %>
-      <li>
-        <%= link_to teacher.full_name, person_path(teacher) %>
-        (Teacher)
-      </li>
-    <% end %>
-  </ul>
+<div class="row">
+  <div class="col-md-6 mb-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-info text-white">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0"><i class="bi bi-journal-text"></i> Subjects</h5>
+          <span class="badge bg-light text-info"><%= Subject.count %></span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="list-group list-group-flush">
+          <% Subject.order(:name).take(5).each do |subject| %>
+            <%= link_to subject_path(subject), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+              <%= subject.name %>
+              <% if subject.courses.any? %>
+                <span class="badge bg-info rounded-pill"><%= subject.courses.count %> courses</span>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        <% if Subject.count > 5 %>
+          <div class="text-center mt-3">
+            <%= link_to subjects_path, class: "btn btn-sm btn-outline-info" do %>
+              <i class="bi bi-list"></i> View all subjects
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-6 mb-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-secondary text-white">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0"><i class="bi bi-clipboard-check"></i> Examinations</h5>
+          <span class="badge bg-light text-secondary"><%= Examination.count %></span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="list-group list-group-flush">
+          <% Examination.order(expected_date: :desc).take(5).each do |examination| %>
+            <%= link_to examination_path(examination), class: "list-group-item list-group-item-action" do %>
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1"><%= examination.title %></h6>
+                <small><%= examination.expected_date&.strftime("%d %b %Y") %></small>
+              </div>
+              <% if examination.course&.subject %>
+                <small class="text-muted"><%= examination.course.subject.name %></small>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        <% if Examination.count > 5 %>
+          <div class="text-center mt-3">
+            <%= link_to examinations_path, class: "btn btn-sm btn-outline-secondary" do %>
+              <i class="bi bi-list"></i> View all examinations
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
