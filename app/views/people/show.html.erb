@@ -1,10 +1,149 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, "#{@person.firstname} #{@person.lastname}" %>
 
-<%= render 'person', person: @person %>
-
-<div>
-  <%= link_to "Edit this person", edit_person_path(@person) %> |
-  <%= link_to "Back to people", people_path %>
-
-  <%= button_to "Destroy this person", @person, method: :delete %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= @person.firstname %> <%= @person.lastname %></h1>
+  <div class="btn-group">
+    <%= link_to "Edit", edit_person_path(@person), class: "btn btn-outline-primary" %>
+    <%= link_to "Back", people_path, class: "btn btn-outline-secondary" %>
+  </div>
 </div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Personal Information</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <span class="badge <%= @person.type == 'Student' ? 'bg-info' : 'bg-warning' %>"><%= @person.type || 'Person' %></span>
+        </div>
+        <dl class="row">
+          <dt class="col-sm-4">Username</dt>
+          <dd class="col-sm-8"><%= @person.username %></dd>
+          
+          <dt class="col-sm-4">Email</dt>
+          <dd class="col-sm-8"><%= @person.email %></dd>
+          
+          <dt class="col-sm-4">Phone</dt>
+          <dd class="col-sm-8"><%= @person.phone_number %></dd>
+          
+          <% if @person.type == "Student" %>
+            <dt class="col-sm-4">Student Status</dt>
+            <dd class="col-sm-8"><%= @person.student_status&.status %></dd>
+          <% end %>
+          
+          <% if @person.type == "Teacher" %>
+            <dt class="col-sm-4">Teacher Status</dt>
+            <dd class="col-sm-8"><%= @person.teacher_status&.status %></dd>
+            
+            <dt class="col-sm-4">IBAN</dt>
+            <dd class="col-sm-8"><%= @person.iban %></dd>
+          <% end %>
+        </dl>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <% if @person.address %>
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <h5 class="card-title mb-0">Address</h5>
+        </div>
+        <div class="card-body">
+          <address>
+            <%= @person.address.street %> <%= @person.address.number %><br>
+            <%= @person.address.zip %> <%= @person.address.town %>
+          </address>
+          <div class="mt-3">
+            <div class="btn-group">
+              <%= link_to "Edit", edit_address_path(@person.address), class: "btn btn-sm btn-outline-secondary" %>
+              <%= link_to "Delete", address_path(@person.address), 
+                  data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, 
+                  class: "btn btn-sm btn-outline-danger" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <h5 class="card-title mb-0">Address</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">No address information available.</p>
+          <%= link_to "Add address", new_address_path(person_id: @person.id), class: "btn btn-sm btn-outline-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% if @person.type == "Student" && @person.school_classes.any? %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0">Classes</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Year</th>
+              <th>Name</th>
+              <th>Room</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @person.school_classes.each do |school_class| %>
+              <tr>
+                <td><%= school_class.year %></td>
+                <td><%= school_class.name %></td>
+                <td><%= school_class.room&.name %></td>
+                <td>
+                  <%= link_to "View", school_class, class: "btn btn-sm btn-outline-primary" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if @person.type == "Teacher" && @person.school_classes.any? %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0">Classes</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Year</th>
+              <th>Name</th>
+              <th>Room</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @person.school_classes.each do |school_class| %>
+              <tr>
+                <td><%= school_class.year %></td>
+                <td><%= school_class.name %></td>
+                <td><%= school_class.room&.name %></td>
+                <td>
+                  <%= link_to "View", school_class, class: "btn btn-sm btn-outline-primary" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -2,17 +2,50 @@
 
 <% content_for :title, "People" %>
 
-<h1>People</h1>
-
-<div id="people">
-  <% @people.each do |person| %>
-    <%= render 'person', person: person %>
-    <p>
-      <%= link_to "Show this person", person %> |
-      <%= link_to "Edit", edit_person_path(person) %> |
-      <%= button_to "Delete", person, method: :delete, data: { confirm: "Are you sure?" } %>
-    </p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>People</h1>
+  <%= link_to new_person_path, class: "btn btn-primary" do %>
+    <i class="bi bi-person-plus"></i> Create new person
   <% end %>
 </div>
 
-<%= link_to "Create new person", new_person_path %>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @people.each do |person| %>
+            <tr>
+              <td><%= "#{person.firstname} #{person.lastname}" %></td>
+              <td><%= person.email %></td>
+              <td><span class="badge <%= person.type == 'Student' ? 'bg-info' : 'bg-warning' %>"><%= person.type || 'Person' %></span></td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <%= link_to person, class: "btn btn-outline-primary" do %>
+                    <i class="bi bi-eye"></i> View
+                  <% end %>
+                  <%= link_to edit_person_path(person), class: "btn btn-outline-secondary" do %>
+                    <i class="bi bi-pencil"></i> Edit
+                  <% end %>
+                  <%= button_to person, method: :delete, 
+                      class: "btn btn-outline-danger", 
+                      form: { data: { turbo_confirm: "Are you sure?" } } do %>
+                    <i class="bi bi-trash"></i> Delete
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
