@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :people
+
   root "home#index"
 
   resources :grades

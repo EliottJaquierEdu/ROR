@@ -1,4 +1,9 @@
 class Person < ApplicationRecord
+  # Include default devise modules
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :trackable,
+         :validatable
+
   has_one :address, dependent: :destroy
   accepts_nested_attributes_for :address, allow_destroy: true
 
