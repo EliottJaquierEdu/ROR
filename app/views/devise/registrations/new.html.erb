@@ -20,7 +20,7 @@
                 <div class="row g-3">
                   <div class="col-md-6">
                     <div class="form-floating mb-3">
-                      <%= f.text_field :username, class: "form-control", placeholder: "Username" %>
+                      <%= f.text_field :username, class: "form-control", placeholder: "Username", autocomplete: "username" %>
                       <%= f.label :username %>
                     </div>
                   </div>
@@ -34,29 +34,43 @@
                   
                   <div class="col-md-6">
                     <div class="form-floating mb-3">
-                      <%= f.text_field :firstname, class: "form-control", placeholder: "First name" %>
+                      <%= f.text_field :firstname, class: "form-control", placeholder: "First name", autocomplete: "given-name" %>
                       <%= f.label :firstname %>
                     </div>
                   </div>
                   
                   <div class="col-md-6">
                     <div class="form-floating mb-3">
-                      <%= f.text_field :lastname, class: "form-control", placeholder: "Last name" %>
+                      <%= f.text_field :lastname, class: "form-control", placeholder: "Last name", autocomplete: "family-name" %>
                       <%= f.label :lastname %>
                     </div>
                   </div>
                   
                   <div class="col-md-6">
                     <div class="form-floating mb-3">
-                      <%= f.telephone_field :phone_number, class: "form-control", placeholder: "Phone number" %>
+                      <%= f.telephone_field :phone_number, class: "form-control", placeholder: "Phone number", autocomplete: "tel" %>
                       <%= f.label :phone_number %>
                     </div>
                   </div>
 
                   <div class="col-md-6">
                     <div class="form-floating mb-3">
-                      <%= f.select :type, ['Student', 'Teacher'], {}, { class: "form-select" } %>
+                      <%= f.select :type, ['Student', 'Teacher'], {}, { class: "form-select", onchange: "handleTypeChange(this.value)" } %>
                       <%= f.label :type %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6" id="student_status_field" style="display: none;">
+                    <div class="form-floating mb-3">
+                      <%= f.collection_select :student_status_id, StudentStatus.all, :id, :status, {}, { class: "form-select" } %>
+                      <%= f.label :student_status_id, "Student Status" %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6" id="teacher_status_field" style="display: none;">
+                    <div class="form-floating mb-3">
+                      <%= f.collection_select :teacher_status_id, TeacherStatus.all, :id, :status, {}, { class: "form-select" } %>
+                      <%= f.label :teacher_status_id, "Teacher Status" %>
                     </div>
                   </div>
                 </div>
@@ -98,28 +112,28 @@
                   <div class="row g-3">
                     <div class="col-md-6">
                       <div class="form-floating mb-3">
-                        <%= address_form.text_field :street, class: "form-control", placeholder: "Street" %>
+                        <%= address_form.text_field :street, class: "form-control", placeholder: "Street", autocomplete: "street-address" %>
                         <%= address_form.label :street %>
                       </div>
                     </div>
 
                     <div class="col-md-6">
                       <div class="form-floating mb-3">
-                        <%= address_form.text_field :number, class: "form-control", placeholder: "Number" %>
+                        <%= address_form.text_field :number, class: "form-control", placeholder: "Number", autocomplete: "address-line2" %>
                         <%= address_form.label :number %>
                       </div>
                     </div>
 
                     <div class="col-md-6">
                       <div class="form-floating mb-3">
-                        <%= address_form.text_field :zip, class: "form-control", placeholder: "ZIP" %>
+                        <%= address_form.text_field :zip, class: "form-control", placeholder: "ZIP", autocomplete: "postal-code" %>
                         <%= address_form.label :zip %>
                       </div>
                     </div>
 
                     <div class="col-md-6">
                       <div class="form-floating mb-3">
-                        <%= address_form.text_field :town, class: "form-control", placeholder: "Town" %>
+                        <%= address_form.text_field :town, class: "form-control", placeholder: "Town", autocomplete: "address-level2" %>
                         <%= address_form.label :town %>
                       </div>
                     </div>
@@ -141,4 +155,30 @@
       </div>
     </div>
   </div>
-</div> 
+</div>
+
+<script>
+function handleTypeChange(type) {
+  const studentStatusField = document.getElementById('student_status_field');
+  const teacherStatusField = document.getElementById('teacher_status_field');
+
+  if (type === 'Student') {
+    studentStatusField.style.display = 'block';
+    teacherStatusField.style.display = 'none';
+  } else if (type === 'Teacher') {
+    studentStatusField.style.display = 'none';
+    teacherStatusField.style.display = 'block';
+  } else {
+    studentStatusField.style.display = 'none';
+    teacherStatusField.style.display = 'none';
+  }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const typeSelect = document.querySelector('select[name="person[type]"]');
+  if (typeSelect) {
+    handleTypeChange(typeSelect.value);
+  }
+});
+</script> 

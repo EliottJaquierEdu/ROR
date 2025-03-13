@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  devise_for :people
+  devise_for :people, controllers: {
+    registrations: 'people/registrations',
+    sessions: 'people/sessions'
+  }
 
   root "home#index"
 
