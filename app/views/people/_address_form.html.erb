@@ -36,7 +36,7 @@
     <% end %>
     
     <div class="mt-3">
-      <% if person.address %>
+      <% if person.persisted? && person.address.present? %>
         <div class="btn-group">
           <%= link_to edit_address_path(person.address), class: "btn btn-outline-secondary btn-sm" do %>
             <i class="bi bi-pencil"></i> Edit address
@@ -47,7 +47,7 @@
             <i class="bi bi-trash"></i> Delete address
           <% end %>
         </div>
-      <% else %>
+      <% elsif person.persisted? %>
         <%= link_to new_address_path(person_id: person.id), class: "btn btn-outline-primary btn-sm" do %>
           <i class="bi bi-plus-circle"></i> Add new address
         <% end %>
