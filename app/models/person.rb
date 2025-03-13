@@ -21,13 +21,17 @@ class Person < ApplicationRecord
     "#{firstname} #{lastname}"
   end
 
-  private
-
   def student?
     type == "Student"
   end
 
   def teacher?
     type == "Teacher"
+  end
+
+  def can_view_grade?(grade)
+    return true if teacher?
+    return false unless student?
+    grade.person_id == id
   end
 end

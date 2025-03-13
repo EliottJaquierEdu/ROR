@@ -1,9 +1,15 @@
 class GradesController < ApplicationController
   before_action :set_grade, only: %i[ show edit update destroy ]
+  before_action :authorize_grade_access, only: %i[ show edit update destroy ]
+  before_action :authorize_grade_management, only: %i[ new create edit update destroy ]
 
   # GET /grades or /grades.json
   def index
-    @grades = Grade.all
+    @grades = if current_person.teacher?
+      Grade.all
+    else
+      current_person.grades
+    end
   end
 
   # GET /grades/1 or /grades/1.json
@@ -60,11 +66,25 @@ class GradesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_grade
-      @grade = Grade.find(params.expect(:id))
+      @grade = Grade.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def grade_params
-      params.expect(grade: [ :value, :effective_date, :person_id, :examination_id ])
+      params.require(:grade).permit(:value, :effective_date, :person_id, :examination_id)
+    end
+
+    def authorize_grade_access
+      unless current_person.can_view_grade?(@grade)
+        flash[:alert] = "You are not authorized to access this grade."
+        redirect_to grades_path
+      end
+    end
+
+    def authorize_grade_management
+      unless current_person.teacher?
+        flash[:alert] = "Only teachers can manage grades."
+        redirect_to grades_path
+      end
     end
 end
