@@ -5,7 +5,10 @@ class Person < ApplicationRecord
   has_and_belongs_to_many :school_classes, join_table: "people_school_classes"
 
   belongs_to :student_status, optional: true
+  belongs_to :teacher_status, optional: true
+
   validates :student_status, presence: true, if: :student?
+  validates :teacher_status, presence: true, if: :teacher?
 
   has_many :grades, foreign_key: "person_id", dependent: :destroy, class_name: "Grade"
 
@@ -17,5 +20,9 @@ class Person < ApplicationRecord
 
   def student?
     type == "Student"
+  end
+
+  def teacher?
+    type == "Teacher"
   end
 end

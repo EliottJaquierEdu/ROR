@@ -110,7 +110,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_28_084500) do
     t.index ["name"], name: "index_subjects_on_name", unique: true
   end
 
-  create_table "teachers_statuses", force: :cascade do |t|
+  create_table "teacher_statuses", force: :cascade do |t|
     t.string "status", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -123,7 +123,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_28_084500) do
   add_foreign_key "grades", "examinations"
   add_foreign_key "grades", "people"
   add_foreign_key "people", "student_statuses"
-  add_foreign_key "people", "teachers_statuses", column: "teacher_status_id"
+  add_foreign_key "people", "teacher_statuses"
   add_foreign_key "people_school_classes", "people"
   add_foreign_key "people_school_classes", "school_classes"
   add_foreign_key "school_classes", "rooms"

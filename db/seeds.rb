@@ -8,15 +8,15 @@ Address.destroy_all
 Person.destroy_all
 Room.destroy_all
 StudentStatus.destroy_all
-TeachersStatus.destroy_all
+TeacherStatus.destroy_all
 
 # Create StudentStatuses
 student_status_enrolled = StudentStatus.create!(status: 'Enrolled')
 student_status_graduated = StudentStatus.create!(status: 'Graduated')
 
 # Create TeacherStatuses
-teacher_status_active = TeachersStatus.create!(status: 'Active')
-teacher_status_retired = TeachersStatus.create!(status: 'Retired')
+teacher_status_active = TeacherStatus.create!(status: 'Active')
+teacher_status_retired = TeacherStatus.create!(status: 'Retired')
 
 # Create Students with their addresses
 student_1 = Student.create!(
