@@ -73,6 +73,7 @@ We implement role-based access control (RBAC) using Single Table Inheritance (ST
 1. **User Types**
    - `Student`: Can view their own grades
    - `Teacher`: Can view and manage all grades
+   - `Dean`: Can view and manage all resources (administrative role)
 
 2. **Permission Methods**
 ```ruby
@@ -82,15 +83,63 @@ def student?
 end
 
 def teacher?
-  type == "Teacher"
+  type == "Teacher" || type == "Dean"
+end
+
+def dean?
+  type == "Dean"
 end
 
 def can_view_grade?(grade)
-  return true if teacher?
+  return true if teacher? || dean?
   return false unless student?
   grade.person_id == id
 end
+
+def can_manage_resources?
+  dean?
+end
 ```
+
+### Dean Role Implementation
+We added a Dean role to provide administrative capabilities within the school management system.
+
+#### Why a Dean Role?
+- Need for a dedicated administrative role with higher permissions
+- Clear separation between teaching and administrative responsibilities
+- Centralized management of school resources (people, classes, rooms, etc.)
+
+#### Implementation Approach
+We implemented the Dean role using inheritance, making Dean inherit from Teacher:
+
+```ruby
+class Dean < Teacher
+  # Dean inherits all Teacher attributes and validations
+end
+```
+
+This approach offers several advantages:
+1. **Reuse of Teacher attributes**: Deans inherit all Teacher attributes and validations (including IBAN and teacher_status)
+2. **Simplified model structure**: No need for additional tables or complex relationships
+3. **Clear permission hierarchy**: Deans can do everything Teachers can do, plus administrative tasks
+
+#### Authorization Implementation
+We implemented resource management authorization using a before_action filter in controllers:
+
+```ruby
+# In ApplicationController
+def authorize_resource_management
+  unless current_person.can_manage_resources?
+    flash[:alert] = "You are not authorized to manage this resource."
+    redirect_back(fallback_location: root_path)
+  end
+end
+
+# In resource controllers
+before_action :authorize_resource_management, only: %i[ new create edit update destroy ]
+```
+
+This ensures that only Deans can create, edit, and delete resources, while Teachers can only view them.
 
 ### Controller-Level Authorization
 We implement authorization in controllers using before_action filters:

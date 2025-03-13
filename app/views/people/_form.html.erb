@@ -54,10 +54,10 @@
     </div>
   </div>
 
-  <% if person.type == "Teacher" %>
+  <% if person.type == "Teacher" || person.type == "Dean" %>
     <div class="card shadow-sm mb-4">
       <div class="card-header bg-light">
-        <h5 class="card-title mb-0">Teacher Information</h5>
+        <h5 class="card-title mb-0"><%= person.type %> Information</h5>
       </div>
       <div class="card-body">
         <div class="row g-3">
@@ -111,7 +111,7 @@ function handleTypeChange(type) {
   const teacherFields = document.getElementById('teacher_fields');
 
   studentFields.style.display = type === 'Student' ? 'block' : 'none';
-  teacherFields.style.display = type === 'Teacher' ? 'block' : 'none';
+  teacherFields.style.display = (type === 'Teacher' || type === 'Dean') ? 'block' : 'none';
 }
 
 // Call on page load to set initial state

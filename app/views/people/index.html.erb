@@ -4,8 +4,10 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>People</h1>
-  <%= link_to new_person_path, class: "btn btn-primary" do %>
-    <i class="bi bi-person-plus"></i> Create new person
+  <% if current_person.can_manage_resources? %>
+    <%= link_to new_person_path, class: "btn btn-primary" do %>
+      <i class="bi bi-person-plus"></i> Create new person
+    <% end %>
   <% end %>
 </div>
 
@@ -26,19 +28,29 @@
             <tr>
               <td><%= "#{person.firstname} #{person.lastname}" %></td>
               <td><%= person.email %></td>
-              <td><span class="badge <%= person.type == 'Student' ? 'bg-info' : 'bg-warning' %>"><%= person.type || 'Person' %></span></td>
+              <td>
+                <% badge_class = case person.type 
+                   when 'Student' then 'bg-info'
+                   when 'Teacher' then 'bg-warning'
+                   when 'Dean' then 'bg-danger'
+                   else 'bg-secondary'
+                   end %>
+                <span class="badge <%= badge_class %>"><%= person.type || 'Person' %></span>
+              </td>
               <td>
                 <div class="btn-group btn-group-sm">
                   <%= link_to person, class: "btn btn-outline-primary" do %>
                     <i class="bi bi-eye"></i> View
                   <% end %>
-                  <%= link_to edit_person_path(person), class: "btn btn-outline-secondary" do %>
-                    <i class="bi bi-pencil"></i> Edit
-                  <% end %>
-                  <%= button_to person, method: :delete, 
-                      class: "btn btn-outline-danger", 
-                      form: { data: { turbo_confirm: "Are you sure?" } } do %>
-                    <i class="bi bi-trash"></i> Delete
+                  <% if current_person.can_manage_resources? %>
+                    <%= link_to edit_person_path(person), class: "btn btn-outline-secondary" do %>
+                      <i class="bi bi-pencil"></i> Edit
+                    <% end %>
+                    <%= button_to person, method: :delete, 
+                        class: "btn btn-outline-danger", 
+                        form: { data: { turbo_confirm: "Are you sure?" } } do %>
+                      <i class="bi bi-trash"></i> Delete
+                    <% end %>
                   <% end %>
                 </div>
               </td>

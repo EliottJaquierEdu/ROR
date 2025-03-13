@@ -13,4 +13,11 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: [:username, :firstname, :lastname, :phone_number,
                                                             address_attributes: [:zip, :town, :street, :number]])
   end
+
+  def authorize_resource_management
+    unless current_person.can_manage_resources?
+      flash[:alert] = "You are not authorized to manage this resource."
+      redirect_back(fallback_location: root_path)
+    end
+  end
 end

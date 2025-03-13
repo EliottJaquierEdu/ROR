@@ -37,6 +37,7 @@
                 <li class="nav-item"><%= link_to people_path, class: "nav-link" do %><i class="bi bi-people"></i> People<% end %></li>
                 <li class="nav-item"><%= link_to people_path(type: "Student"), class: "nav-link" do %><i class="bi bi-mortarboard"></i> Students<% end %></li>
                 <li class="nav-item"><%= link_to people_path(type: "Teacher"), class: "nav-link" do %><i class="bi bi-person-workspace"></i> Teachers<% end %></li>
+                <li class="nav-item"><%= link_to people_path(type: "Dean"), class: "nav-link" do %><i class="bi bi-person-badge"></i> Deans<% end %></li>
                 <li class="nav-item"><%= link_to addresses_path, class: "nav-link" do %><i class="bi bi-geo-alt"></i> Addresses<% end %></li>
                 <li class="nav-item"><%= link_to school_classes_path, class: "nav-link" do %><i class="bi bi-building"></i> School Classes<% end %></li>
                 <li class="nav-item"><%= link_to rooms_path, class: "nav-link" do %><i class="bi bi-door-open"></i> Rooms<% end %></li>
@@ -55,6 +56,13 @@
       <% if notice %>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           <%= notice %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% end %>
+      
+      <% if alert %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= alert %>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       <% end %>

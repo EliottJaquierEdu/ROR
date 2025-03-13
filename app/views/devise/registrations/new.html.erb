@@ -55,7 +55,7 @@
 
                   <div class="col-md-6">
                     <div class="form-floating mb-3">
-                      <%= f.select :type, ['Student', 'Teacher'], {}, { class: "form-select", onchange: "handleTypeChange(this.value)" } %>
+                      <%= f.select :type, ['Student', 'Teacher', 'Dean'], {}, { class: "form-select", onchange: "handleTypeChange(this.value)" } %>
                       <%= f.label :type %>
                     </div>
                   </div>
@@ -71,6 +71,13 @@
                     <div class="form-floating mb-3">
                       <%= f.collection_select :teacher_status_id, TeacherStatus.all, :id, :status, {}, { class: "form-select" } %>
                       <%= f.label :teacher_status_id, "Teacher Status" %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6" id="iban_field" style="display: none;">
+                    <div class="form-floating mb-3">
+                      <%= f.text_field :iban, class: "form-control", placeholder: "IBAN" %>
+                      <%= f.label :iban %>
                     </div>
                   </div>
                 </div>
@@ -161,16 +168,20 @@
 function handleTypeChange(type) {
   const studentStatusField = document.getElementById('student_status_field');
   const teacherStatusField = document.getElementById('teacher_status_field');
+  const ibanField = document.getElementById('iban_field');
 
   if (type === 'Student') {
     studentStatusField.style.display = 'block';
     teacherStatusField.style.display = 'none';
-  } else if (type === 'Teacher') {
+    ibanField.style.display = 'none';
+  } else if (type === 'Teacher' || type === 'Dean') {
     studentStatusField.style.display = 'none';
     teacherStatusField.style.display = 'block';
+    ibanField.style.display = 'block';
   } else {
     studentStatusField.style.display = 'none';
     teacherStatusField.style.display = 'none';
+    ibanField.style.display = 'none';
   }
 }
 

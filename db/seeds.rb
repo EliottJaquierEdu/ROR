@@ -18,6 +18,27 @@ student_status_graduated = StudentStatus.create!(status: 'Graduated')
 teacher_status_active = TeacherStatus.create!(status: 'Active')
 teacher_status_retired = TeacherStatus.create!(status: 'Retired')
 
+# Create Dean with address (inherits from Teacher)
+dean = Dean.create!(
+  username: 'dean_admin',
+  lastname: 'Wilson',
+  firstname: 'Robert',
+  email: 'robertwilson@example.com',
+  phone_number: '555-4321',
+  iban: 'CH9300762011623852957',  # IBAN required for Teachers and Deans
+  teacher_status: teacher_status_active,  # Teacher status required for Teachers and Deans
+  type: 'Dean',
+  password: 'password',
+  password_confirmation: 'password'
+)
+
+dean.create_address!(
+  zip: 45678,
+  town: 'Adminville',
+  street: 'Admin St',
+  number: '10A'
+)
+
 # Create Students with their addresses
 student_1 = Student.create!(
   username: 'student_one',
@@ -26,7 +47,9 @@ student_1 = Student.create!(
   email: 'johndoe@example.com',
   phone_number: '555-1234',
   student_status: student_status_enrolled,
-  type: 'Student'
+  type: 'Student',
+  password: 'password',
+  password_confirmation: 'password'
 )
 
 student_1.create_address!(
@@ -43,7 +66,9 @@ student_2 = Student.create!(
   email: 'janesmith@example.com',
   phone_number: '555-5678',
   student_status: student_status_graduated,
-  type: 'Student'
+  type: 'Student',
+  password: 'password',
+  password_confirmation: 'password'
 )
 
 student_2.create_address!(
@@ -62,7 +87,9 @@ teacher_1 = Teacher.create!(
   phone_number: '555-7890',
   iban: 'DE89370400440532013000',
   teacher_status: teacher_status_active,
-  type: 'Teacher'
+  type: 'Teacher',
+  password: 'password',
+  password_confirmation: 'password'
 )
 
 teacher_1.create_address!(
@@ -80,7 +107,9 @@ teacher_2 = Teacher.create!(
   phone_number: '555-9876',
   iban: 'FR7630006000011234567890189',
   teacher_status: teacher_status_retired,
-  type: 'Teacher'
+  type: 'Teacher',
+  password: 'password',
+  password_confirmation: 'password'
 )
 
 teacher_2.create_address!(
