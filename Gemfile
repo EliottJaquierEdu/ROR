@@ -20,6 +20,8 @@ gem "jbuilder"
 gem 'bootstrap', '~> 5.3.2'
 # Use sassc-rails for processing Sass files
 gem 'sassc-rails'
+# Use Devise for authentication
+gem 'devise', '~> 4.9.3'
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
