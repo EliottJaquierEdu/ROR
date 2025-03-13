@@ -4,7 +4,14 @@ class PeopleController < ApplicationController
 
   # GET /people or /people.json
   def index
-    @people = Person.includes(:address).all
+    @people = Person.includes(:address)
+
+    # Filter by type if type parameter is provided
+    if params[:type].present?
+      @people = @people.where(type: params[:type])
+    end
+
+    @people = @people.all
   end
 
   # GET /people/1 or /people/1.json
