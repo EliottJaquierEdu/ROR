@@ -1,5 +1,6 @@
 class PeopleController < ApplicationController
   before_action :set_person, only: %i[ show edit update destroy ]
+  before_action :authorize_resource_management, only: %i[ new create edit update destroy ]
 
   # GET /people or /people.json
   def index

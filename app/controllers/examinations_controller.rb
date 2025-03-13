@@ -1,5 +1,6 @@
 class ExaminationsController < ApplicationController
   before_action :set_examination, only: %i[ show edit update destroy ]
+  before_action :authorize_resource_management, only: %i[ new create edit update destroy ]
 
   # GET /examinations or /examinations.json
   def index

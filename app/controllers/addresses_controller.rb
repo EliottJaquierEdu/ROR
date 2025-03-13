@@ -1,5 +1,6 @@
 class AddressesController < ApplicationController
   before_action :set_address, only: %i[ show edit update destroy ]
+  before_action :authorize_resource_management, only: %i[ new create edit update destroy ]
 
   # GET /addresses or /addresses.json
   def index

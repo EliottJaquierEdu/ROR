@@ -1,5 +1,6 @@
 class SchoolClassesController < ApplicationController
   before_action :set_school_class, only: %i[ show edit update destroy ]
+  before_action :authorize_resource_management, only: %i[ new create edit update destroy ]
 
   # GET /school_classes or /school_classes.json
   def index

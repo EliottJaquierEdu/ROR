@@ -5,7 +5,7 @@ class GradesController < ApplicationController
 
   # GET /grades or /grades.json
   def index
-    @grades = if current_person.teacher?
+    @grades = if current_person.dean? || current_person.teacher?
       Grade.all
     else
       current_person.grades
@@ -82,8 +82,8 @@ class GradesController < ApplicationController
     end
 
     def authorize_grade_management
-      unless current_person.teacher?
-        flash[:alert] = "Only teachers can manage grades."
+      unless current_person.can_manage_resources?
+        flash[:alert] = "Only deans can manage grades."
         redirect_to grades_path
       end
     end
