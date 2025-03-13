@@ -23,15 +23,77 @@ We renamed the class model to school_class to avoid conflicts with the reserved 
 ### Remove propotions_asserts
 We removed the propotions_asserts table because it was not useful for the project. 
 It was used to store which ruby functions to call to know if a student passed but we decided to store this information in the student model (more related to business logic).
-## Authentification
+
+## Authentication
 References :
 - https://guides.rubyonrails.org/security.html
 - https://www.reddit.com/r/rails/comments/10z34qx/what_is_used_for_authentication_in_rails_nowadays/
 - http://rawsyntax.com/blog/rails-authentication-plugins/
-Used the default recommended authentification system ([Device](https://github.com/heartcombo/devise)) by [Rails](https://rubygems.org/gems/devise) :
 
-Which approach to choose between *Add authentication to the people table* and *Create a separate users table for authentication*?
-- If all people are authenticated users → add Devise to people.
-- If some people don't have access / we need a scalable, modular architecture → separate users and people.
+### Devise Implementation
+We use the default recommended authentication system ([Devise](https://github.com/heartcombo/devise)) by [Rails](https://rubygems.org/gems/devise).
 
-Because everyone in the application must be able to log in / people are closely linked to the authentication system, we chose to **add authentication to the people table**.
+#### Why Devise?
+- Industry standard for Rails authentication
+- Provides secure, battle-tested authentication mechanisms
+- Handles common security concerns out of the box
+- Easy to customize and extend
+
+#### Implementation Choice
+We had two options for implementing authentication:
+1. Add authentication to the people table
+2. Create a separate users table for authentication
+
+We chose to **add authentication to the people table** because:
+- Everyone in the application must be able to log in
+- People are closely linked to the authentication system
+- Simpler architecture with no need for separate user management
+
+#### Devise Configuration
+```ruby
+# In Person model
+devise :database_authenticatable, :registerable,
+       :recoverable, :rememberable, :trackable,
+       :validatable
+```
+
+This configuration provides:
+- Database authentication with secure password hashing
+- User registration functionality
+- Password recovery capabilities
+- Remember me functionality
+- User activity tracking
+- Email validation
+
+## Access Management
+
+### User Types and Permissions
+We implement role-based access control (RBAC) using Single Table Inheritance (STI):
+
+1. **User Types**
+   - `Student`: Can view their own grades
+   - `Teacher`: Can view and manage all grades
+
+2. **Permission Methods**
+```ruby
+# In Person model
+def student?
+  type == "Student"
+end
+
+def teacher?
+  type == "Teacher"
+end
+
+def can_view_grade?(grade)
+  return true if teacher?
+  return false unless student?
+  grade.person_id == id
+end
+```
+
+### Controller-Level Authorization
+We implement authorization in controllers using before_action filters:
+
+### View-Level Access Control
+The views adapt their content based on user type (ex. show only the grades of the current user for students and teachers can see all grades)
