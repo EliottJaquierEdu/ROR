@@ -2,6 +2,7 @@ module SchoolClassesHelper
   # Check if the current user can view a specific school class
   def can_view_school_class?(school_class)
     return false unless person_signed_in?
+    return false unless school_class
     
     # Deans can view all classes
     return true if current_person.dean?
@@ -30,6 +31,7 @@ module SchoolClassesHelper
   # Check if the current user can edit a specific school class
   def can_edit_school_class?(school_class)
     return false unless person_signed_in?
+    return false unless school_class
     
     # Deans can edit all classes
     return true if current_person.dean?
@@ -45,6 +47,7 @@ module SchoolClassesHelper
   # Check if the current user can delete a specific school class
   def can_delete_school_class?(school_class)
     return false unless person_signed_in?
+    return false unless school_class
     
     # Only deans can delete classes
     current_person.dean?
@@ -73,6 +76,7 @@ module SchoolClassesHelper
   # Check if the current user can manage students in a class
   def can_manage_students?(school_class)
     return false unless person_signed_in?
+    return false unless school_class
     
     # Deans can manage students in all classes
     return true if current_person.dean?
@@ -88,6 +92,7 @@ module SchoolClassesHelper
   # Check if the current user can manage examinations in a class
   def can_manage_examinations?(school_class)
     return false unless person_signed_in?
+    return false unless school_class
     
     # Deans can manage examinations in all classes
     return true if current_person.dean?
