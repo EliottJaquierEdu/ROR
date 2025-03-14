@@ -1,4 +1,4 @@
-<%= form_with(model: person, scope: :person, class: "needs-validation") do |form| %>
+<%= form_with(model: person, class: "needs-validation") do |form| %>
   <% if person.errors.any? %>
     <div class="alert alert-danger">
       <h5><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h5>
@@ -18,20 +18,6 @@
       <div class="row g-3">
         <div class="col-md-6">
           <div class="form-floating mb-3">
-            <%= form.text_field :username, class: "form-control", placeholder: "Username" %>
-            <%= form.label :username %>
-          </div>
-        </div>
-        
-        <div class="col-md-6">
-          <div class="form-floating mb-3">
-            <%= form.email_field :email, class: "form-control", placeholder: "Email" %>
-            <%= form.label :email %>
-          </div>
-        </div>
-        
-        <div class="col-md-6">
-          <div class="form-floating mb-3">
             <%= form.text_field :firstname, class: "form-control", placeholder: "First name" %>
             <%= form.label :firstname %>
           </div>
@@ -46,62 +32,56 @@
         
         <div class="col-md-6">
           <div class="form-floating mb-3">
-            <%= form.telephone_field :phone_number, class: "form-control", placeholder: "Phone number" %>
-            <%= form.label :phone_number %>
+            <%= form.email_field :email, class: "form-control", placeholder: "Email" %>
+            <%= form.label :email %>
           </div>
         </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.password_field :password, class: "form-control", placeholder: "Password" %>
+            <%= form.label :password %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.password_field :password_confirmation, class: "form-control", placeholder: "Password confirmation" %>
+            <%= form.label :password_confirmation %>
+          </div>
+        </div>
+        
+        <% if current_person.dean? %>
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <%= form.select :type, 
+                  [["Student", "Student"], ["Teacher", "Teacher"], ["Dean", "Dean"]], 
+                  { include_blank: "Select type" }, 
+                  { class: "form-select" } %>
+              <%= form.label :type %>
+            </div>
+          </div>
+        <% else %>
+          <%= form.hidden_field :type, value: person.type %>
+        <% end %>
       </div>
     </div>
   </div>
 
-  <% if person.type == "Teacher" || person.type == "Dean" %>
+  <% if can_view_address?(person) %>
     <div class="card shadow-sm mb-4">
       <div class="card-header bg-light">
-        <h5 class="card-title mb-0"><%= person.type %> Information</h5>
+        <h5 class="card-title mb-0">Address</h5>
       </div>
       <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <div class="form-floating mb-3">
-              <%= form.text_field :iban, class: "form-control", placeholder: "IBAN" %>
-              <%= form.label :iban %>
-            </div>
-          </div>
-          
-          <div class="col-md-6">
-            <div class="form-floating mb-3">
-              <%= form.collection_select :teacher_status_id, TeacherStatus.all, :id, :status, {}, { class: "form-select" } %>
-              <%= form.label :teacher_status_id, "Teacher Status" %>
-            </div>
-          </div>
-        </div>
+        <%= render "address_form", form: form %>
       </div>
     </div>
   <% end %>
-
-  <% if person.type == "Student" %>
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-light">
-        <h5 class="card-title mb-0">Student Information</h5>
-      </div>
-      <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <div class="form-floating mb-3">
-              <%= form.collection_select :student_status_id, StudentStatus.all, :id, :status, {}, { class: "form-select" } %>
-              <%= form.label :student_status_id, "Student Status" %>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  <% end %>
-
-  <%= render 'address_form', form: form, person: person %>
 
   <div class="d-grid gap-2 d-md-flex justify-content-md-end">
     <%= form.submit class: "btn btn-primary" %>
-    <%= link_to "Cancel", person.persisted? ? person : people_path, class: "btn btn-outline-secondary" %>
+    <%= link_to "Cancel", people_path, class: "btn btn-outline-secondary" %>
   </div>
 <% end %>
 
