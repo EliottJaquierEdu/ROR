@@ -1,9 +1,14 @@
 class CoursesController < ApplicationController
+  before_action :authenticate_person!
   before_action :set_course, only: %i[ show edit update destroy ]
+  before_action :authorize_view, only: %i[ show ]
+  before_action :authorize_edit, only: %i[ edit update ]
+  before_action :authorize_create, only: %i[ new create ]
+  before_action :authorize_delete, only: %i[ destroy ]
 
   # GET /courses or /courses.json
   def index
-    @courses = Course.all
+    @courses = helpers.visible_courses
   end
 
   # GET /courses/1 or /courses/1.json
@@ -60,11 +65,36 @@ class CoursesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
-      @course = Course.find(params.expect(:id))
+      @course = Course.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def course_params
-      params.expect(course: [ :term, :start_at, :end_at, :week_day, :school_class_id ])
+      params.require(:course).permit(:term, :start_at, :end_at, :week_day, :school_class_id, :subject_id)
+    end
+    
+    # Authorization methods
+    def authorize_view
+      unless helpers.can_view_course?(@course)
+        redirect_to courses_path, alert: "You are not authorized to view this course."
+      end
+    end
+    
+    def authorize_edit
+      unless helpers.can_edit_course?(@course)
+        redirect_to courses_path, alert: "You are not authorized to edit this course."
+      end
+    end
+    
+    def authorize_create
+      unless helpers.can_create_course?
+        redirect_to courses_path, alert: "You are not authorized to create courses."
+      end
+    end
+    
+    def authorize_delete
+      unless helpers.can_delete_course?(@course)
+        redirect_to courses_path, alert: "You are not authorized to delete this course."
+      end
     end
 end

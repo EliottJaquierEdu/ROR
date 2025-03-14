@@ -4,9 +4,22 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>People</h1>
-  <%= link_to new_person_path, class: "btn btn-primary" do %>
-    <i class="bi bi-person-plus"></i> Create new person
+  <% if can_create_person? %>
+    <%= link_to new_person_path, class: "btn btn-primary" do %>
+      <i class="bi bi-plus-circle"></i> New person
+    <% end %>
   <% end %>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <div class="d-flex gap-2">
+      <%= link_to "All", people_path, class: "btn #{params[:type].blank? ? 'btn-primary' : 'btn-outline-primary'}" %>
+      <%= link_to "Students", people_path(type: "Student"), class: "btn #{params[:type] == 'Student' ? 'btn-primary' : 'btn-outline-primary'}" %>
+      <%= link_to "Teachers", people_path(type: "Teacher"), class: "btn #{params[:type] == 'Teacher' ? 'btn-primary' : 'btn-outline-primary'}" %>
+      <%= link_to "Deans", people_path(type: "Dean"), class: "btn #{params[:type] == 'Dean' ? 'btn-primary' : 'btn-outline-primary'}" %>
+    </div>
+  </div>
 </div>
 
 <div class="card shadow-sm">
@@ -24,21 +37,29 @@
         <tbody>
           <% @people.each do |person| %>
             <tr>
-              <td><%= "#{person.firstname} #{person.lastname}" %></td>
+              <td><%= person.full_name %></td>
               <td><%= person.email %></td>
-              <td><span class="badge <%= person.type == 'Student' ? 'bg-info' : 'bg-warning' %>"><%= person.type || 'Person' %></span></td>
+              <td><%= person.type %></td>
               <td>
                 <div class="btn-group btn-group-sm">
-                  <%= link_to person, class: "btn btn-outline-primary" do %>
-                    <i class="bi bi-eye"></i> View
+                  <% if can_view_person?(person) %>
+                    <%= link_to person, class: "btn btn-outline-primary" do %>
+                      <i class="bi bi-eye"></i> View
+                    <% end %>
                   <% end %>
-                  <%= link_to edit_person_path(person), class: "btn btn-outline-secondary" do %>
-                    <i class="bi bi-pencil"></i> Edit
+                  
+                  <% if can_edit_person?(person) %>
+                    <%= link_to edit_person_path(person), class: "btn btn-outline-secondary" do %>
+                      <i class="bi bi-pencil"></i> Edit
+                    <% end %>
                   <% end %>
-                  <%= button_to person, method: :delete, 
-                      class: "btn btn-outline-danger", 
-                      form: { data: { turbo_confirm: "Are you sure?" } } do %>
-                    <i class="bi bi-trash"></i> Delete
+                  
+                  <% if can_delete_person?(person) %>
+                    <%= button_to person, method: :delete, 
+                        class: "btn btn-outline-danger", 
+                        form: { data: { turbo_confirm: "Are you sure?" } } do %>
+                      <i class="bi bi-trash"></i> Delete
+                    <% end %>
                   <% end %>
                 </div>
               </td>

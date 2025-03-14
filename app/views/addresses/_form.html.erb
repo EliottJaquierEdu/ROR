@@ -13,13 +13,17 @@
   <% if params[:person_id].present? %>
     <%= form.hidden_field :person_id, value: params[:person_id] %>
   <% else %>
-    <div class="form-floating mb-3">
-      <%= form.select :person_id, 
-          Person.all.collect { |p| ["#{p.firstname} #{p.lastname}", p.id] }, 
-          { include_blank: "Select a person" }, 
-          { class: "form-select" } %>
-      <%= form.label :person_id, "Person" %>
-    </div>
+    <% if current_person.dean? %>
+      <div class="form-floating mb-3">
+        <%= form.select :person_id, 
+            Person.all.collect { |p| ["#{p.firstname} #{p.lastname}", p.id] }, 
+            { include_blank: "Select a person" }, 
+            { class: "form-select" } %>
+        <%= form.label :person_id, "Person" %>
+      </div>
+    <% else %>
+      <%= form.hidden_field :person_id, value: address.person_id || current_person.id %>
+    <% end %>
   <% end %>
 
   <div class="row g-3">

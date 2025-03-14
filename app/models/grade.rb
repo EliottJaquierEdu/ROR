@@ -10,6 +10,21 @@ class Grade < ApplicationRecord
   validates :student, presence: true
   validate :student_must_be_student
 
+  # String representation of a Grade
+  def to_s
+    "Grade #{value} for #{student&.full_name} on #{examination&.title}"
+  end
+  
+  # JSON representation of a Grade
+  def as_json(options = {})
+    super(options.merge(
+      include: {
+        examination: { only: [:id, :title, :expected_date] },
+        student: { only: [:id, :firstname, :lastname], methods: [:full_name] }
+      }
+    ))
+  end
+
   private
 
   def student_must_be_student

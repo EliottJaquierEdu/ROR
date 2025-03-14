@@ -4,8 +4,10 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>Rooms</h1>
-  <%= link_to new_room_path, class: "btn btn-primary" do %>
-    <i class="bi bi-plus-circle"></i> New room
+  <% if can_create_room? %>
+    <%= link_to new_room_path, class: "btn btn-primary" do %>
+      <i class="bi bi-plus-circle"></i> New room
+    <% end %>
   <% end %>
 </div>
 
@@ -26,23 +28,31 @@
               <td><%= room.name %></td>
               <td>
                 <% if room.school_classes.any? %>
-                  <span class="badge bg-info"><%= room.school_classes.count %> classes</span>
+                  <span class="badge bg-info"><%= room.class_count %> classes</span>
                 <% else %>
                   <span class="text-muted">No classes</span>
                 <% end %>
               </td>
               <td>
                 <div class="btn-group btn-group-sm">
-                  <%= link_to room, class: "btn btn-outline-primary" do %>
-                    <i class="bi bi-eye"></i> View
+                  <% if can_view_room?(room) %>
+                    <%= link_to room, class: "btn btn-outline-primary" do %>
+                      <i class="bi bi-eye"></i> View
+                    <% end %>
                   <% end %>
-                  <%= link_to edit_room_path(room), class: "btn btn-outline-secondary" do %>
-                    <i class="bi bi-pencil"></i> Edit
+                  
+                  <% if can_edit_room?(room) %>
+                    <%= link_to edit_room_path(room), class: "btn btn-outline-secondary" do %>
+                      <i class="bi bi-pencil"></i> Edit
+                    <% end %>
                   <% end %>
-                  <%= button_to room, method: :delete, 
-                      class: "btn btn-outline-danger", 
-                      form: { data: { turbo_confirm: "Are you sure?" } } do %>
-                    <i class="bi bi-trash"></i> Delete
+                  
+                  <% if can_delete_room?(room) %>
+                    <%= button_to room, method: :delete, 
+                        class: "btn btn-outline-danger", 
+                        form: { data: { turbo_confirm: "Are you sure?" } } do %>
+                      <i class="bi bi-trash"></i> Delete
+                    <% end %>
                   <% end %>
                 </div>
               </td>

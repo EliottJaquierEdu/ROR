@@ -1,8 +1,10 @@
 <div id="<%= dom_id address %>">
-  <p>
-    <strong>Id:</strong>
-    <%= address.id %>
-  </p>
+  <% if current_person.dean? || current_person.teacher? %>
+    <p>
+      <strong>Id:</strong>
+      <%= address.id %>
+    </p>
+  <% end %>
 
   <p>
     <strong>Zip:</strong>
@@ -24,9 +26,14 @@
     <%= address.number %>
   </p>
 
-  <p>
-    <strong>People:</strong>
-    <%= address.person_id %>
-  </p>
-
+  <% if current_person.dean? || current_person.teacher? %>
+    <p>
+      <strong>Person:</strong>
+      <% if address.person %>
+        <%= link_to address.person.full_name, address.person %>
+      <% else %>
+        <span class="text-muted">None</span>
+      <% end %>
+    </p>
+  <% end %>
 </div>

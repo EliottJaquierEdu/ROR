@@ -3,8 +3,10 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>Editing Examination</h1>
   <div class="btn-group">
-    <%= link_to @examination, class: "btn btn-outline-primary" do %>
-      <i class="bi bi-eye"></i> View
+    <% if can_view_examination?(@examination) %>
+      <%= link_to @examination, class: "btn btn-outline-primary" do %>
+        <i class="bi bi-eye"></i> View
+      <% end %>
     <% end %>
     <%= link_to examinations_path, class: "btn btn-outline-secondary" do %>
       <i class="bi bi-arrow-left"></i> Back

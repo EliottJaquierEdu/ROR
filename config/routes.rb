@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  devise_for :people, controllers: {
+    registrations: 'people/registrations',
+    sessions: 'people/sessions'
+  }
+
   root "home#index"
 
   resources :grades
@@ -10,6 +15,7 @@ Rails.application.routes.draw do
   resources :people
   resources :students, controller: 'people'
   resources :teachers, controller: 'people'
+  resources :deans, controller: 'people'
   resources :addresses
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

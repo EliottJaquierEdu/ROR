@@ -1,9 +1,14 @@
 class PeopleController < ApplicationController
+  before_action :authenticate_person!
   before_action :set_person, only: %i[ show edit update destroy ]
+  before_action :authorize_view, only: %i[ show ]
+  before_action :authorize_edit, only: %i[ edit update ]
+  before_action :authorize_create, only: %i[ new create ]
+  before_action :authorize_delete, only: %i[ destroy ]
 
   # GET /people or /people.json
   def index
-    @people = Person.includes(:address).all
+    @people = helpers.visible_people_by_type(params[:type])
   end
 
   # GET /people/1 or /people/1.json
@@ -13,22 +18,19 @@ class PeopleController < ApplicationController
   # GET /people/new
   def new
     @person = Person.new
-    @person.build_address
   end
 
   # GET /people/1/edit
   def edit
-    @person.build_address if @person.address.nil?
   end
 
   # POST /people or /people.json
   def create
     @person = Person.new(person_params)
-    @person.build_address if @person.address.nil?
 
     respond_to do |format|
       if @person.save
-        format.html { redirect_to person_url(@person), notice: "Person was successfully created." }
+        format.html { redirect_to @person, notice: "Person was successfully created." }
         format.json { render :show, status: :created, location: @person }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -41,7 +43,7 @@ class PeopleController < ApplicationController
   def update
     respond_to do |format|
       if @person.update(person_params)
-        format.html { redirect_to person_url(@person), notice: "Person was successfully updated." }
+        format.html { redirect_to @person, notice: "Person was successfully updated." }
         format.json { render :show, status: :ok, location: @person }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -55,7 +57,7 @@ class PeopleController < ApplicationController
     @person.destroy!
 
     respond_to do |format|
-      format.html { redirect_to people_url, notice: "Person was successfully destroyed." }
+      format.html { redirect_to people_path, status: :see_other, notice: "Person was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -63,13 +65,36 @@ class PeopleController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_person
-      @person = Person.includes(:address).find(params[:id])
+      @person = Person.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def person_params
-      params.require(:person).permit(:username, :lastname, :firstname, :email, :phone_number, :type,
-                                   :student_status_id, :teacher_status_id, :iban,
-                                   address_attributes: [:id, :street, :number, :zip, :town, :_destroy])
+      params.require(:person).permit(:firstname, :lastname, :email, :type, :password, :password_confirmation)
+    end
+    
+    # Authorization methods
+    def authorize_view
+      unless helpers.can_view_person?(@person)
+        redirect_to people_path, alert: "You are not authorized to view this person."
+      end
+    end
+    
+    def authorize_edit
+      unless helpers.can_edit_person?(@person)
+        redirect_to people_path, alert: "You are not authorized to edit this person."
+      end
+    end
+    
+    def authorize_create
+      unless helpers.can_create_person?
+        redirect_to people_path, alert: "You are not authorized to create people."
+      end
+    end
+    
+    def authorize_delete
+      unless helpers.can_delete_person?(@person)
+        redirect_to people_path, alert: "You are not authorized to delete this person."
+      end
     end
 end

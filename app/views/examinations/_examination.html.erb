@@ -6,12 +6,24 @@
 
   <p>
     <strong>Expected date:</strong>
-    <%= examination.expected_date %>
+    <%= examination.expected_date&.strftime("%d %b %Y") %>
   </p>
 
-  <p>
-    <strong>Course:</strong>
-    <%= examination.course_id %>
-  </p>
-
+  <% if current_person.dean? || current_person.teacher? %>
+    <p>
+      <strong>Course:</strong>
+      <% if examination.course %>
+        <%= link_to "#{examination.course.subject&.name} - Term #{examination.course.term}", examination.course %>
+      <% else %>
+        <span class="text-muted">None</span>
+      <% end %>
+    </p>
+    
+    <% if examination.course&.school_class %>
+      <p>
+        <strong>Class:</strong>
+        <%= link_to examination.course.school_class.name, examination.course.school_class %>
+      </p>
+    <% end %>
+  <% end %>
 </div>

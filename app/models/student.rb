@@ -5,4 +5,16 @@ class Student < Person
   has_many :grades,
            foreign_key: "person_id",  # Changed from student_id to person_id
            dependent: :destroy
+           
+  # String representation of a Student
+  def to_s
+    "Student: #{full_name}"
+  end
+  
+  # JSON representation of a Student
+  def as_json(options = {})
+    super(options.merge(
+      include: { student_status: { only: [:id, :status] } }
+    ))
+  end
 end

@@ -1,9 +1,14 @@
 class SchoolClassesController < ApplicationController
-  before_action :set_school_class, only: %i[ show edit update destroy ]
+  before_action :authenticate_person!
+  before_action :set_school_class, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_view, only: [:show]
+  before_action :authorize_edit, only: [:edit, :update]
+  before_action :authorize_create, only: [:new, :create]
+  before_action :authorize_delete, only: [:destroy]
 
   # GET /school_classes or /school_classes.json
   def index
-    @school_classes = SchoolClass.all
+    @school_classes = helpers.visible_school_classes
   end
 
   # GET /school_classes/1 or /school_classes/1.json
@@ -23,48 +28,60 @@ class SchoolClassesController < ApplicationController
   def create
     @school_class = SchoolClass.new(school_class_params)
 
-    respond_to do |format|
-      if @school_class.save
-        format.html { redirect_to @school_class, notice: "SchoolClass was successfully created." }
-        format.json { render :show, status: :created, location: @school_class }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @school_class.errors, status: :unprocessable_entity }
-      end
+    if @school_class.save
+      redirect_to @school_class, notice: 'Class was successfully created.'
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /school_classes/1 or /school_classes/1.json
   def update
-    respond_to do |format|
-      if @school_class.update(school_class_params)
-        format.html { redirect_to @school_class, notice: "SchoolClass was successfully updated." }
-        format.json { render :show, status: :ok, location: @school_class }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @school_class.errors, status: :unprocessable_entity }
-      end
+    if @school_class.update(school_class_params)
+      redirect_to @school_class, notice: 'Class was successfully updated.'
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
   # DELETE /school_classes/1 or /school_classes/1.json
   def destroy
-    @school_class.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to school_classes_path, status: :see_other, notice: "SchoolClass was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    @school_class.destroy
+    redirect_to school_classes_url, notice: 'Class was successfully deleted.'
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_school_class
-      @school_class = SchoolClass.find(params.expect(:id))
+      @school_class = SchoolClass.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def school_class_params
-      params.expect(school_class: [ :year, :name, :room_id, :master_id ])
+      params.require(:school_class).permit(:year, :name, :master_id, :room_id)
+    end
+
+    def authorize_view
+      unless helpers.can_view_school_class?(@school_class)
+        redirect_to school_classes_path, alert: 'You are not authorized to view this class.'
+      end
+    end
+
+    def authorize_edit
+      unless helpers.can_edit_school_class?(@school_class)
+        redirect_to school_classes_path, alert: 'You are not authorized to edit this class.'
+      end
+    end
+
+    def authorize_create
+      unless helpers.can_create_school_class?
+        redirect_to school_classes_path, alert: 'You are not authorized to create classes.'
+      end
+    end
+
+    def authorize_delete
+      unless helpers.can_delete_school_class?(@school_class)
+        redirect_to school_classes_path, alert: 'You are not authorized to delete this class.'
+      end
     end
 end
