@@ -31,15 +31,35 @@
         </div>
         
         <div class="col-md-6">
-          <div class="form-floating mb-3">
-            <%= form.collection_select :course_id, 
-                Course.includes(:subject).all, 
-                :id, 
-                ->(course) { "#{course.subject&.name} - Term #{course.term}" }, 
-                { include_blank: "Select course" }, 
-                { class: "form-select" } %>
-            <%= form.label :course_id, "Course" %>
-          </div>
+          <% if params[:course_id].present? %>
+            <%= form.hidden_field :course_id, value: params[:course_id] %>
+            <% course = Course.find_by(id: params[:course_id]) %>
+            <% if course %>
+              <div class="form-control-plaintext">
+                <strong>Course:</strong> <%= course.subject&.name %> - Term <%= course.term %>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="form-floating mb-3">
+              <% if current_person.dean? %>
+                <%= form.collection_select :course_id, 
+                    Course.includes(:subject).all, 
+                    :id, 
+                    ->(course) { "#{course.subject&.name} - Term #{course.term}" }, 
+                    { include_blank: "Select course" }, 
+                    { class: "form-select" } %>
+              <% elsif current_person.teacher? %>
+                <%= form.collection_select :course_id, 
+                    Course.includes(:subject, :school_class)
+                          .where(school_class: { master_id: current_person.id }), 
+                    :id, 
+                    ->(course) { "#{course.subject&.name} - Term #{course.term}" }, 
+                    { include_blank: "Select course" }, 
+                    { class: "form-select" } %>
+              <% end %>
+              <%= form.label :course_id, "Course" %>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
