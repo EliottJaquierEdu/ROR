@@ -63,4 +63,17 @@ class Person < ApplicationRecord
   def respond_to?(method_name, include_private = false)
     method_name.to_sym == :empty? || super
   end
+  
+  # String representation of a Person
+  def to_s
+    full_name
+  end
+  
+  # JSON representation of a Person
+  def as_json(options = {})
+    super(options.merge(
+      methods: [:full_name, :type],
+      except: [:encrypted_password, :reset_password_token, :reset_password_sent_at]
+    ))
+  end
 end
