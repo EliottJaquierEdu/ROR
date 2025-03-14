@@ -32,13 +32,31 @@
         
         <div class="col-md-6">
           <div class="form-floating mb-3">
-            <%= form.collection_select :person_id, 
-                Student.all, 
-                :id, 
-                ->(student) { "#{student.firstname} #{student.lastname}" }, 
-                { include_blank: "Select student" }, 
-                { class: "form-select" } %>
-            <%= form.label :person_id, "Student" %>
+            <% if grade.person_id.present? %>
+              <%= form.hidden_field :person_id %>
+              <% student = Person.find_by(id: grade.person_id) %>
+              <input type="text" class="form-control" value="<%= student ? "#{student.firstname} #{student.lastname}" : '' %>" disabled>
+              <label>Student (pre-selected)</label>
+            <% else %>
+              <% if current_person.dean? %>
+                <%= form.collection_select :person_id, 
+                    Student.all, 
+                    :id, 
+                    ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                    { include_blank: "Select student" }, 
+                    { class: "form-select" } %>
+              <% elsif current_person.teacher? %>
+                <% class_ids = SchoolClass.where(master_id: current_person.id).pluck(:id) %>
+                <% students = Student.joins(:school_classes).where(school_classes: { id: class_ids }).distinct %>
+                <%= form.collection_select :person_id, 
+                    students, 
+                    :id, 
+                    ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                    { include_blank: "Select student" }, 
+                    { class: "form-select" } %>
+              <% end %>
+              <%= form.label :person_id, "Student" %>
+            <% end %>
           </div>
         </div>
         
@@ -50,12 +68,23 @@
               <input type="text" class="form-control" value="<%= examination&.title %>" disabled>
               <label>Examination (pre-selected)</label>
             <% else %>
-              <%= form.collection_select :examination_id, 
-                  Examination.all, 
-                  :id, 
-                  :title, 
-                  { include_blank: "Select examination" }, 
-                  { class: "form-select" } %>
+              <% if current_person.dean? %>
+                <%= form.collection_select :examination_id, 
+                    Examination.all, 
+                    :id, 
+                    :title, 
+                    { include_blank: "Select examination" }, 
+                    { class: "form-select" } %>
+              <% elsif current_person.teacher? %>
+                <% class_ids = SchoolClass.where(master_id: current_person.id).pluck(:id) %>
+                <% examinations = Examination.joins(course: :school_class).where(course: { school_class_id: class_ids }) %>
+                <%= form.collection_select :examination_id, 
+                    examinations, 
+                    :id, 
+                    :title, 
+                    { include_blank: "Select examination" }, 
+                    { class: "form-select" } %>
+              <% end %>
               <%= form.label :examination_id, "Examination" %>
             <% end %>
           </div>
