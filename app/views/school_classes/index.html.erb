@@ -4,8 +4,10 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>School Classes</h1>
-  <%= link_to new_school_class_path, class: "btn btn-primary" do %>
-    <i class="bi bi-plus-circle"></i> New class
+  <% if can_create_school_class? %>
+    <%= link_to new_school_class_path, class: "btn btn-primary" do %>
+      <i class="bi bi-plus-circle"></i> New class
+    <% end %>
   <% end %>
 </div>
 
@@ -17,9 +19,9 @@
           <tr>
             <th>Year</th>
             <th>Name</th>
-            <th>Room</th>
             <th>Master Teacher</th>
             <th>Students</th>
+            <th>Room</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -29,15 +31,8 @@
               <td><%= school_class.year %></td>
               <td><%= school_class.name %></td>
               <td>
-                <% if school_class.room %>
-                  <%= link_to school_class.room.name, school_class.room %>
-                <% else %>
-                  <span class="text-muted">None</span>
-                <% end %>
-              </td>
-              <td>
                 <% if school_class.master %>
-                  <%= link_to "#{school_class.master.firstname} #{school_class.master.lastname}", school_class.master %>
+                  <%= link_to school_class.master.full_name, school_class.master %>
                 <% else %>
                   <span class="text-muted">None</span>
                 <% end %>
@@ -50,17 +45,32 @@
                 <% end %>
               </td>
               <td>
+                <% if school_class.room %>
+                  <%= link_to school_class.room.name, school_class.room %>
+                <% else %>
+                  <span class="text-muted">No room</span>
+                <% end %>
+              </td>
+              <td>
                 <div class="btn-group btn-group-sm">
-                  <%= link_to school_class, class: "btn btn-outline-primary" do %>
-                    <i class="bi bi-eye"></i> View
+                  <% if can_view_school_class?(school_class) %>
+                    <%= link_to school_class, class: "btn btn-outline-primary" do %>
+                      <i class="bi bi-eye"></i> View
+                    <% end %>
                   <% end %>
-                  <%= link_to edit_school_class_path(school_class), class: "btn btn-outline-secondary" do %>
-                    <i class="bi bi-pencil"></i> Edit
+                  
+                  <% if can_edit_school_class?(school_class) %>
+                    <%= link_to edit_school_class_path(school_class), class: "btn btn-outline-secondary" do %>
+                      <i class="bi bi-pencil"></i> Edit
+                    <% end %>
                   <% end %>
-                  <%= button_to school_class, method: :delete, 
-                      class: "btn btn-outline-danger", 
-                      form: { data: { turbo_confirm: "Are you sure?" } } do %>
-                    <i class="bi bi-trash"></i> Delete
+                  
+                  <% if can_delete_school_class?(school_class) %>
+                    <%= button_to school_class, method: :delete, 
+                        class: "btn btn-outline-danger", 
+                        form: { data: { turbo_confirm: "Are you sure?" } } do %>
+                      <i class="bi bi-trash"></i> Delete
+                    <% end %>
                   <% end %>
                 </div>
               </td>
