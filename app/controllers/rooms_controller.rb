@@ -1,10 +1,14 @@
 class RoomsController < ApplicationController
+  before_action :authenticate_person!
   before_action :set_room, only: %i[ show edit update destroy ]
-  before_action :authorize_resource_management, only: %i[ new create edit update destroy ]
+  before_action :authorize_view, only: %i[ show ]
+  before_action :authorize_edit, only: %i[ edit update ]
+  before_action :authorize_create, only: %i[ new create ]
+  before_action :authorize_delete, only: %i[ destroy ]
 
   # GET /rooms or /rooms.json
   def index
-    @rooms = Room.all
+    @rooms = helpers.visible_rooms
   end
 
   # GET /rooms/1 or /rooms/1.json
@@ -61,11 +65,36 @@ class RoomsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_room
-      @room = Room.find(params.expect(:id))
+      @room = Room.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def room_params
-      params.expect(room: [ :name ])
+      params.require(:room).permit(:name, :capacity)
+    end
+    
+    # Authorization methods
+    def authorize_view
+      unless helpers.can_view_room?(@room)
+        redirect_to rooms_path, alert: "You are not authorized to view this room."
+      end
+    end
+    
+    def authorize_edit
+      unless helpers.can_edit_room?(@room)
+        redirect_to rooms_path, alert: "You are not authorized to edit this room."
+      end
+    end
+    
+    def authorize_create
+      unless helpers.can_create_room?
+        redirect_to rooms_path, alert: "You are not authorized to create rooms."
+      end
+    end
+    
+    def authorize_delete
+      unless helpers.can_delete_room?(@room)
+        redirect_to rooms_path, alert: "You are not authorized to delete this room."
+      end
     end
 end
