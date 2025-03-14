@@ -1,7 +1,7 @@
 class SubjectsController < ApplicationController
   before_action :authenticate_person!
   before_action :set_subject, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_view, only: [:index, :show]
+  before_action :authorize_view, only: [:show]
   before_action :authorize_edit, only: [:edit, :update]
   before_action :authorize_create, only: [:new, :create]
   before_action :authorize_delete, only: [:destroy]
@@ -58,7 +58,7 @@ class SubjectsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def subject_params
-      params.require(:subject).permit(:name, :description)
+      params.require(:subject).permit(:name)
     end
 
     def authorize_view

@@ -2,6 +2,7 @@ module SubjectsHelper
   # Check if the current user can view a specific subject
   def can_view_subject?(subject)
     return false unless person_signed_in?
+    return false unless subject
     
     # Deans can view all subjects
     return true if current_person.dean?
@@ -30,6 +31,7 @@ module SubjectsHelper
   # Check if the current user can edit a specific subject
   def can_edit_subject?(subject)
     return false unless person_signed_in?
+    return false unless subject
     
     # Only deans can edit subjects
     current_person.dean?
@@ -38,6 +40,7 @@ module SubjectsHelper
   # Check if the current user can delete a specific subject
   def can_delete_subject?(subject)
     return false unless person_signed_in?
+    return false unless subject
     
     # Only deans can delete subjects
     current_person.dean?

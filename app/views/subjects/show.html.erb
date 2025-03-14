@@ -34,11 +34,6 @@
           <h6 class="text-muted mb-2">Name</h6>
           <p class="mb-0"><%= @subject.name %></p>
         </div>
-        
-        <div class="mb-3">
-          <h6 class="text-muted mb-2">Description</h6>
-          <p class="mb-0"><%= @subject.description %></p>
-        </div>
       </div>
     </div>
   </div>
@@ -51,14 +46,17 @@
       <div class="card-body">
         <% if @subject.courses.any? %>
           <div class="list-group list-group-flush">
-            <% @subject.courses.each do |course| %>
+            <% @subject.courses.includes(:school_class).each do |course| %>
               <%= link_to course_path(course), class: "list-group-item list-group-item-action" do %>
                 <div class="d-flex w-100 justify-content-between">
-                  <h6 class="mb-1"><%= course.school_class.name %></h6>
-                  <small class="text-muted"><%= course.term %></small>
+                  <h6 class="mb-1">
+                    <%= "#{course.school_class.year}-#{course.school_class.name}" if course.school_class %>
+                  </h6>
+                  <small class="text-muted">Term <%= course.term %></small>
                 </div>
                 <p class="mb-1">
-                  <%= course.teacher.full_name if course.teacher %>
+                  <% days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] %>
+                  <%= days[course.week_day] if course.week_day.between?(0, 6) %>
                   <%= course.start_at&.strftime("%H:%M") %> - <%= course.end_at&.strftime("%H:%M") %>
                 </p>
               <% end %>
@@ -90,7 +88,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @subject.courses.flat_map(&:examinations).each do |examination| %>
+            <% @subject.courses.includes(:school_class, :examinations).flat_map(&:examinations).each do |examination| %>
               <tr>
                 <td><%= examination.title %></td>
                 <td><%= examination.expected_date&.strftime("%d %b %Y") %></td>
