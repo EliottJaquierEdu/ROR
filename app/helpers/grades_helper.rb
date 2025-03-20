@@ -99,4 +99,51 @@ module GradesHelper
     
     []
   end
+
+  # Organize grades by term (semester)
+  def organize_grades_by_term(grades)
+    grades_by_term = {}
+    
+    grades.each do |grade|
+      term = grade.examination&.course&.term
+      next unless term
+      grades_by_term[term] ||= []
+      grades_by_term[term] << grade
+    end
+    
+    # Sort terms chronologically (assuming term format can be sorted)
+    sorted_terms = grades_by_term.keys.sort
+    
+    [sorted_terms, grades_by_term]
+  end
+  
+  # Group grades by subject for a specific term
+  def group_term_grades_by_subject(term_grades)
+    grades_by_subject = {}
+    
+    term_grades.each do |grade|
+      subject = grade.examination&.course&.subject
+      next unless subject
+      grades_by_subject[subject] ||= []
+      grades_by_subject[subject] << grade
+    end
+    
+    grades_by_subject
+  end
+  
+  # Calculate the average grade for an array of grades
+  def calculate_average_grade(grades)
+    return 0 if grades.empty?
+    (grades.sum { |g| g.value } / grades.size).to_f
+  end
+  
+  # Format a grade value with proper decimal places
+  def format_grade(grade_value)
+    sprintf('%.2f', grade_value)
+  end
+  
+  # Determine if a grade is passing (success) or failing (danger)
+  def grade_status_class(grade_value)
+    grade_value >= 4.0 ? 'bg-success' : 'bg-danger'
+  end
 end

@@ -76,4 +76,68 @@ class Person < ApplicationRecord
       except: [:encrypted_password, :reset_password_token, :reset_password_sent_at]
     ))
   end
+
+  # Get all grades with their associated data for efficient report generation
+  def grades_with_associations
+    grades.includes(examination: { course: :subject })
+  end
+  
+  # Get student's grades organized by term
+  def grades_by_term
+    # This method returns a hash of grades grouped by term
+    grades_hash = {}
+    
+    grades_with_associations.each do |grade|
+      term = grade.examination&.course&.term
+      next unless term
+      grades_hash[term] ||= []
+      grades_hash[term] << grade
+    end
+    
+    grades_hash
+  end
+  
+  # Get student's grades organized by term and subject
+  def grades_by_term_and_subject
+    result = {}
+    
+    grades_by_term.each do |term, term_grades|
+      result[term] = {}
+      
+      # Group by subject
+      term_grades.each do |grade|
+        subject = grade.examination&.course&.subject
+        next unless subject
+        
+        result[term][subject] ||= []
+        result[term][subject] << grade
+      end
+    end
+    
+    result
+  end
+  
+  # Calculate average grade for a specific term
+  def term_average(term)
+    term_grades = grades_by_term[term]
+    return 0 if term_grades.nil? || term_grades.empty?
+    
+    term_grades.sum { |g| g.value } / term_grades.size
+  end
+  
+  # Calculate average grade for a specific subject in a term
+  def subject_average(term, subject)
+    term_subject_data = grades_by_term_and_subject[term]
+    return 0 if term_subject_data.nil?
+    
+    subject_grades = term_subject_data[subject]
+    return 0 if subject_grades.nil? || subject_grades.empty?
+    
+    subject_grades.sum { |g| g.value } / subject_grades.size
+  end
+  
+  # Get a list of terms sorted chronologically
+  def sorted_terms
+    grades_by_term.keys.sort
+  end
 end

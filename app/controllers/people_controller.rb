@@ -13,6 +13,11 @@ class PeopleController < ApplicationController
 
   # GET /people/1 or /people/1.json
   def show
+    # If we're showing a student, preload their grades with associations for the grade report
+    if @person.student?
+      # This will trigger the grades_with_associations method
+      @person.grades_with_associations.to_a
+    end
   end
 
   # GET /people/new
