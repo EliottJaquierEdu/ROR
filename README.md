@@ -1,29 +1,28 @@
+Voici la documentation mise à jour en incluant `uru` comme alternative à `rbenv` :
+
+---
+
 # **School Data Manager**
 
 A Ruby on Rails application to manage school-related data, including addresses, people, teachers, students, school classes, courses, subjects, grades, and more.
 
 ## **Installation**
 
-1. **Clone the Repository**
-2. **Ensure Ruby Version Compatibility**  
-   This project uses Ruby `3.4.1`. Use a Ruby version manager (e.g., `rbenv` or `RVM`) to set the proper version:
-```shell script
-rbenv install 3.4.1
-rbenv local 3.4.1
-```
+### 1. **Ensure Ruby Version Compatibility**
+This project uses Ruby `3.4.1`. You can use `rbenv` (Linux/macOS) or `uru` (Windows) to set up the correct Ruby version.
 
-3. **Install Bundler**  
-   Make sure you have Bundler installed:
-```shell script
+### 2. **Install Bundler**
+Ensure that Bundler is installed:
+```shell
 gem install bundler
 ```
 
-4. **Install Dependencies**  
-   Install all dependencies defined in the `Gemfile`:
+### 3. **Install Dependencies**
+Install all dependencies defined in the `Gemfile`:
 ```shell script
 bundle install
 ```
-   
+
 ---
 
 ## **Dependencies**
