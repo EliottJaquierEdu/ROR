@@ -1,0 +1,40 @@
+<%#
+  Params:
+  - resource: The resource object (e.g., @person, @course)
+  - resource_name: The humanized name of the resource (e.g., 'Person', 'Course')
+  - index_path: The path to return to (e.g., people_path)
+  - form_partial: The path to the form partial (defaults to 'form')
+  - back_text: Optional custom back text (defaults to "Back to [resource_name plural]")
+%>
+
+<% content_for :title, "New #{resource_name}" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h2 mb-0">New <%= resource_name %></h1>
+  <%= link_to index_path, class: "btn btn-light text-secondary hover-scale" do %>
+    <i class="bi bi-arrow-left"></i>
+    <span class="ms-1">
+      <%= local_assigns.fetch(:back_text, "Back to #{resource_name.pluralize.downcase}") %>
+    </span>
+  <% end %>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body p-4">
+    <%= render local_assigns.fetch(:form_partial, "form"), resource.class.name.underscore.to_sym => resource %>
+  </div>
+</div>
+
+<% content_for :styles do %>
+  <style>
+    .hover-scale {
+      transition: all 0.2s ease;
+      border: 1px solid #e9ecef;
+    }
+    
+    .hover-scale:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+<% end %> 

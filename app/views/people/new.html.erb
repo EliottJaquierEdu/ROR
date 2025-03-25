@@ -1,14 +1,7 @@
 <% content_for :title, "New Person" %>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>New Person</h1>
-  <%= link_to people_path, class: "btn btn-outline-secondary" do %>
-    <i class="bi bi-arrow-left"></i> Back
-  <% end %>
-</div>
-
-<div class="card shadow-sm mb-4">
-  <div class="card-body">
-    <%= render "form", person: @person %>
-  </div>
-</div>
+<%= render 'shared/new_resource',
+  resource: @person,
+  resource_name: 'Person',
+  index_path: people_path,
+  back_text: 'Back' %>

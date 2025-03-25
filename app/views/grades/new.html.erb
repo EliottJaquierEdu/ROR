@@ -1,14 +1,6 @@
 <% content_for :title, "New Grade" %>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>New Grade</h1>
-  <%= link_to grades_path, class: "btn btn-outline-secondary" do %>
-    <i class="bi bi-arrow-left"></i> Back to grades
-  <% end %>
-</div>
-
-<div class="card shadow-sm mb-4">
-  <div class="card-body">
-    <%= render "form", grade: @grade %>
-  </div>
-</div>
+<%= render 'shared/new_resource',
+  resource: @grade,
+  resource_name: 'Grade',
+  index_path: grades_path %>

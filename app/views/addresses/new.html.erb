@@ -1,14 +1,6 @@
 <% content_for :title, "New Address" %>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>New Address</h1>
-  <%= link_to addresses_path, class: "btn btn-outline-secondary" do %>
-    <i class="bi bi-arrow-left"></i> Back to addresses
-  <% end %>
-</div>
-
-<div class="card shadow-sm mb-4">
-  <div class="card-body">
-    <%= render "form", address: @address %>
-  </div>
-</div>
+<%= render 'shared/new_resource',
+  resource: @address,
+  resource_name: 'Address',
+  index_path: addresses_path %>

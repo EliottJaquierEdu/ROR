@@ -1,10 +1,6 @@
 <% content_for :title, "New Class" %>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>New Class</h1>
-  <%= link_to school_classes_path, class: "btn btn-outline-secondary" do %>
-    <i class="bi bi-arrow-left"></i> Back
-  <% end %>
-</div>
-
-<%= render 'form', school_class: @school_class %>
+<%= render 'shared/new_resource',
+  resource: @school_class,
+  resource_name: 'Class',
+  index_path: school_classes_path %>
