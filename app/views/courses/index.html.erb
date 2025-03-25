@@ -11,17 +11,63 @@
   <% end %>
 </div>
 
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= form_tag courses_path, method: :get, class: "row g-3" do %>
+      <div class="col-md-3">
+        <%= label_tag :term, "Term", class: "form-label" %>
+        <%= select_tag :term, 
+            options_for_select(Course.distinct.pluck(:term).compact, params[:term]),
+            prompt: "All Terms",
+            class: "form-select" %>
+      </div>
+      
+      <div class="col-md-3">
+        <%= label_tag :week_day, "Day", class: "form-label" %>
+        <%= select_tag :week_day,
+            options_for_select([
+              ["Monday", 1], ["Tuesday", 2], ["Wednesday", 3],
+              ["Thursday", 4], ["Friday", 5], ["Saturday", 6], ["Sunday", 7]
+            ], params[:week_day]),
+            prompt: "All Days",
+            class: "form-select" %>
+      </div>
+      
+      <div class="col-md-3">
+        <%= label_tag :year, "Year", class: "form-label" %>
+        <%= select_tag :year,
+            options_for_select(SchoolClass.distinct.pluck(:year).compact.sort, params[:year]),
+            prompt: "All Years",
+            class: "form-select" %>
+      </div>
+      
+      <div class="col-md-3">
+        <%= label_tag :subject_id, "Subject", class: "form-label" %>
+        <%= select_tag :subject_id,
+            options_from_collection_for_select(Subject.all, :id, :name, params[:subject_id]),
+            prompt: "All Subjects",
+            class: "form-select" %>
+      </div>
+      
+      <div class="col-12">
+        <%= submit_tag "Filter", class: "btn btn-primary me-2" %>
+        <%= link_to "Clear Filters", courses_path, class: "btn btn-outline-secondary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
 <div class="card shadow-sm">
   <div class="card-body">
     <div class="table-responsive">
       <table class="table table-hover">
         <thead class="table-light">
           <tr>
-            <th>Term</th>
-            <th>Day</th>
-            <th>Time</th>
-            <th>Class</th>
-            <th>Subject</th>
+            <th><%= sortable "term" %></th>
+            <th><%= sortable "week_day", "Day" %></th>
+            <th><%= sortable "start_at", "Time" %></th>
+            <th><%= sortable "school_classes.name", "Class" %></th>
+            <th><%= sortable "subjects.name", "Subject" %></th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -53,6 +99,10 @@
           <% end %>
         </tbody>
       </table>
+    </div>
+    
+    <div class="d-flex justify-content-center mt-4">
+      <%= paginate @courses %>
     </div>
   </div>
 </div>

@@ -39,4 +39,17 @@ module ApplicationHelper
       current_person.can_manage_resources?
     end
   end
+
+  def sortable(column, title = nil)
+    title ||= column.titleize
+    direction = (column == params[:sort] && params[:direction] == "asc") ? "desc" : "asc"
+    icon = if column == params[:sort]
+             direction == "asc" ? "bi-sort-down" : "bi-sort-up"
+           else
+             "bi-arrow-down-up text-muted"
+           end
+    link_to request.params.merge(sort: column, direction: direction), class: "text-decoration-none text-dark" do
+      raw("#{title} <i class='bi #{icon} ms-1'></i>")
+    end
+  end
 end
