@@ -233,90 +233,108 @@ students.each do |student|
 end
 
 # Create weekly schedule for 1M1
-# Schedule template - Periods are 45 minutes
-# 8:00-8:45, 8:45-9:30, 9:50-10:35, 10:35-11:20, 11:20-12:05
-# 13:15-14:00, 14:00-14:45, 15:05-15:50, 15:50-16:35
+# Schedule template - Each period is 45 minutes with breaks
+# Morning: 8:00-9:30, 9:50-11:20, 11:30-13:00
+# Afternoon: 14:00-15:30, 15:45-17:15
 
 schedule_template = {
   1 => [ # Monday
-    { subject: 'Mathématiques', start: 8, duration: 2 },
-    { subject: 'Français', start: 9.83, duration: 2 },
-    { subject: 'Histoire', start: 13.25, duration: 2 },
-    { subject: 'Anglais', start: 15.08, duration: 2 }
+    { subject: 'Mathématiques', start_time: '08:00', end_time: '09:30' },
+    { subject: 'Français', start_time: '09:50', end_time: '11:20' },
+    { subject: 'Histoire', start_time: '14:00', end_time: '15:30' },
+    { subject: 'Anglais', start_time: '15:45', end_time: '17:15' }
   ],
   2 => [ # Tuesday
-    { subject: 'Allemand', start: 8, duration: 2 },
-    { subject: 'Chimie', start: 9.83, duration: 2 },
-    { subject: 'Géographie', start: 13.25, duration: 2 },
-    { subject: 'Éducation physique', start: 15.08, duration: 2 }
+    { subject: 'Allemand', start_time: '08:00', end_time: '09:30' },
+    { subject: 'Chimie', start_time: '09:50', end_time: '11:20' },
+    { subject: 'Géographie', start_time: '14:00', end_time: '15:30' },
+    { subject: 'Éducation physique', start_time: '15:45', end_time: '17:15' }
   ],
   3 => [ # Wednesday
-    { subject: 'Physique', start: 8, duration: 2 },
-    { subject: 'Mathématiques', start: 9.83, duration: 2 },
-    { subject: 'Français', start: 13.25, duration: 2 },
-    { subject: 'Arts visuels', start: 15.08, duration: 2 }
+    { subject: 'Physique', start_time: '08:00', end_time: '09:30' },
+    { subject: 'Mathématiques', start_time: '09:50', end_time: '11:20' },
+    { subject: 'Français', start_time: '14:00', end_time: '15:30' },
+    { subject: 'Arts visuels', start_time: '15:45', end_time: '17:15' }
   ],
   4 => [ # Thursday
-    { subject: 'Biologie', start: 8, duration: 2 },
-    { subject: 'Informatique', start: 9.83, duration: 2 },
-    { subject: 'Allemand', start: 13.25, duration: 2 },
-    { subject: 'Philosophie', start: 15.08, duration: 2 }
+    { subject: 'Biologie', start_time: '08:00', end_time: '09:30' },
+    { subject: 'Informatique', start_time: '09:50', end_time: '11:20' },
+    { subject: 'Allemand', start_time: '14:00', end_time: '15:30' },
+    { subject: 'Philosophie', start_time: '15:45', end_time: '17:15' }
   ],
   5 => [ # Friday
-    { subject: 'Mathématiques', start: 8, duration: 2 },
-    { subject: 'Musique', start: 9.83, duration: 2 },
-    { subject: 'Anglais', start: 13.25, duration: 2 },
-    { subject: 'Histoire', start: 15.08, duration: 2 }
+    { subject: 'Mathématiques', start_time: '08:00', end_time: '09:30' },
+    { subject: 'Musique', start_time: '09:50', end_time: '11:20' },
+    { subject: 'Anglais', start_time: '14:00', end_time: '15:30' },
+    { subject: 'Histoire', start_time: '15:45', end_time: '17:15' }
   ]
 }
 
 # Create courses for the entire year
 term_dates = {
   'Semestre d\'automne 2024' => {
-    start: DateTime.new(2024, 8, 26),
-    end: DateTime.new(2024, 12, 20)
+    start: DateTime.new(2024, 8, 26), # First day of autumn semester
+    end: DateTime.new(2024, 12, 20)   # Last day of autumn semester
   },
   'Semestre de printemps 2025' => {
-    start: DateTime.new(2025, 2, 17),
-    end: DateTime.new(2025, 7, 4)
+    start: DateTime.new(2025, 2, 17), # First day of spring semester
+    end: DateTime.new(2025, 7, 4)     # Last day of spring semester
   }
 }
 
+# Helper to parse time string and combine with date
+def combine_date_time(date, time_str)
+  hours, minutes = time_str.split(':').map(&:to_i)
+  date.change(hour: hours, min: minutes)
+end
+
 term_dates.each do |term_name, dates|
-  schedule_template.each do |day, day_schedule|
-    day_schedule.each do |period|
-      subject = Subject.find_by(name: period[:subject])
+  # For each week in the term
+  current_date = dates[:start]
+  while current_date <= dates[:end]
+    # For each day in the schedule template
+    schedule_template.each do |day, day_schedule|
+      # Calculate the date for this weekday
+      weekday_date = current_date + (day - current_date.wday).days
+      next if weekday_date > dates[:end]
 
-      course = Course.create!(
-        term: term_name,
-        start_at: dates[:start],
-        end_at: dates[:end],
-        week_day: day,
-        school_class: class_1m1,
-        subject: subject
-      )
+      # Create each course for this day
+      day_schedule.each do |period|
+        subject = Subject.find_by(name: period[:subject])
+        next unless subject # Skip if subject not found
 
-      # Create some examinations for each course
-      2.times do |i|
-        exam_date = dates[:start] + (i + 1) * 30.days
-        exam_date = exam_date.change(hour: period[:start].to_i)
-
-        examination = Examination.create!(
-          title: "#{i == 0 ? 'Contrôle continu' : 'Examen'} - #{period[:subject]}",
-          expected_date: exam_date,
-          course: course
+        # Create the course with proper start and end times
+        course = Course.create!(
+          term: term_name,
+          start_at: combine_date_time(weekday_date, period[:start_time]),
+          end_at: combine_date_time(weekday_date, period[:end_time]),
+          week_day: day,
+          school_class: class_1m1,
+          subject: subject
         )
 
-        # Create grades for each student
-        students.each do |student|
-          Grade.create!(
-            value: rand(3.5..6.0).round(1),
-            effective_date: exam_date + 1.day,
-            student: student,
-            examination: examination
+        # Create examinations (only two per course per term)
+        if rand < 0.3 # 30% chance of having an exam this week
+          examination = Examination.create!(
+            title: "#{['Contrôle', 'Test', 'Examen'].sample} - #{period[:subject]}",
+            expected_date: combine_date_time(weekday_date, period[:start_time]),
+            course: course
           )
+
+          # Create grades for each student
+          students.each do |student|
+            Grade.create!(
+              value: rand(3.5..6.0).round(1),
+              effective_date: examination.expected_date + 1.week,
+              student: student,
+              examination: examination
+            )
+          end
         end
       end
     end
+
+    # Move to next week
+    current_date = current_date + 1.week
   end
 end
