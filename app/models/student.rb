@@ -6,12 +6,6 @@ class Student < Person
            foreign_key: "person_id",  # Changed from student_id to person_id
            dependent: :destroy
 
-  # Calculate overall average across all grades
-  def overall_average
-    return 0 if grades.empty?
-    grades.average(:value).to_f
-  end
-
   # String representation of a Student
   def to_s
     "Student: #{full_name}"

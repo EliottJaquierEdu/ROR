@@ -63,12 +63,12 @@ class Person < ApplicationRecord
   def respond_to?(method_name, include_private = false)
     method_name.to_sym == :empty? || super
   end
-  
+
   # String representation of a Person
   def to_s
     full_name
   end
-  
+
   # JSON representation of a Person
   def as_json(options = {})
     super(options.merge(
@@ -81,63 +81,80 @@ class Person < ApplicationRecord
   def grades_with_associations
     grades.includes(examination: { course: :subject })
   end
-  
+
   # Get student's grades organized by term
-  def grades_by_term
+  def grades_by_term(school_class_id = nil)
     # This method returns a hash of grades grouped by term
     grades_hash = {}
-    
-    grades_with_associations.each do |grade|
+
+    filtered_grades = grades_with_associations
+    if school_class_id.present?
+      filtered_grades = filtered_grades.joins(examination: { course: :school_class })
+                                     .where(courses: { school_class_id: school_class_id })
+    end
+
+    filtered_grades.each do |grade|
       term = grade.examination&.course&.term
       next unless term
       grades_hash[term] ||= []
       grades_hash[term] << grade
     end
-    
+
     grades_hash
   end
-  
+
   # Get student's grades organized by term and subject
-  def grades_by_term_and_subject
+  def grades_by_term_and_subject(school_class_id = nil)
     result = {}
-    
-    grades_by_term.each do |term, term_grades|
+
+    grades_by_term(school_class_id).each do |term, term_grades|
       result[term] = {}
-      
+
       # Group by subject
       term_grades.each do |grade|
         subject = grade.examination&.course&.subject
         next unless subject
-        
+
         result[term][subject] ||= []
         result[term][subject] << grade
       end
     end
-    
+
     result
   end
-  
+
   # Calculate average grade for a specific term
-  def term_average(term)
-    term_grades = grades_by_term[term]
+  def term_average(term, school_class_id = nil)
+    term_grades = grades_by_term(school_class_id)[term]
     return 0 if term_grades.nil? || term_grades.empty?
-    
+
     term_grades.sum { |g| g.value } / term_grades.size
   end
-  
+
   # Calculate average grade for a specific subject in a term
-  def subject_average(term, subject)
-    term_subject_data = grades_by_term_and_subject[term]
+  def subject_average(term, subject, school_class_id = nil)
+    term_subject_data = grades_by_term_and_subject(school_class_id)[term]
     return 0 if term_subject_data.nil?
-    
+
     subject_grades = term_subject_data[subject]
     return 0 if subject_grades.nil? || subject_grades.empty?
-    
+
     subject_grades.sum { |g| g.value } / subject_grades.size
   end
-  
+
   # Get a list of terms sorted chronologically
-  def sorted_terms
-    grades_by_term.keys.sort
+  def sorted_terms(school_class_id = nil)
+    grades_by_term(school_class_id).keys.sort
+  end
+
+  # Calculate overall average across all grades or for a specific class
+  def overall_average(school_class_id = nil)
+    filtered_grades = grades
+    if school_class_id.present?
+      filtered_grades = filtered_grades.joins(examination: { course: :school_class })
+                                     .where(courses: { school_class_id: school_class_id })
+    end
+    return 0 if filtered_grades.empty?
+    filtered_grades.average(:value).to_f
   end
 end
