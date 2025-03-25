@@ -126,11 +126,10 @@
     </div>
   </div>
 
-  <% # Set selected week (default to current week) %>
   <% selected_week = params[:week] ? Date.parse(params[:week]) : Date.current.beginning_of_week %>
   
   <%= render 'shared/weekly_schedule', 
-           courses: @person.subjects.flat_map { |s| s.courses.select { |c| c.teacher_id == @person.id } },
+           courses: @person.courses,
            class_name: "#{@person.full_name}'s Schedule",
            selected_week: @selected_week %>
   
@@ -139,9 +138,9 @@
       <h5 class="card-title mb-0">Subjects Taught</h5>
     </div>
     <div class="card-body">
-      <% if @person.subjects.loaded? && @person.subjects.any? %>
+      <% if @person.subjects.any? %>
         <ul class="list-unstyled mb-0">
-          <% @person.subjects.each do |subject| %>
+          <% @person.subjects.includes(:courses).each do |subject| %>
             <li class="mb-2">
               <strong><%= subject.name %></strong>
               <ul class="small text-muted">
@@ -160,9 +159,4 @@
       <% end %>
     </div>
   </div>
-
-  <%= render 'shared/weekly_schedule', 
-           courses: @person.subjects.flat_map { |s| s.courses.select { |c| c.teacher_id == @person.id } },
-           class_name: "#{@person.full_name}'s Schedule",
-           selected_week: @selected_week %>
 <% end %>

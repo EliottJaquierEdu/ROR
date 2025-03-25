@@ -198,7 +198,7 @@ end
 rooms = (101..110).map { |num| Room.create!(name: "Salle #{num}") }
 
 # Create Subjects with their respective teachers
-subjects = {
+subjects_with_teachers = {
   'Mathématiques' => teachers[0],
   'Français' => teachers[1],
   'Allemand' => teachers[2],
@@ -215,7 +215,7 @@ subjects = {
   'Informatique' => teachers[3]
 }
 
-subjects.each do |name, teacher|
+subjects_with_teachers.each do |name, teacher|
   Subject.create!(name: name)
 end
 
@@ -303,6 +303,10 @@ term_dates.each do |term_name, dates|
         subject = Subject.find_by(name: period[:subject])
         next unless subject # Skip if subject not found
 
+        # Find the teacher for this subject
+        teacher = subjects_with_teachers[period[:subject]]
+        next unless teacher # Skip if teacher not found
+
         # Create the course with proper start and end times
         course = Course.create!(
           term: term_name,
@@ -310,7 +314,8 @@ term_dates.each do |term_name, dates|
           end_at: combine_date_time(weekday_date, period[:end_time]),
           week_day: day,
           school_class: class_1m1,
-          subject: subject
+          subject: subject,
+          teacher: teacher
         )
 
         # Create examinations (only two per course per term)

@@ -14,12 +14,12 @@ class Grade < ApplicationRecord
   def to_s
     "Grade #{value} for #{student&.full_name} on #{examination&.title}"
   end
-  
+
   # JSON representation of a Grade
   def as_json(options = {})
     super(options.merge(
       include: {
-        examination: { only: [:id, :title, :expected_date] },
+        examination: { only: [:id, :title] },
         student: { only: [:id, :firstname, :lastname], methods: [:full_name] }
       }
     ))

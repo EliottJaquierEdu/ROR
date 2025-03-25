@@ -4,11 +4,6 @@
     <%= examination.title %>
   </p>
 
-  <p>
-    <strong>Expected date:</strong>
-    <%= examination.expected_date&.strftime("%d %b %Y") %>
-  </p>
-
   <% if current_person.dean? || current_person.teacher? %>
     <p>
       <strong>Course:</strong>

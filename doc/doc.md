@@ -182,3 +182,34 @@ We initially had a separate `expected_date` field for examinations but removed i
    - Grades and other related data can reference the course date when needed
 
 Doing so simplify examination create process, eliminate the potential date mismatch between courses and examinations.
+
+### Teacher-Course Relationship
+We added a direct relationship between teachers and courses to establish clear ownership and responsibility within the academic system:
+
+1. **Course Ownership**
+   - Each course must have an assigned teacher
+   - This creates clear accountability for course delivery
+   - Enables tracking of teacher workload and scheduling
+
+2. **Implementation Benefits**
+   ```ruby
+   class Course < ApplicationRecord
+     belongs_to :teacher, class_name: 'Person'
+   end
+
+   class Teacher < Person
+     has_many :courses, foreign_key: 'teacher_id'
+   end
+   ```
+
+3. **Key Advantages**
+   - **Schedule Management**: Teachers can easily view their course schedule
+   - **Permission Control**: Simplifies access control for course-related operations
+   - **Resource Planning**: Helps in managing teacher workload and availability
+   - **Reporting**: Enables generation of teacher-specific reports and analytics
+
+4. **System Integration**
+   - Teachers can view and manage their assigned courses
+   - The relationship supports the examination and grading system
+   - Facilitates communication between teachers and students
+   - Helps in organizing the school's academic structure
