@@ -6,7 +6,7 @@ class Address {
   +string town
   +string street
   +string number
-  +Person[] persons
+  +Person person
 }
 
 class Person {
@@ -15,6 +15,17 @@ class Person {
   +string firstname
   +string email
   +string phone_number
+  +string encrypted_password
+  +string reset_password_token
+  +datetime reset_password_sent_at
+  +datetime remember_created_at
+  +integer sign_in_count
+  +datetime current_sign_in_at
+  +datetime last_sign_in_at
+  +string current_sign_in_ip
+  +string last_sign_in_ip
+  +integer student_status_id
+  +integer teacher_status_id
   +Address address
 }
 
@@ -31,7 +42,7 @@ class Student {
 }
 
 class SchoolClass {
-  +number year
+  +integer year
   +string name
   +Room room
   +Teacher master
@@ -81,9 +92,9 @@ class StudentStatus {
   +string status
 }
 
-Address "1" o-- "0..*" Person
-Teacher "0..*" --o "1" TeacherStatus
-Student "0..*" --o "1" StudentStatus
+Address "1" o-- "1" Person
+Person "0..*" --o "1" StudentStatus
+Person "0..*" --o "1" TeacherStatus
 SchoolClass "0..*" -- "0..*" Person
 SchoolClass "0..*" --o "1" Room
 SchoolClass "0..*" --o "1" Person
