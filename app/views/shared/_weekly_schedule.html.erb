@@ -65,16 +65,31 @@
                   
                   <% day_courses.each do |course| %>
                     <% duration_hours = ((course.end_at - course.start_at) / 1.hour).round %>
-                    <div class="position-absolute top-0 start-0 end-0 p-1"
-                         style="background-color: rgba(var(--bs-primary-rgb), 0.1); 
-                                border-left: 4px solid var(--bs-primary);
-                                height: <%= duration_hours * 60 %>px;
-                                z-index: 1;">
-                      <div class="small">
-                        <strong><%= course.subject.name %></strong><br>
-                        <%= course.start_at.strftime("%H:%M") %> - <%= course.end_at.strftime("%H:%M") %>
+                    <% if can_view_course?(course) %>
+                      <%= link_to course_path(course), class: "text-decoration-none" do %>
+                        <div class="position-absolute top-0 start-0 end-0 p-1"
+                             style="background-color: rgba(var(--bs-primary-rgb), 0.1); 
+                                    border-left: 4px solid var(--bs-primary);
+                                    height: <%= duration_hours * 60 %>px;
+                                    z-index: 1;">
+                          <div class="small">
+                            <strong><%= course.subject.name %></strong><br>
+                            <%= course.start_at.strftime("%H:%M") %> - <%= course.end_at.strftime("%H:%M") %>
+                          </div>
+                        </div>
+                      <% end %>
+                    <% else %>
+                      <div class="position-absolute top-0 start-0 end-0 p-1"
+                           style="background-color: rgba(var(--bs-primary-rgb), 0.1); 
+                                  border-left: 4px solid var(--bs-primary);
+                                  height: <%= duration_hours * 60 %>px;
+                                  z-index: 1;">
+                        <div class="small">
+                          <strong><%= course.subject.name %></strong><br>
+                          <%= course.start_at.strftime("%H:%M") %> - <%= course.end_at.strftime("%H:%M") %>
+                        </div>
                       </div>
-                    </div>
+                    <% end %>
                   <% end %>
                 </td>
               <% end %>
