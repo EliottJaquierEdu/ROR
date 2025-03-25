@@ -13,6 +13,9 @@ class PeopleController < ApplicationController
 
   # GET /people/1 or /people/1.json
   def show
+    # Get the selected week (default to current week)
+    @selected_week = params[:week] ? Date.parse(params[:week]) : Date.current.beginning_of_week
+
     # If we're showing a student, preload their grades with associations for the grade report
     if @person.student?
       # This will trigger the grades_with_associations method
@@ -77,26 +80,26 @@ class PeopleController < ApplicationController
     def person_params
       params.require(:person).permit(:firstname, :lastname, :email, :type, :password, :password_confirmation)
     end
-    
+
     # Authorization methods
     def authorize_view
       unless helpers.can_view_person?(@person)
         redirect_to people_path, alert: "You are not authorized to view this person."
       end
     end
-    
+
     def authorize_edit
       unless helpers.can_edit_person?(@person)
         redirect_to people_path, alert: "You are not authorized to edit this person."
       end
     end
-    
+
     def authorize_create
       unless helpers.can_create_person?
         redirect_to people_path, alert: "You are not authorized to create people."
       end
     end
-    
+
     def authorize_delete
       unless helpers.can_delete_person?(@person)
         redirect_to people_path, alert: "You are not authorized to delete this person."
