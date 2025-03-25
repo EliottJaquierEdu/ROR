@@ -1,4 +1,6 @@
 class Person < ApplicationRecord
+  include WeeklySchedulable
+
   # NOTE: This model includes an implementation of the empty? method
   # to fix an issue with Devise authentication. Without this method,
   # authentication fails with "undefined method 'empty?' for #<Student>"
@@ -15,6 +17,12 @@ class Person < ApplicationRecord
 
   has_and_belongs_to_many :school_classes, join_table: "people_school_classes"
 
+
+  # Teacher-class relationships
+  has_many :mastered_classes, class_name: 'SchoolClass', foreign_key: 'master_id'
+  has_many :courses, foreign_key: 'teacher_id'
+  has_many :taught_classes, through: :courses, source: :school_class
+
   belongs_to :student_status, optional: true
   belongs_to :teacher_status, optional: true
 
@@ -22,6 +30,18 @@ class Person < ApplicationRecord
   validates :teacher_status, presence: true, if: :teacher?
 
   has_many :grades, foreign_key: "person_id", dependent: :destroy, class_name: "Grade"
+
+  # Define a method to get all school classes based on role
+  def school_classes
+    if teacher?
+      SchoolClass.where(id: SchoolClass.select(:id)
+        .left_joins(:courses)
+        .where('school_classes.master_id = :person_id OR courses.teacher_id = :person_id', person_id: id)
+        .distinct)
+    else
+      super  # Use the default has_and_belongs_to_many association
+    end
+  end
 
   def full_name
     "#{firstname} #{lastname}"
@@ -156,5 +176,43 @@ class Person < ApplicationRecord
     end
     return 0 if filtered_grades.empty?
     filtered_grades.average(:value).to_f
+  end
+
+  # Show page data loading methods
+  def load_show_data(selected_week = nil)
+    if student?
+      load_student_data
+    elsif teacher?
+      load_teacher_data(selected_week)
+    end
+  end
+
+  private
+
+  def load_student_data
+    grades_with_associations.to_a
+  end
+
+  def load_teacher_data(selected_week = nil)
+    week_range = selected_week_range(selected_week)
+
+    {
+      school_classes: load_teacher_classes,
+      week_courses: load_teacher_week_courses(week_range)
+    }
+  end
+
+  def load_teacher_classes
+    school_classes
+      .includes(:students, :room, :master, courses: [:subject, :teacher])
+      .distinct
+  end
+
+  def load_teacher_week_courses(week_range)
+    courses
+      .includes(:subject, school_class: [:room, :master])
+      .where(week_day: 1..5)
+      .where("DATE(start_at) BETWEEN ? AND ?", week_range[:start], week_range[:end])
+      .order(:week_day, :start_at)
   end
 end
