@@ -116,10 +116,9 @@
         <% @school_class.examinations.each do |examination| %>
           <%= link_to examination_path(examination), class: "list-group-item list-group-item-action" do %>
             <div class="d-flex w-100 justify-content-between">
-              <h6 class="mb-1"><%= examination.subject.name %></h6>
-              <small class="text-muted"><%= examination.date.strftime("%B %d, %Y") %></small>
+              <h6 class="mb-1"><%= examination.course.subject.name %></h6>
+              <small class="text-muted"><%= examination.expected_date.strftime("%B %d, %Y") %></small>
             </div>
-            <p class="mb-1"><%= examination.description %></p>
           <% end %>
         <% end %>
       </div>
