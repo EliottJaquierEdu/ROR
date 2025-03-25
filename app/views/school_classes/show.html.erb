@@ -69,37 +69,23 @@
     <div class="card shadow-sm mb-4">
       <div class="card-header bg-light">
         <div class="d-flex justify-content-between align-items-center">
-          <h5 class="card-title mb-0">Students</h5>
-          <% if can_manage_students?(@school_class) %>
-            <div class="btn-group">
-              <%= link_to new_school_class_student_path(@school_class), class: "btn btn-sm btn-outline-primary" do %>
-                <i class="bi bi-person-plus"></i> Add Existing Student
-              <% end %>
-            </div>
-          <% end %>
+          <h5 class="card-title mb-0">Examinations</h5>
         </div>
       </div>
       <div class="card-body">
-        <% if @school_class.students.any? %>
+        <% if @examinations.any? %>
           <div class="list-group list-group-flush">
-            <% @school_class.students.each do |student| %>
-              <div class="list-group-item">
-                <div class="d-flex w-100 justify-content-between align-items-center">
-                  <%= link_to student.full_name, student, class: "text-decoration-none" %>
-                  <% if can_manage_students?(@school_class) %>
-                    <%= button_to school_class_student_path(@school_class, student), 
-                        method: :delete, 
-                        class: "btn btn-sm btn-outline-danger",
-                        form: { data: { turbo_confirm: "Are you sure you want to remove this student?" } } do %>
-                      <i class="bi bi-trash"></i>
-                    <% end %>
-                  <% end %>
+            <% @examinations.each do |examination| %>
+              <%= link_to examination_path(examination), class: "list-group-item list-group-item-action" do %>
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1"><%= examination.course.subject.name %></h6>
+                  <small class="text-muted"><%= examination.expected_date.strftime("%B %d, %Y") %></small>
                 </div>
-              </div>
+              <% end %>
             <% end %>
           </div>
         <% else %>
-          <p class="text-muted mb-0">No students enrolled.</p>
+          <p class="text-muted mb-0">No examinations scheduled.</p>
         <% end %>
       </div>
     </div>
@@ -109,23 +95,37 @@
 <div class="card shadow-sm mb-4">
   <div class="card-header bg-light">
     <div class="d-flex justify-content-between align-items-center">
-      <h5 class="card-title mb-0">Examinations</h5>
+      <h5 class="card-title mb-0">Students</h5>
+      <% if can_manage_students?(@school_class) %>
+        <div class="btn-group">
+          <%= link_to new_school_class_student_path(@school_class), class: "btn btn-sm btn-outline-primary" do %>
+            <i class="bi bi-person-plus"></i> Add Existing Student
+          <% end %>
+        </div>
+      <% end %>
     </div>
   </div>
   <div class="card-body">
-    <% if @school_class.examinations.any? %>
+    <% if @school_class.students.any? %>
       <div class="list-group list-group-flush">
-        <% @school_class.examinations.each do |examination| %>
-          <%= link_to examination_path(examination), class: "list-group-item list-group-item-action" do %>
-            <div class="d-flex w-100 justify-content-between">
-              <h6 class="mb-1"><%= examination.course.subject.name %></h6>
-              <small class="text-muted"><%= examination.expected_date.strftime("%B %d, %Y") %></small>
+        <% @school_class.students.each do |student| %>
+          <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+              <%= link_to student.full_name, student, class: "text-decoration-none" %>
+              <% if can_manage_students?(@school_class) %>
+                <%= button_to school_class_student_path(@school_class, student), 
+                    method: :delete, 
+                    class: "btn btn-sm btn-outline-danger",
+                    form: { data: { turbo_confirm: "Are you sure you want to remove this student?" } } do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              <% end %>
             </div>
-          <% end %>
+          </div>
         <% end %>
       </div>
     <% else %>
-      <p class="text-muted mb-0">No examinations scheduled.</p>
+      <p class="text-muted mb-0">No students enrolled.</p>
     <% end %>
   </div>
 </div>
