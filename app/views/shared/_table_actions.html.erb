@@ -4,24 +4,52 @@
   - resource_name: The name of the resource (e.g., 'person', 'course')
 %>
 
-<div class="btn-group btn-group-sm">
+<div class="btn-group btn-group-sm action-group shadow-sm rounded">
   <% if respond_to?("can_view_#{resource_name}?") && send("can_view_#{resource_name}?", resource) %>
-    <%= link_to resource, class: "btn btn-outline-primary" do %>
-      <i class="bi bi-eye"></i> View
+    <%= link_to resource, class: "btn btn-light text-primary hover-scale me-1" do %>
+      <i class="bi bi-eye-fill"></i>
     <% end %>
   <% end %>
   
   <% if respond_to?("can_edit_#{resource_name}?") && send("can_edit_#{resource_name}?", resource) %>
-    <%= link_to send("edit_#{resource_name}_path", resource), class: "btn btn-outline-secondary" do %>
-      <i class="bi bi-pencil"></i> Edit
+    <%= link_to send("edit_#{resource_name}_path", resource), class: "btn btn-light text-secondary hover-scale me-1" do %>
+      <i class="bi bi-pencil-fill"></i>
     <% end %>
   <% end %>
   
   <% if respond_to?("can_delete_#{resource_name}?") && send("can_delete_#{resource_name}?", resource) %>
     <%= button_to resource, method: :delete, 
-        class: "btn btn-outline-danger", 
-        form: { data: { turbo_confirm: "Are you sure?" } } do %>
-      <i class="bi bi-trash"></i> Delete
+        class: "btn btn-light text-danger hover-scale-danger", 
+        form: { 
+          class: "d-inline",
+          data: { 
+            turbo_confirm: "Are you sure?" 
+          } 
+        } do %>
+      <i class="bi bi-trash-fill"></i>
     <% end %>
   <% end %>
-</div> 
+</div>
+
+<% content_for :styles do %>
+  <style>
+    .action-group .btn {
+      padding: 0.35rem 0.65rem;
+      transition: all 0.2s ease;
+      border: 1px solid #e9ecef;
+    }
+    
+    .hover-scale:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .hover-scale-danger:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(220,53,69,0.2);
+      background-color: #dc3545 !important;
+      color: white !important;
+      border-color: #dc3545;
+    }
+  </style>
+<% end %> 

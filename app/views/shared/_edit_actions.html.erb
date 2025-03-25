@@ -5,14 +5,29 @@
   - index_path: The path to return to (e.g., courses_path)
 %>
 
-<div class="btn-group">
+<div class="btn-group action-group shadow-sm rounded">
   <% if respond_to?("can_view_#{resource_name}?") && send("can_view_#{resource_name}?", resource) %>
-    <%= link_to resource, class: "btn btn-outline-primary" do %>
-      <i class="bi bi-eye"></i> View
+    <%= link_to resource, class: "btn btn-light text-primary hover-scale me-1" do %>
+      <i class="bi bi-eye-fill"></i> <span class="ms-1">View</span>
     <% end %>
   <% end %>
   
-  <%= link_to index_path, class: "btn btn-outline-secondary" do %>
-    <i class="bi bi-arrow-left"></i> Back
+  <%= link_to index_path, class: "btn btn-light text-secondary hover-scale" do %>
+    <i class="bi bi-arrow-left"></i> <span class="ms-1">Back</span>
   <% end %>
-</div> 
+</div>
+
+<% content_for :styles do %>
+  <style>
+    .action-group .btn {
+      padding: 0.5rem 1rem;
+      transition: all 0.2s ease;
+      border: 1px solid #e9ecef;
+    }
+    
+    .hover-scale:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+<% end %> 
