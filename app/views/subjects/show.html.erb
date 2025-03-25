@@ -39,34 +39,12 @@
   </div>
   
   <div class="col-md-6">
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-light">
-        <h5 class="card-title mb-0">Courses</h5>
-      </div>
-      <div class="card-body">
-        <% if @subject.courses.any? %>
-          <div class="list-group list-group-flush">
-            <% @subject.courses.includes(:school_class).each do |course| %>
-              <%= link_to course_path(course), class: "list-group-item list-group-item-action" do %>
-                <div class="d-flex w-100 justify-content-between">
-                  <h6 class="mb-1">
-                    <%= "#{course.school_class.year}-#{course.school_class.name}" if course.school_class %>
-                  </h6>
-                  <small class="text-muted">Term <%= course.term %></small>
-                </div>
-                <p class="mb-1">
-                  <% days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] %>
-                  <%= days[course.week_day] if course.week_day.between?(0, 6) %>
-                  <%= course.start_at&.strftime("%H:%M") %> - <%= course.end_at&.strftime("%H:%M") %>
-                </p>
-              <% end %>
-            <% end %>
-          </div>
-        <% else %>
-          <p class="text-muted mb-0">No courses assigned to this subject.</p>
-        <% end %>
-      </div>
-    </div>
+    <%= render partial: 'shared/weekly_schedule',
+       locals: {
+         courses: @weekly_courses,
+         selected_week: @selected_week,
+         class_name: @subject.name
+       } %>
   </div>
 </div>
 

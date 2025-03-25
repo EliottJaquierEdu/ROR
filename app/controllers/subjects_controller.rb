@@ -13,6 +13,8 @@ class SubjectsController < ApplicationController
 
   # GET /subjects/1 or /subjects/1.json
   def show
+    @selected_week = params[:week] ? Date.parse(params[:week]) : Date.current
+    @weekly_courses = @subject.courses_for_week(@selected_week)
   end
 
   # GET /subjects/new
