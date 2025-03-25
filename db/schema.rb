@@ -19,6 +19,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_200000) do
     t.integer "person_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_addresses_on_archived_at"
     t.index ["person_id"], name: "index_addresses_on_person_id"
   end
 
@@ -32,6 +34,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_200000) do
     t.datetime "updated_at", null: false
     t.integer "subject_id", null: false
     t.integer "teacher_id", null: false
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_courses_on_archived_at"
     t.index ["school_class_id"], name: "index_courses_on_school_class_id"
     t.index ["subject_id"], name: "index_courses_on_subject_id"
     t.index ["teacher_id"], name: "index_courses_on_teacher_id"
@@ -42,6 +46,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_200000) do
     t.integer "course_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_examinations_on_archived_at"
     t.index ["course_id"], name: "index_examinations_on_course_id"
   end
 
@@ -52,6 +58,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_200000) do
     t.integer "examination_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_grades_on_archived_at"
     t.index ["examination_id"], name: "index_grades_on_examination_id"
     t.index ["person_id"], name: "index_grades_on_person_id"
   end
@@ -77,6 +85,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_200000) do
     t.datetime "last_sign_in_at"
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_people_on_archived_at"
     t.index ["email"], name: "index_people_on_email", unique: true
     t.index ["reset_password_token"], name: "index_people_on_reset_password_token", unique: true
     t.index ["student_status_id"], name: "index_people_on_student_status_id"
@@ -86,6 +96,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_200000) do
   create_table "people_school_classes", id: false, force: :cascade do |t|
     t.integer "school_class_id", null: false
     t.integer "person_id", null: false
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_people_school_classes_on_archived_at"
     t.index ["person_id"], name: "index_people_school_classes_on_person_id"
     t.index ["school_class_id", "person_id"], name: "index_people_school_classes_on_school_class_id_and_person_id", unique: true
     t.index ["school_class_id"], name: "index_people_school_classes_on_school_class_id"
@@ -95,6 +107,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_200000) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_rooms_on_archived_at"
     t.index ["name"], name: "index_rooms_on_name", unique: true
   end
 
@@ -105,6 +119,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_200000) do
     t.integer "master_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_school_classes_on_archived_at"
     t.index ["room_id"], name: "index_school_classes_on_room_id"
   end
 
@@ -112,12 +128,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_200000) do
     t.string "status", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_student_statuses_on_archived_at"
   end
 
   create_table "subjects", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_subjects_on_archived_at"
     t.index ["name"], name: "index_subjects_on_name", unique: true
   end
 
@@ -125,6 +145,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_200000) do
     t.string "status", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_teacher_statuses_on_archived_at"
   end
 
   add_foreign_key "addresses", "people"

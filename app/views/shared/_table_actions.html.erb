@@ -17,17 +17,8 @@
     <% end %>
   <% end %>
   
-  <% if respond_to?("can_delete_#{resource_name}?") && send("can_delete_#{resource_name}?", resource) %>
-    <%= button_to resource, method: :delete, 
-        class: "btn btn-light text-danger hover-scale-danger", 
-        form: { 
-          class: "d-inline",
-          data: { 
-            turbo_confirm: "Are you sure?" 
-          } 
-        } do %>
-      <i class="bi bi-trash-fill"></i>
-    <% end %>
+  <% if respond_to?("can_archive_#{resource_name}?") && send("can_archive_#{resource_name}?", resource) %>
+    <%= render 'shared/archive_buttons', resource: resource, compact: true %>
   <% end %>
 </div>
 

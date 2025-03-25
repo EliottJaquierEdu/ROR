@@ -1,5 +1,6 @@
 class Person < ApplicationRecord
   include WeeklySchedulable
+  include Archivable
 
   # NOTE: This model includes an implementation of the empty? method
   # to fix an issue with Devise authentication. Without this method,
@@ -213,5 +214,25 @@ class Person < ApplicationRecord
       .where(week_day: 1..5)
       .where("DATE(start_at) BETWEEN ? AND ?", week_range[:start], week_range[:end])
       .order(:week_day, :start_at)
+  end
+
+  def archive_dependencies
+    # Archive associated records
+    address&.archive!
+    grades.each(&:archive!)
+    mastered_classes.each(&:archive!)
+
+    # For teachers, archive their courses
+    courses.each(&:archive!) if type == 'Teacher'
+
+    # Note: We don't automatically archive school_classes as they might still be active
+    # even if a student is archived
+  end
+
+  def unarchive_dependencies
+    # Unarchive associated records
+    address&.unarchive!
+    # Don't automatically unarchive other associations as they might have been
+    # archived for other reasons
   end
 end

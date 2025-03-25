@@ -1,15 +1,17 @@
 class PeopleController < ApplicationController
   before_action :authenticate_person!
-  before_action :set_person, only: %i[ show edit update destroy ]
+  before_action :set_person, only: %i[ show edit update archive unarchive ]
   before_action :authorize_view, only: %i[ show ]
   before_action :authorize_edit, only: %i[ edit update ]
   before_action :authorize_create, only: %i[ new create ]
-  before_action :authorize_delete, only: %i[ destroy ]
+  before_action :authorize_archive, only: %i[ archive ]
+  before_action :authorize_unarchive, only: %i[ unarchive ]
 
   # GET /people or /people.json
   def index
-    @people = helpers.visible_people_by_type(params[:type])
-                    .page(params[:page]).per(10)
+    base_scope = helpers.visible_people_by_type(params[:type])
+    @people = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @people = @people.page(params[:page]).per(10) # Add pagination if you're using kaminari
   end
 
   # GET /people/1 or /people/1.json
@@ -63,11 +65,21 @@ class PeopleController < ApplicationController
   end
 
   # DELETE /people/1 or /people/1.json
-  def destroy
-    @person.destroy!
+  def archive
+    @person.archive!
 
     respond_to do |format|
-      format.html { redirect_to people_path, status: :see_other, notice: "Person was successfully destroyed." }
+      format.html { redirect_to people_path, status: :see_other, notice: "#{@person.full_name} was successfully archived." }
+      format.json { head :no_content }
+    end
+  end
+
+  # PATCH /people/1/unarchive
+  def unarchive
+    @person.unarchive!
+
+    respond_to do |format|
+      format.html { redirect_to people_path, status: :see_other, notice: "#{@person.full_name} was successfully unarchived." }
       format.json { head :no_content }
     end
   end
@@ -102,9 +114,15 @@ class PeopleController < ApplicationController
       end
     end
 
-    def authorize_delete
-      unless helpers.can_delete_person?(@person)
-        redirect_to people_path, alert: "You are not authorized to delete this person."
+    def authorize_archive
+      unless helpers.can_archive_person?(@person)
+        redirect_to people_path, alert: "You are not authorized to archive this person."
+      end
+    end
+
+    def authorize_unarchive
+      unless helpers.can_unarchive_person?(@person)
+        redirect_to people_path, alert: "You are not authorized to unarchive this person."
       end
     end
 end
