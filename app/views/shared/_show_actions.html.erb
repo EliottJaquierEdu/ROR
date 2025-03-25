@@ -20,7 +20,7 @@
   <% if respond_to?("can_delete_#{resource_name}?") && send("can_delete_#{resource_name}?", resource) %>
     <%= button_to resource, method: :delete, 
         class: "btn btn-outline-danger", 
-        form: { data: { turbo_confirm: confirm_message || "Are you sure you want to delete this #{resource_name}?" } } do %>
+        form: { data: { turbo_confirm: local_assigns.fetch(:confirm_message, "Are you sure you want to delete this #{resource_name}?") } } do %>
       <i class="bi bi-trash"></i> Delete
     <% end %>
   <% end %>
