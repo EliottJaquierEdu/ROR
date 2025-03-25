@@ -23,6 +23,11 @@
   </div>
 </div>
 
+<%= render 'shared/weekly_schedule', 
+           courses: @week_courses,
+           class_name: "#{@school_class.year}-#{@school_class.name}",
+           selected_week: @selected_week %>
+
 <div class="row">
   <div class="col-md-6">
     <div class="card shadow-sm mb-4">
