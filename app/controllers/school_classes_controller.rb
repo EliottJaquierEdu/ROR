@@ -10,6 +10,7 @@ class SchoolClassesController < ApplicationController
   def index
     @school_classes = helpers.visible_school_classes
                             .includes(:master, :room, :students)
+                            .page(params[:page]).per(10)
   end
 
   # GET /school_classes/1 or /school_classes/1.json

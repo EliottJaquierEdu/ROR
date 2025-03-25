@@ -9,6 +9,7 @@ class RoomsController < ApplicationController
   # GET /rooms or /rooms.json
   def index
     @rooms = helpers.visible_rooms
+                    .page(params[:page]).per(10)
   end
 
   # GET /rooms/1 or /rooms/1.json
@@ -72,26 +73,26 @@ class RoomsController < ApplicationController
     def room_params
       params.require(:room).permit(:name, :capacity)
     end
-    
+
     # Authorization methods
     def authorize_view
       unless helpers.can_view_room?(@room)
         redirect_to rooms_path, alert: "You are not authorized to view this room."
       end
     end
-    
+
     def authorize_edit
       unless helpers.can_edit_room?(@room)
         redirect_to rooms_path, alert: "You are not authorized to edit this room."
       end
     end
-    
+
     def authorize_create
       unless helpers.can_create_room?
         redirect_to rooms_path, alert: "You are not authorized to create rooms."
       end
     end
-    
+
     def authorize_delete
       unless helpers.can_delete_room?(@room)
         redirect_to rooms_path, alert: "You are not authorized to delete this room."

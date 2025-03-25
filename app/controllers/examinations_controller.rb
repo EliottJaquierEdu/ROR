@@ -9,6 +9,7 @@ class ExaminationsController < ApplicationController
   # GET /examinations or /examinations.json
   def index
     @examinations = helpers.visible_examinations
+                          .page(params[:page]).per(10)
   end
 
   # GET /examinations/1 or /examinations/1.json

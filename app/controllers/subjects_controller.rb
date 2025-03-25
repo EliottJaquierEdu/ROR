@@ -9,6 +9,7 @@ class SubjectsController < ApplicationController
   # GET /subjects or /subjects.json
   def index
     @subjects = helpers.visible_subjects
+                      .page(params[:page]).per(10)
   end
 
   # GET /subjects/1 or /subjects/1.json

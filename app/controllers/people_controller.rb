@@ -9,6 +9,7 @@ class PeopleController < ApplicationController
   # GET /people or /people.json
   def index
     @people = helpers.visible_people_by_type(params[:type])
+                    .page(params[:page]).per(10)
   end
 
   # GET /people/1 or /people/1.json

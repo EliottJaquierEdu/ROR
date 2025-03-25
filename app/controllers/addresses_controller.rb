@@ -9,6 +9,7 @@ class AddressesController < ApplicationController
   # GET /addresses or /addresses.json
   def index
     @addresses = helpers.visible_addresses
+                       .page(params[:page]).per(10)
   end
 
   # GET /addresses/1 or /addresses/1.json
@@ -73,26 +74,26 @@ class AddressesController < ApplicationController
     def address_params
       params.require(:address).permit(:zip, :town, :street, :number, :person_id)
     end
-    
+
     # Authorization methods
     def authorize_view
       unless helpers.can_view_address?(@address)
         redirect_to addresses_path, alert: "You are not authorized to view this address."
       end
     end
-    
+
     def authorize_edit
       unless helpers.can_edit_address?(@address)
         redirect_to addresses_path, alert: "You are not authorized to edit this address."
       end
     end
-    
+
     def authorize_create
       unless helpers.can_create_address?
         redirect_to addresses_path, alert: "You are not authorized to create addresses."
       end
     end
-    
+
     def authorize_delete
       unless helpers.can_delete_address?(@address)
         redirect_to addresses_path, alert: "You are not authorized to delete this address."

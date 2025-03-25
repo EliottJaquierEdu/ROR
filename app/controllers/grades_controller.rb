@@ -9,6 +9,7 @@ class GradesController < ApplicationController
   # GET /grades or /grades.json
   def index
     @grades = helpers.visible_grades
+                    .page(params[:page]).per(10)
   end
 
   # GET /grades/1 or /grades/1.json
@@ -19,7 +20,7 @@ class GradesController < ApplicationController
   def new
     @grade = Grade.new
     @grade.examination_id = params[:examination_id] if params[:examination_id].present?
-    
+
     # If an examination_id is provided, check if the user can create a grade for this examination
     if params[:examination_id].present?
       examination = Examination.find_by(id: params[:examination_id])
@@ -37,7 +38,7 @@ class GradesController < ApplicationController
   # POST /grades or /grades.json
   def create
     @grade = Grade.new(grade_params)
-    
+
     # Check if the user can create a grade for this examination
     unless helpers.can_create_grade_for_examination?(Examination.find_by(id: @grade.examination_id))
       redirect_to grades_path, alert: "You are not authorized to create grades for this examination."
@@ -88,26 +89,26 @@ class GradesController < ApplicationController
     def grade_params
       params.require(:grade).permit(:value, :effective_date, :person_id, :examination_id)
     end
-    
+
     # Authorization methods
     def authorize_view
       unless helpers.can_view_grade?(@grade)
         redirect_to grades_path, alert: "You are not authorized to view this grade."
       end
     end
-    
+
     def authorize_edit
       unless helpers.can_edit_grade?(@grade)
         redirect_to grades_path, alert: "You are not authorized to edit this grade."
       end
     end
-    
+
     def authorize_create
       unless helpers.can_create_grade?
         redirect_to grades_path, alert: "You are not authorized to create grades."
       end
     end
-    
+
     def authorize_delete
       unless helpers.can_delete_grade?(@grade)
         redirect_to grades_path, alert: "You are not authorized to delete this grade."
