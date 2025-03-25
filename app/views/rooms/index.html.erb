@@ -34,27 +34,7 @@
                 <% end %>
               </td>
               <td>
-                <div class="btn-group btn-group-sm">
-                  <% if can_view_room?(room) %>
-                    <%= link_to room, class: "btn btn-outline-primary" do %>
-                      <i class="bi bi-eye"></i> View
-                    <% end %>
-                  <% end %>
-                  
-                  <% if can_edit_room?(room) %>
-                    <%= link_to edit_room_path(room), class: "btn btn-outline-secondary" do %>
-                      <i class="bi bi-pencil"></i> Edit
-                    <% end %>
-                  <% end %>
-                  
-                  <% if can_delete_room?(room) %>
-                    <%= button_to room, method: :delete, 
-                        class: "btn btn-outline-danger", 
-                        form: { data: { turbo_confirm: "Are you sure?" } } do %>
-                      <i class="bi bi-trash"></i> Delete
-                    <% end %>
-                  <% end %>
-                </div>
+                <%= render 'shared/table_actions', resource: room, resource_name: 'room' %>
               </td>
             </tr>
           <% end %>

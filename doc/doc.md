@@ -372,3 +372,41 @@ end
    - Includes proper database optimizations
    - Uses eager loading where appropriate
    - Reduces N+1 query problems
+
+## Shared Components and Partials
+Our application uses several shared components to maintain consistency and reduce code duplication across views.
+
+### Table Actions Component
+The `_table_actions.html.erb` partial provides a standardized way to display action buttons (View, Edit, Delete) in tables across the application.
+
+#### Purpose
+- Provides consistent action buttons in tables
+- Handles permission checks automatically
+- Maintains uniform styling and behavior
+- Reduces code duplication
+
+#### Features
+- Automatically checks permissions using `can_view_#{resource_name}?`, etc.
+- Consistent button styling with Bootstrap classes
+- Built-in confirmation dialogs for delete actions
+
+### Show Actions Component
+The `_show_actions.html.erb` partial provides a standardized way to display action buttons (Edit, Back, Delete) in show pages.
+
+#### Purpose
+- Provides consistent action buttons in show views
+- Handles permission checks automatically
+- Maintains uniform styling and behavior
+- Standardizes delete confirmations
+
+#### Features
+- Automatic permission checks
+- Consistent button styling
+- Bootstrap Icons integration
+- Proper routing to index pages
+
+### Benefits of Using These Components
+1. **Code Reusability**
+2. **Permission Management**
+3. **UI Consistency**
+4. **Maintainability**

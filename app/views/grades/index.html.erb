@@ -46,27 +46,7 @@
                 <% end %>
               </td>
               <td>
-                <div class="btn-group btn-group-sm">
-                  <% if can_view_grade?(grade) %>
-                    <%= link_to grade, class: "btn btn-outline-primary" do %>
-                      <i class="bi bi-eye"></i> View
-                    <% end %>
-                  <% end %>
-                  
-                  <% if can_edit_grade?(grade) %>
-                    <%= link_to edit_grade_path(grade), class: "btn btn-outline-secondary" do %>
-                      <i class="bi bi-pencil"></i> Edit
-                    <% end %>
-                  <% end %>
-                  
-                  <% if can_delete_grade?(grade) %>
-                    <%= button_to grade, method: :delete, 
-                        class: "btn btn-outline-danger", 
-                        form: { data: { turbo_confirm: "Are you sure?" } } do %>
-                      <i class="bi bi-trash"></i> Delete
-                    <% end %>
-                  <% end %>
-                </div>
+                <%= render 'shared/table_actions', resource: grade, resource_name: 'grade' %>
               </td>
             </tr>
           <% end %>

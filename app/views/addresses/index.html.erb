@@ -40,27 +40,7 @@
                 <% end %>
               </td>
               <td>
-                <div class="btn-group btn-group-sm">
-                  <% if can_view_address?(address) %>
-                    <%= link_to address, class: "btn btn-outline-primary" do %>
-                      <i class="bi bi-eye"></i> View
-                    <% end %>
-                  <% end %>
-                  
-                  <% if can_edit_address?(address) %>
-                    <%= link_to edit_address_path(address), class: "btn btn-outline-secondary" do %>
-                      <i class="bi bi-pencil"></i> Edit
-                    <% end %>
-                  <% end %>
-                  
-                  <% if can_delete_address?(address) %>
-                    <%= button_to address, method: :delete, 
-                        class: "btn btn-outline-danger", 
-                        form: { data: { turbo_confirm: "Are you sure?" } } do %>
-                      <i class="bi bi-trash"></i> Delete
-                    <% end %>
-                  <% end %>
-                </div>
+                <%= render 'shared/table_actions', resource: address, resource_name: 'address' %>
               </td>
             </tr>
           <% end %>

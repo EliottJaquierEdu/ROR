@@ -38,27 +38,7 @@
                 <% end %>
               </td>
               <td>
-                <div class="btn-group btn-group-sm">
-                  <% if can_view_examination?(examination) %>
-                    <%= link_to examination, class: "btn btn-outline-primary" do %>
-                      <i class="bi bi-eye"></i> View
-                    <% end %>
-                  <% end %>
-                  
-                  <% if can_edit_examination?(examination) %>
-                    <%= link_to edit_examination_path(examination), class: "btn btn-outline-secondary" do %>
-                      <i class="bi bi-pencil"></i> Edit
-                    <% end %>
-                  <% end %>
-                  
-                  <% if can_delete_examination?(examination) %>
-                    <%= button_to examination, method: :delete, 
-                        class: "btn btn-outline-danger", 
-                        form: { data: { turbo_confirm: "Are you sure?" } } do %>
-                      <i class="bi bi-trash"></i> Delete
-                    <% end %>
-                  <% end %>
-                </div>
+                <%= render 'shared/table_actions', resource: examination, resource_name: 'examination' %>
               </td>
             </tr>
           <% end %>

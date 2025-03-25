@@ -2,25 +2,10 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>Class Details</h1>
-  <div class="btn-group">
-    <% if can_edit_school_class?(@school_class) %>
-      <%= link_to edit_school_class_path(@school_class), class: "btn btn-outline-primary" do %>
-        <i class="bi bi-pencil"></i> Edit
-      <% end %>
-    <% end %>
-    
-    <%= link_to school_classes_path, class: "btn btn-outline-secondary" do %>
-      <i class="bi bi-arrow-left"></i> Back
-    <% end %>
-    
-    <% if can_delete_school_class?(@school_class) %>
-      <%= button_to @school_class, method: :delete, 
-          class: "btn btn-outline-danger", 
-          form: { data: { turbo_confirm: "Are you sure you want to delete this class?" } } do %>
-        <i class="bi bi-trash"></i> Delete
-      <% end %>
-    <% end %>
-  </div>
+  <%= render 'shared/show_actions',
+             resource: @school_class,
+             resource_name: 'school_class',
+             index_path: school_classes_path %>
 </div>
 
 <%= render 'shared/weekly_schedule', 

@@ -34,27 +34,7 @@
                 <% end %>
               </td>
               <td>
-                <div class="btn-group btn-group-sm">
-                  <% if can_view_subject?(subject) %>
-                    <%= link_to subject, class: "btn btn-outline-primary" do %>
-                      <i class="bi bi-eye"></i> View
-                    <% end %>
-                  <% end %>
-                  
-                  <% if can_edit_subject?(subject) %>
-                    <%= link_to edit_subject_path(subject), class: "btn btn-outline-secondary" do %>
-                      <i class="bi bi-pencil"></i> Edit
-                    <% end %>
-                  <% end %>
-                  
-                  <% if can_delete_subject?(subject) %>
-                    <%= button_to subject, method: :delete, 
-                        class: "btn btn-outline-danger", 
-                        form: { data: { turbo_confirm: "Are you sure?" } } do %>
-                      <i class="bi bi-trash"></i> Delete
-                    <% end %>
-                  <% end %>
-                </div>
+                <%= render 'shared/table_actions', resource: subject, resource_name: 'subject' %>
               </td>
             </tr>
           <% end %>

@@ -1,0 +1,27 @@
+<%# 
+  Params:
+  - resource: The resource object to perform actions on
+  - resource_name: The name of the resource (e.g., 'person', 'course')
+%>
+
+<div class="btn-group btn-group-sm">
+  <% if respond_to?("can_view_#{resource_name}?") && send("can_view_#{resource_name}?", resource) %>
+    <%= link_to resource, class: "btn btn-outline-primary" do %>
+      <i class="bi bi-eye"></i> View
+    <% end %>
+  <% end %>
+  
+  <% if respond_to?("can_edit_#{resource_name}?") && send("can_edit_#{resource_name}?", resource) %>
+    <%= link_to send("edit_#{resource_name}_path", resource), class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-pencil"></i> Edit
+    <% end %>
+  <% end %>
+  
+  <% if respond_to?("can_delete_#{resource_name}?") && send("can_delete_#{resource_name}?", resource) %>
+    <%= button_to resource, method: :delete, 
+        class: "btn btn-outline-danger", 
+        form: { data: { turbo_confirm: "Are you sure?" } } do %>
+      <i class="bi bi-trash"></i> Delete
+    <% end %>
+  <% end %>
+</div> 
