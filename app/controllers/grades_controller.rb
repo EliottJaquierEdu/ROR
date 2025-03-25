@@ -1,15 +1,17 @@
 class GradesController < ApplicationController
   before_action :authenticate_person!
-  before_action :set_grade, only: %i[ show edit update destroy ]
+  before_action :set_grade, only: %i[ show edit update archive unarchive ]
   before_action :authorize_view, only: %i[ show ]
   before_action :authorize_edit, only: %i[ edit update ]
   before_action :authorize_create, only: %i[ new create ]
-  before_action :authorize_delete, only: %i[ destroy ]
+  before_action :authorize_archive, only: %i[ archive ]
+  before_action :authorize_unarchive, only: %i[ unarchive ]
 
   # GET /grades or /grades.json
   def index
-    @grades = helpers.visible_grades
-                    .page(params[:page]).per(10)
+    base_scope = helpers.visible_grades
+    @grades = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @grades = @grades.page(params[:page]).per(10)
   end
 
   # GET /grades/1 or /grades/1.json
@@ -69,12 +71,18 @@ class GradesController < ApplicationController
     end
   end
 
-  # DELETE /grades/1 or /grades/1.json
-  def destroy
-    @grade.destroy!
-
+  def archive
+    @grade.archive!
     respond_to do |format|
-      format.html { redirect_to grades_path, status: :see_other, notice: "Grade was successfully destroyed." }
+      format.html { redirect_to grades_path, notice: "Grade was successfully archived." }
+      format.json { head :no_content }
+    end
+  end
+
+  def unarchive
+    @grade.unarchive!
+    respond_to do |format|
+      format.html { redirect_to grades_path, notice: "Grade was successfully unarchived." }
       format.json { head :no_content }
     end
   end
@@ -109,9 +117,15 @@ class GradesController < ApplicationController
       end
     end
 
-    def authorize_delete
-      unless helpers.can_delete_grade?(@grade)
-        redirect_to grades_path, alert: "You are not authorized to delete this grade."
+    def authorize_archive
+      unless helpers.can_archive_grade?(@grade)
+        redirect_to grades_path, alert: "You are not authorized to archive this grade."
+      end
+    end
+
+    def authorize_unarchive
+      unless helpers.can_unarchive_grade?(@grade)
+        redirect_to grades_path, alert: "You are not authorized to unarchive this grade."
       end
     end
 end

@@ -1,15 +1,17 @@
 class ExaminationsController < ApplicationController
   before_action :authenticate_person!
-  before_action :set_examination, only: %i[ show edit update destroy ]
+  before_action :set_examination, only: %i[ show edit update archive unarchive ]
   before_action :authorize_view, only: %i[ show ]
   before_action :authorize_edit, only: %i[ edit update ]
   before_action :authorize_create, only: %i[ new create ]
-  before_action :authorize_delete, only: %i[ destroy ]
+  before_action :authorize_archive, only: %i[ archive ]
+  before_action :authorize_unarchive, only: %i[ unarchive ]
 
   # GET /examinations or /examinations.json
   def index
-    @examinations = helpers.visible_examinations
-                          .page(params[:page]).per(10)
+    base_scope = helpers.visible_examinations
+    @examinations = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @examinations = @examinations.page(params[:page]).per(10)
   end
 
   # GET /examinations/1 or /examinations/1.json
@@ -69,12 +71,18 @@ class ExaminationsController < ApplicationController
     end
   end
 
-  # DELETE /examinations/1 or /examinations/1.json
-  def destroy
-    @examination.destroy!
-
+  def archive
+    @examination.archive!
     respond_to do |format|
-      format.html { redirect_to examinations_path, status: :see_other, notice: "Examination was successfully destroyed." }
+      format.html { redirect_to examinations_path, notice: "Examination was successfully archived." }
+      format.json { head :no_content }
+    end
+  end
+
+  def unarchive
+    @examination.unarchive!
+    respond_to do |format|
+      format.html { redirect_to examinations_path, notice: "Examination was successfully unarchived." }
       format.json { head :no_content }
     end
   end
@@ -109,9 +117,15 @@ class ExaminationsController < ApplicationController
       end
     end
 
-    def authorize_delete
-      unless helpers.can_delete_examination?(@examination)
-        redirect_to examinations_path, alert: "You are not authorized to delete this examination."
+    def authorize_archive
+      unless helpers.can_archive_examination?(@examination)
+        redirect_to examinations_path, alert: "You are not authorized to archive this examination."
+      end
+    end
+
+    def authorize_unarchive
+      unless helpers.can_unarchive_examination?(@examination)
+        redirect_to examinations_path, alert: "You are not authorized to unarchive this examination."
       end
     end
 end

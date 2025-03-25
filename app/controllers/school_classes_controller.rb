@@ -1,16 +1,17 @@
 class SchoolClassesController < ApplicationController
   before_action :authenticate_person!
-  before_action :set_school_class, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_view, only: [:show]
-  before_action :authorize_edit, only: [:edit, :update]
-  before_action :authorize_create, only: [:new, :create]
-  before_action :authorize_delete, only: [:destroy]
+  before_action :set_school_class, only: %i[ show edit update archive unarchive ]
+  before_action :authorize_view, only: %i[ show ]
+  before_action :authorize_edit, only: %i[ edit update ]
+  before_action :authorize_create, only: %i[ new create ]
+  before_action :authorize_archive, only: %i[ archive ]
+  before_action :authorize_unarchive, only: %i[ unarchive ]
 
   # GET /school_classes or /school_classes.json
   def index
-    @school_classes = helpers.visible_school_classes
-                            .includes(:master, :room, :students)
-                            .page(params[:page]).per(10)
+    base_scope = helpers.visible_school_classes
+    @school_classes = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @school_classes = @school_classes.page(params[:page]).per(10)
   end
 
   # GET /school_classes/1 or /school_classes/1.json
@@ -48,10 +49,20 @@ class SchoolClassesController < ApplicationController
     end
   end
 
-  # DELETE /school_classes/1 or /school_classes/1.json
-  def destroy
-    @school_class.destroy
-    redirect_to school_classes_url, notice: 'Class was successfully deleted.'
+  def archive
+    @school_class.archive!
+    respond_to do |format|
+      format.html { redirect_to school_classes_path, notice: "School class was successfully archived." }
+      format.json { head :no_content }
+    end
+  end
+
+  def unarchive
+    @school_class.unarchive!
+    respond_to do |format|
+      format.html { redirect_to school_classes_path, notice: "School class was successfully unarchived." }
+      format.json { head :no_content }
+    end
   end
 
   private
@@ -83,9 +94,15 @@ class SchoolClassesController < ApplicationController
       end
     end
 
-    def authorize_delete
-      unless helpers.can_delete_school_class?(@school_class)
-        redirect_to school_classes_path, alert: 'You are not authorized to delete this class.'
+    def authorize_archive
+      unless helpers.can_archive_school_class?(@school_class)
+        redirect_to school_classes_path, alert: "You are not authorized to archive this school class."
+      end
+    end
+
+    def authorize_unarchive
+      unless helpers.can_unarchive_school_class?(@school_class)
+        redirect_to school_classes_path, alert: "You are not authorized to unarchive this school class."
       end
     end
 end

@@ -1,29 +1,17 @@
 class CoursesController < ApplicationController
   before_action :authenticate_person!
-  before_action :set_course, only: %i[ show edit update destroy ]
+  before_action :set_course, only: %i[ show edit update archive unarchive ]
   before_action :authorize_view, only: %i[ show ]
   before_action :authorize_edit, only: %i[ edit update ]
   before_action :authorize_create, only: %i[ new create ]
-  before_action :authorize_delete, only: %i[ destroy ]
+  before_action :authorize_archive, only: %i[ archive ]
+  before_action :authorize_unarchive, only: %i[ unarchive ]
 
   # GET /courses or /courses.json
   def index
-    @courses = helpers.visible_courses
-
-    # Apply filters
-    @courses = @courses.where(term: params[:term]) if params[:term].present?
-    @courses = @courses.where(week_day: params[:week_day]) if params[:week_day].present?
-    @courses = @courses.joins(:school_class).where(school_classes: { year: params[:year] }) if params[:year].present?
-    @courses = @courses.joins(:subject).where(subjects: { id: params[:subject_id] }) if params[:subject_id].present?
-
-    # Apply sorting
-    sort_column = %w[term week_day start_at school_classes.name subjects.name].include?(params[:sort]) ? params[:sort] : 'term'
-    sort_direction = %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
-
-    @courses = @courses.joins(:school_class, :subject)
-                      .order("#{sort_column} #{sort_direction}")
-                      .includes(:school_class, :subject) # Eager load associations
-                      .page(params[:page]).per(10) # Add pagination with 10 items per page
+    base_scope = helpers.visible_courses
+    @courses = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @courses = @courses.page(params[:page]).per(10)
   end
 
   # GET /courses/1 or /courses/1.json
@@ -67,12 +55,18 @@ class CoursesController < ApplicationController
     end
   end
 
-  # DELETE /courses/1 or /courses/1.json
-  def destroy
-    @course.destroy!
-
+  def archive
+    @course.archive!
     respond_to do |format|
-      format.html { redirect_to courses_path, status: :see_other, notice: "Course was successfully destroyed." }
+      format.html { redirect_to courses_path, notice: "Course was successfully archived." }
+      format.json { head :no_content }
+    end
+  end
+
+  def unarchive
+    @course.unarchive!
+    respond_to do |format|
+      format.html { redirect_to courses_path, notice: "Course was successfully unarchived." }
       format.json { head :no_content }
     end
   end
@@ -107,9 +101,15 @@ class CoursesController < ApplicationController
       end
     end
 
-    def authorize_delete
-      unless helpers.can_delete_course?(@course)
-        redirect_to courses_path, alert: "You are not authorized to delete this course."
+    def authorize_archive
+      unless helpers.can_archive_course?(@course)
+        redirect_to courses_path, alert: "You are not authorized to archive this course."
+      end
+    end
+
+    def authorize_unarchive
+      unless helpers.can_unarchive_course?(@course)
+        redirect_to courses_path, alert: "You are not authorized to unarchive this course."
       end
     end
 end

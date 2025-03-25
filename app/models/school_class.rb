@@ -1,5 +1,6 @@
 class SchoolClass < ApplicationRecord
   include WeeklyCourseable
+  include Archivable
 
   belongs_to :room, optional: true
   belongs_to :master, class_name: "Person", optional: true
@@ -7,6 +8,9 @@ class SchoolClass < ApplicationRecord
 
   has_many :courses, dependent: :destroy
   has_many :examinations, through: :courses
+
+  validates :name, presence: true
+  validates :year, presence: true, numericality: { only_integer: true }
 
   # String representation of a SchoolClass
   def to_s
@@ -27,5 +31,15 @@ class SchoolClass < ApplicationRecord
   # Helper method to get the number of students
   def student_count
     students.count
+  end
+
+  private
+
+  def archive_dependencies
+    courses.each(&:archive!)
+  end
+
+  def unarchive_dependencies
+    # Don't automatically unarchive courses as they might have been archived for other reasons
   end
 end

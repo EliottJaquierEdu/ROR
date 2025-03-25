@@ -1,15 +1,17 @@
 class SubjectsController < ApplicationController
   before_action :authenticate_person!
-  before_action :set_subject, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_view, only: [:show]
-  before_action :authorize_edit, only: [:edit, :update]
-  before_action :authorize_create, only: [:new, :create]
-  before_action :authorize_delete, only: [:destroy]
+  before_action :set_subject, only: %i[ show edit update archive unarchive ]
+  before_action :authorize_view, only: %i[ show ]
+  before_action :authorize_edit, only: %i[ edit update ]
+  before_action :authorize_create, only: %i[ new create ]
+  before_action :authorize_archive, only: %i[ archive ]
+  before_action :authorize_unarchive, only: %i[ unarchive ]
 
   # GET /subjects or /subjects.json
   def index
-    @subjects = helpers.visible_subjects
-                      .page(params[:page]).per(10)
+    base_scope = helpers.visible_subjects
+    @subjects = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @subjects = @subjects.page(params[:page]).per(10)
   end
 
   # GET /subjects/1 or /subjects/1.json
@@ -47,10 +49,20 @@ class SubjectsController < ApplicationController
     end
   end
 
-  # DELETE /subjects/1 or /subjects/1.json
-  def destroy
-    @subject.destroy
-    redirect_to subjects_url, notice: 'Subject was successfully deleted.'
+  def archive
+    @subject.archive!
+    respond_to do |format|
+      format.html { redirect_to subjects_path, notice: "Subject was successfully archived." }
+      format.json { head :no_content }
+    end
+  end
+
+  def unarchive
+    @subject.unarchive!
+    respond_to do |format|
+      format.html { redirect_to subjects_path, notice: "Subject was successfully unarchived." }
+      format.json { head :no_content }
+    end
   end
 
   private
@@ -82,9 +94,15 @@ class SubjectsController < ApplicationController
       end
     end
 
-    def authorize_delete
-      unless helpers.can_delete_subject?(@subject)
-        redirect_to subjects_path, alert: 'You are not authorized to delete this subject.'
+    def authorize_archive
+      unless helpers.can_archive_subject?(@subject)
+        redirect_to subjects_path, alert: "You are not authorized to archive this subject."
+      end
+    end
+
+    def authorize_unarchive
+      unless helpers.can_unarchive_subject?(@subject)
+        redirect_to subjects_path, alert: "You are not authorized to unarchive this subject."
       end
     end
 end

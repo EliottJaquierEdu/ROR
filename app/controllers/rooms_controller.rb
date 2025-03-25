@@ -1,15 +1,17 @@
 class RoomsController < ApplicationController
   before_action :authenticate_person!
-  before_action :set_room, only: %i[ show edit update destroy ]
+  before_action :set_room, only: %i[ show edit update archive unarchive ]
   before_action :authorize_view, only: %i[ show ]
   before_action :authorize_edit, only: %i[ edit update ]
   before_action :authorize_create, only: %i[ new create ]
-  before_action :authorize_delete, only: %i[ destroy ]
+  before_action :authorize_archive, only: %i[ archive ]
+  before_action :authorize_unarchive, only: %i[ unarchive ]
 
   # GET /rooms or /rooms.json
   def index
-    @rooms = helpers.visible_rooms
-                    .page(params[:page]).per(10)
+    base_scope = helpers.visible_rooms
+    @rooms = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @rooms = @rooms.page(params[:page]).per(10)
   end
 
   # GET /rooms/1 or /rooms/1.json
@@ -53,12 +55,18 @@ class RoomsController < ApplicationController
     end
   end
 
-  # DELETE /rooms/1 or /rooms/1.json
-  def destroy
-    @room.destroy!
-
+  def archive
+    @room.archive!
     respond_to do |format|
-      format.html { redirect_to rooms_path, status: :see_other, notice: "Room was successfully destroyed." }
+      format.html { redirect_to rooms_path, notice: "Room was successfully archived." }
+      format.json { head :no_content }
+    end
+  end
+
+  def unarchive
+    @room.unarchive!
+    respond_to do |format|
+      format.html { redirect_to rooms_path, notice: "Room was successfully unarchived." }
       format.json { head :no_content }
     end
   end
@@ -93,9 +101,15 @@ class RoomsController < ApplicationController
       end
     end
 
-    def authorize_delete
-      unless helpers.can_delete_room?(@room)
-        redirect_to rooms_path, alert: "You are not authorized to delete this room."
+    def authorize_archive
+      unless helpers.can_archive_room?(@room)
+        redirect_to rooms_path, alert: "You are not authorized to archive this room."
+      end
+    end
+
+    def authorize_unarchive
+      unless helpers.can_unarchive_room?(@room)
+        redirect_to rooms_path, alert: "You are not authorized to unarchive this room."
       end
     end
 end
