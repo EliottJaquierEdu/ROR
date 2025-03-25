@@ -110,23 +110,9 @@
                 <td><%= grade.value %></td>
                 <td><%= grade.effective_date&.strftime("%d %b %Y") %></td>
                 <td>
-                  <div class="btn-group btn-group-sm">
-                    <%= link_to grade, class: "btn btn-sm btn-outline-primary" do %>
-                      <i class="bi bi-eye"></i> View
-                    <% end %>
-                    
-                    <% if can_manage_grades?(@examination) %>
-                      <%= link_to edit_grade_path(grade), class: "btn btn-sm btn-outline-secondary" do %>
-                        <i class="bi bi-pencil"></i> Edit
-                      <% end %>
-                      
-                      <%= button_to grade, method: :delete, 
-                          class: "btn btn-sm btn-outline-danger", 
-                          form: { data: { turbo_confirm: "Are you sure?" } } do %>
-                        <i class="bi bi-trash"></i> Delete
-                      <% end %>
-                    <% end %>
-                  </div>
+                  <%= render 'shared/table_actions',
+                            resource: grade,
+                            resource_name: 'grade' %>
                 </td>
               </tr>
             <% end %>
