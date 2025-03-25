@@ -1,0 +1,18 @@
+<%#
+  Params:
+  - resource: The resource object to perform actions on
+  - resource_name: The name of the resource (e.g., 'person', 'course')
+  - index_path: The path to return to (e.g., courses_path)
+%>
+
+<div class="btn-group">
+  <% if respond_to?("can_view_#{resource_name}?") && send("can_view_#{resource_name}?", resource) %>
+    <%= link_to resource, class: "btn btn-outline-primary" do %>
+      <i class="bi bi-eye"></i> View
+    <% end %>
+  <% end %>
+  
+  <%= link_to index_path, class: "btn btn-outline-secondary" do %>
+    <i class="bi bi-arrow-left"></i> Back
+  <% end %>
+</div> 

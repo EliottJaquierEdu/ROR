@@ -405,6 +405,56 @@ The `_show_actions.html.erb` partial provides a standardized way to display acti
 - Bootstrap Icons integration
 - Proper routing to index pages
 
+### Edit Actions Component
+The `_edit_actions.html.erb` partial provides a standardized way to display action buttons (View, Back) in edit pages.
+
+#### Purpose
+- Provides consistent action buttons in edit views
+- Handles permission checks automatically
+- Maintains uniform styling and behavior
+- Reduces code duplication
+
+#### Implementation
+```erb
+<%# app/views/shared/_edit_actions.html.erb %>
+<%= render 'shared/edit_actions',
+           resource: @resource,
+           resource_name: 'resource',
+           index_path: resources_path %>
+```
+
+#### Parameters
+- `resource`: The resource object to perform actions on
+- `resource_name`: The name of the resource (e.g., 'person', 'course')
+- `index_path`: The path to return to (e.g., courses_path)
+
+#### Features
+- Automatic permission checks for view action
+- Consistent button styling
+- Bootstrap Icons integration
+- Proper routing to index pages
+
+#### Usage Example
+```erb
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Editing Course</h1>
+  <%= render 'shared/edit_actions',
+             resource: @course,
+             resource_name: 'course',
+             index_path: courses_path %>
+</div>
+```
+
+These components are used throughout the application in:
+- Address views
+- Course views
+- Examination views
+- Grade views
+- Person views
+- Room views
+- School Class views
+- Subject views
+
 ### Benefits of Using These Components
 1. **Code Reusability**
 2. **Permission Management**

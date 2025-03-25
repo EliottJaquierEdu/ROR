@@ -2,16 +2,10 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>Editing Examination</h1>
-  <div class="btn-group">
-    <% if can_view_examination?(@examination) %>
-      <%= link_to @examination, class: "btn btn-outline-primary" do %>
-        <i class="bi bi-eye"></i> View
-      <% end %>
-    <% end %>
-    <%= link_to examinations_path, class: "btn btn-outline-secondary" do %>
-      <i class="bi bi-arrow-left"></i> Back
-    <% end %>
-  </div>
+  <%= render 'shared/edit_actions',
+             resource: @examination,
+             resource_name: 'examination',
+             index_path: examinations_path %>
 </div>
 
 <div class="card shadow-sm mb-4">
