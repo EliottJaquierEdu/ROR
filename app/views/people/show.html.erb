@@ -132,31 +132,4 @@
            courses: @week_courses,
            class_name: "#{@person.full_name}'s Schedule",
            selected_week: @selected_week %>
-  
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-light">
-      <h5 class="card-title mb-0">Subjects Taught</h5>
-    </div>
-    <div class="card-body">
-      <% if @person.subjects.any? %>
-        <ul class="list-unstyled mb-0">
-          <% @person.subjects.includes(:courses).each do |subject| %>
-            <li class="mb-2">
-              <strong><%= subject.name %></strong>
-              <ul class="small text-muted">
-                <% subject.courses.select { |c| c.teacher_id == @person.id }.each do |course| %>
-                  <li>
-                    <%= "#{course.school_class.year}-#{course.school_class.name}" %>
-                    (<%= course.start_at.strftime("%H:%M") %> - <%= course.end_at.strftime("%H:%M") %>)
-                  </li>
-                <% end %>
-              </ul>
-            </li>
-          <% end %>
-        </ul>
-      <% else %>
-        <p class="text-muted mb-0">No subjects assigned</p>
-      <% end %>
-    </div>
-  </div>
 <% end %>
