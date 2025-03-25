@@ -1,9 +1,11 @@
 class SchoolClass < ApplicationRecord
-  belongs_to :room
-  belongs_to :master, class_name: "Person"
+  include WeeklyCourseable
+
+  belongs_to :room, optional: true
+  belongs_to :master, class_name: "Person", optional: true
   has_and_belongs_to_many :students, class_name: "Person", join_table: "people_school_classes"
 
-  has_many :courses
+  has_many :courses, dependent: :destroy
   has_many :examinations, through: :courses
 
   # String representation of a SchoolClass

@@ -1,5 +1,6 @@
 module Teachable
   extend ActiveSupport::Concern
+  include WeeklyCourseable
 
   included do
     has_many :mastered_classes, class_name: 'SchoolClass', foreign_key: 'master_id'
@@ -21,19 +22,10 @@ module Teachable
       .distinct
   end
 
-  def load_teacher_week_courses(week_range)
-    courses
-      .includes(:subject, school_class: [:room, :master])
-      .where(week_day: 1..5)
-      .where("DATE(start_at) BETWEEN ? AND ?", week_range[:start], week_range[:end])
-      .order(:week_day, :start_at)
-  end
-
   def load_show_data(selected_week = nil)
-    week_range = selected_week_range(selected_week)
     {
       school_classes: load_teacher_classes,
-      week_courses: load_teacher_week_courses(week_range)
+      week_courses: courses_for_week(selected_week)
     }
   end
 end

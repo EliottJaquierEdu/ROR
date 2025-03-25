@@ -14,18 +14,8 @@ class SchoolClassesController < ApplicationController
 
   # GET /school_classes/1 or /school_classes/1.json
   def show
-    # Get the selected week (default to current week)
-    @selected_week = params[:week] ? Date.parse(params[:week]) : Date.current.beginning_of_week
-    week_start = @selected_week.beginning_of_week
-    week_end = @selected_week.end_of_week
-
-    # Load courses for the selected week with optimized query
-    @week_courses = @school_class.courses
-                                .includes(:subject)
-                                .where(week_day: 1..5)
-                                .where("DATE(start_at) BETWEEN ? AND ?", week_start, week_end)
-                                .order(:week_day, :start_at)
-
+    @selected_week = params[:week] ? Date.parse(params[:week]) : Date.current
+    @week_courses = @school_class.courses_for_week(@selected_week)
   end
 
   # GET /school_classes/new

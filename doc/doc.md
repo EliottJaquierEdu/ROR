@@ -213,3 +213,162 @@ We added a direct relationship between teachers and courses to establish clear o
    - The relationship supports the examination and grading system
    - Facilitates communication between teachers and students
    - Helps in organizing the school's academic structure
+
+## Concerns and Modules
+Our application uses several concerns to encapsulate shared functionality across different models. Here's an overview of each concern:
+
+### WeeklyCourseable
+This concern provides functionality for filtering courses based on weekly schedules.
+
+#### Purpose
+- Provides a consistent way to filter courses for a specific week
+- Ensures courses are properly filtered by both weekday and date range
+- Includes necessary associations and ordering
+
+#### Implementation
+```ruby
+module WeeklyCourseable
+  extend ActiveSupport::Concern
+
+  def courses_for_week(date = Date.current)
+    week_start = date.beginning_of_week
+    week_end = date.end_of_week
+
+    courses.where(week_day: 1..5)
+           .where('DATE(start_at) <= ? AND DATE(end_at) >= ?', week_end, week_start)
+           .includes(:subject, :school_class)
+           .order(:week_day, :start_at)
+  end
+end
+```
+
+#### Usage
+Used by:
+- `Subject` model - for viewing subject's weekly schedule
+- `SchoolClass` model - for class schedule display
+- `Teachable` concern - for teacher's schedule management
+
+### Teachable
+This concern encapsulates all teacher-related functionality.
+
+#### Purpose
+- Manages teacher-specific relationships and methods
+- Handles course and class associations
+- Provides methods for loading teacher data efficiently
+
+#### Implementation
+```ruby
+module Teachable
+  extend ActiveSupport::Concern
+  include WeeklyCourseable
+
+  included do
+    has_many :mastered_classes, class_name: 'SchoolClass'
+    has_many :courses, foreign_key: 'teacher_id'
+    has_many :taught_classes, through: :courses
+    has_many :subjects, -> { distinct }, through: :courses
+  end
+
+  def school_classes
+    # Returns all classes where person is either master or teacher
+  end
+
+  def load_show_data(selected_week = nil)
+    # Loads teacher data with proper associations
+  end
+end
+```
+
+#### Usage
+- Included in the `Teacher` model
+- Provides teacher-specific functionality
+- Manages relationships between teachers and their classes/courses
+
+### Gradeable
+This concern handles grade-related functionality for students.
+
+#### Purpose
+- Manages grade calculations and aggregations
+- Provides methods for viewing grades by term and subject
+- Calculates various types of averages
+
+#### Implementation
+```ruby
+module Gradeable
+  extend ActiveSupport::Concern
+
+  included do
+    has_many :grades, foreign_key: "person_id"
+  end
+
+  def grades_by_term
+    # Organizes grades by term
+  end
+
+  def grades_by_term_and_subject
+    # Organizes grades by term and subject
+  end
+
+  def term_average(term)
+    # Calculates average for a specific term
+  end
+
+  def overall_average
+    # Calculates overall grade average
+  end
+end
+```
+
+#### Usage
+- Included in the `Student` model
+- Provides comprehensive grade management
+- Supports grade reporting and analysis
+
+### WeeklySchedulable
+This concern provides helper methods for handling week-based date ranges.
+
+#### Purpose
+- Standardizes week range calculations
+- Provides consistent week selection logic
+- Supports weekly view functionality
+
+#### Implementation
+```ruby
+module WeeklySchedulable
+  extend ActiveSupport::Concern
+
+  def selected_week_range(selected_week = nil)
+    week = selected_week ? Date.parse(selected_week.to_s) : Date.current
+    {
+      start: week.beginning_of_week,
+      end: week.end_of_week
+    }
+  end
+end
+```
+
+#### Usage
+- Used across models that need week-based date handling
+- Supports weekly schedule views
+- Provides consistent week range calculations
+
+### Benefits of Using Concerns
+1. **Code Organization**
+   - Separates distinct functionalities into manageable modules
+   - Makes the codebase more maintainable
+   - Improves code readability
+
+2. **Reusability**
+   - Allows sharing of common functionality across models
+   - Reduces code duplication
+   - Makes it easier to maintain consistent behavior
+
+3. **Modularity**
+   - Each concern has a single, well-defined responsibility
+   - Makes the code easier to test
+   - Facilitates future modifications and extensions
+
+4. **Performance**
+   - Includes proper database optimizations
+   - Uses eager loading where appropriate
+   - Reduces N+1 query problems
