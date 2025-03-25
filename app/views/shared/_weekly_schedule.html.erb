@@ -60,11 +60,8 @@
               <% # For each day of the week (1-5, Monday to Friday) %>
               <% (1..5).each do |day| %>
                 <td class="position-relative">
-                  <% # Find courses for this day and hour %>
-                  <% day_courses = courses.select do |course| 
-                    course.week_day == day && 
-                    course.start_at.hour == hour
-                  end %>
+                  <% # Find courses for this day and hour - now using the prefiltered collection %>
+                  <% day_courses = courses.select { |course| course.week_day == day && course.start_at.hour == hour } %>
                   
                   <% day_courses.each do |course| %>
                     <% duration_hours = ((course.end_at - course.start_at) / 1.hour).round %>
@@ -74,7 +71,7 @@
                                 height: <%= duration_hours * 60 %>px;
                                 z-index: 1;">
                       <div class="small">
-                        <strong><%= course.subject&.name %></strong><br>
+                        <strong><%= course.subject.name %></strong><br>
                         <%= course.start_at.strftime("%H:%M") %> - <%= course.end_at.strftime("%H:%M") %>
                       </div>
                     </div>

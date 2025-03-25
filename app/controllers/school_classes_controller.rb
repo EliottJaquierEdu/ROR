@@ -9,18 +9,27 @@ class SchoolClassesController < ApplicationController
   # GET /school_classes or /school_classes.json
   def index
     @school_classes = helpers.visible_school_classes
+                            .includes(:master, :room, :students)
   end
 
   # GET /school_classes/1 or /school_classes/1.json
   def show
     # Get the selected week (default to current week)
     @selected_week = params[:week] ? Date.parse(params[:week]) : Date.current.beginning_of_week
+    week_start = @selected_week.beginning_of_week
+    week_end = @selected_week.end_of_week
 
-    # Load courses for the selected week
-    @week_courses = @school_class.courses.includes(:subject).select do |course|
-      course_date = @selected_week + (course.week_day - 1).days
-      course_date.between?(@selected_week, @selected_week.end_of_week)
-    end
+    # Load courses for the selected week with optimized query
+    @week_courses = @school_class.courses
+                                .includes(:subject)
+                                .where(week_day: 1..5)
+                                .where("DATE(start_at) BETWEEN ? AND ?", week_start, week_end)
+                                .order(:week_day, :start_at)
+
+    # Eager load examinations with their courses and subjects
+    @examinations = @school_class.examinations
+                                .includes(course: :subject)
+                                .order(expected_date: :desc)
   end
 
   # GET /school_classes/new
