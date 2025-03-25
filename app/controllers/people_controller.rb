@@ -15,11 +15,22 @@ class PeopleController < ApplicationController
   def show
     # Get the selected week (default to current week)
     @selected_week = params[:week] ? Date.parse(params[:week]) : Date.current.beginning_of_week
+    week_start = @selected_week.beginning_of_week
+    week_end = @selected_week.end_of_week
 
     # If we're showing a student, preload their grades with associations for the grade report
     if @person.student?
       # This will trigger the grades_with_associations method
       @person.grades_with_associations.to_a
+    end
+
+    # If we're showing a teacher, filter their courses for the selected week
+    if @person.teacher?
+      @week_courses = @person.courses
+                            .includes(:subject)
+                            .where(week_day: 1..5)
+                            .where("DATE(start_at) BETWEEN ? AND ?", week_start, week_end)
+                            .order(:week_day, :start_at)
     end
   end
 
