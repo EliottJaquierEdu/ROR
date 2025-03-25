@@ -17,7 +17,6 @@ class Person < ApplicationRecord
 
   has_and_belongs_to_many :school_classes, join_table: "people_school_classes"
 
-
   # Teacher-class relationships
   has_many :mastered_classes, class_name: 'SchoolClass', foreign_key: 'master_id'
   has_many :courses, foreign_key: 'teacher_id'

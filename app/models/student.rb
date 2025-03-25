@@ -1,4 +1,6 @@
 class Student < Person
+  include Gradeable
+
   belongs_to :student_status, optional: true
   validates :student_status, presence: true, if: -> { self.type == "Student" }
 
@@ -16,5 +18,9 @@ class Student < Person
     super(options.merge(
       include: { student_status: { only: [:id, :status] } }
     ))
+  end
+
+  def load_show_data(selected_week = nil)
+    grades_with_associations.to_a
   end
 end
