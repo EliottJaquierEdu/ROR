@@ -1,0 +1,34 @@
+<% content_for :title, "Add Students to #{@school_class.name}" %>
+
+<div class="card shadow-sm">
+  <div class="card-header bg-light">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">Add Students to <%= @school_class.name %></h5>
+      <%= link_to @school_class, class: "btn btn-sm btn-outline-secondary" do %>
+        <i class="bi bi-arrow-left"></i> Back to Class
+      <% end %>
+    </div>
+  </div>
+  <div class="card-body">
+    <%= form_with(model: [@school_class, Student.new], url: school_class_students_path(@school_class), method: :post) do |f| %>
+      <% if @available_students.any? %>
+        <div class="list-group list-group-flush">
+          <% @available_students.each do |student| %>
+            <div class="list-group-item">
+              <div class="form-check">
+                <%= check_box_tag "student_ids[]", student.id, false, class: "form-check-input" %>
+                <%= label_tag "student_ids_#{student.id}", student.full_name, class: "form-check-label" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-muted mb-0">No available students to add.</p>
+      <% end %>
+
+      <div class="mt-4">
+        <%= f.submit "Add Selected Students", class: "btn btn-primary", disabled: @available_students.empty? %>
+      </div>
+    <% end %>
+  </div>
+</div> 

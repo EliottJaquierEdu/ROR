@@ -66,9 +66,11 @@
         <div class="d-flex justify-content-between align-items-center">
           <h5 class="card-title mb-0">Students</h5>
           <% if can_manage_students?(@school_class) %>
-            <%= link_to new_school_class_student_path(@school_class), class: "btn btn-sm btn-outline-primary" do %>
-              <i class="bi bi-plus-circle"></i> Add Student
-            <% end %>
+            <div class="btn-group">
+              <%= link_to new_school_class_student_path(@school_class), class: "btn btn-sm btn-outline-primary" do %>
+                <i class="bi bi-person-plus"></i> Add Existing Student
+              <% end %>
+            </div>
           <% end %>
         </div>
       </div>
@@ -103,11 +105,6 @@
   <div class="card-header bg-light">
     <div class="d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0">Examinations</h5>
-      <% if can_manage_examinations?(@school_class) %>
-        <%= link_to new_school_class_examination_path(@school_class), class: "btn btn-sm btn-outline-primary" do %>
-          <i class="bi bi-plus-circle"></i> New Examination
-        <% end %>
-      <% end %>
     </div>
   </div>
   <div class="card-body">
