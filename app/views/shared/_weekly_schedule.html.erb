@@ -95,6 +95,9 @@
                                 <% end %>
                               </strong><br>
                               <%= course.start_at.strftime("%H:%M") %> - <%= course.end_at.strftime("%H:%M") %>
+                              <% if course.school_class.present? %>
+                                <br><span class="text-muted"><%= course.school_class.name %></span>
+                              <% end %>
                             </div>
                           </div>
                         <% end %>
@@ -114,6 +117,9 @@
                               <% end %>
                             </strong><br>
                             <%= course.start_at.strftime("%H:%M") %> - <%= course.end_at.strftime("%H:%M") %>
+                            <% if course.school_class.present? %>
+                              <br><span class="text-muted"><%= course.school_class.name %></span>
+                            <% end %>
                           </div>
                         </div>
                       <% end %>
