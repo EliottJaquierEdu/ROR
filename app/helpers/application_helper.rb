@@ -10,11 +10,6 @@ module ApplicationHelper
       links << { path: people_path, icon: 'bi-people', text: 'People' }
     end
 
-    # Addresses - only accessible to deans
-    if current_person&.dean?
-      links << { path: addresses_path, icon: 'bi-geo-alt', text: 'Addresses' }
-    end
-
     # School Classes - accessible to all authenticated users
     links << { path: school_classes_path, icon: 'bi-building', text: 'Classes' }
 
