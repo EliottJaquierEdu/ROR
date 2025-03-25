@@ -81,7 +81,6 @@
           <thead class="table-light">
             <tr>
               <th>Title</th>
-              <th>Date</th>
               <th>Course</th>
               <th>Class</th>
               <th>Actions</th>
@@ -91,7 +90,6 @@
             <% @subject.courses.includes(:school_class, :examinations).flat_map(&:examinations).each do |examination| %>
               <tr>
                 <td><%= examination.title %></td>
-                <td><%= examination.expected_date&.strftime("%d %b %Y") %></td>
                 <td>
                   <% if examination.course %>
                     <%= link_to "Term #{examination.course.term}", examination.course %>

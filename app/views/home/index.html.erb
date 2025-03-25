@@ -164,7 +164,6 @@
                 <%= link_to examination_path(examination), class: "list-group-item list-group-item-action" do %>
                   <div class="d-flex w-100 justify-content-between">
                     <h6 class="mb-1"><%= examination.title %></h6>
-                    <small><%= examination.expected_date&.strftime("%d %b %Y") %></small>
                   </div>
                   <% if examination.course&.subject %>
                     <small class="text-muted"><%= examination.course.subject.name %></small>

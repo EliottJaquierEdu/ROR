@@ -146,3 +146,39 @@ We implement authorization in controllers using before_action filters:
 
 ### View-Level Access Control
 The views adapt their content based on user type (ex. show only the grades of the current user for students and teachers can see all grades)
+
+## Course System and Examinations
+
+### Course Design
+Our course system is designed to handle recurring weekly schedules in an academic setting:
+
+1. **Course Structure**
+   - Each course has a specific term (e.g., "Autumn Semester 2024")
+   - Courses occur on fixed weekdays with set start and end times
+   - Each course instance has a specific date, representing when that particular session occurs
+   - Courses are linked to a school class and subject (global information about the module, not specific about a particular date)
+
+2. **Weekly Schedule**
+   ```ruby
+   class Course < ApplicationRecord
+     ...
+     validates :start_at, presence: true  # DateTime of the specific course instance
+     validates :end_at, presence: true    # DateTime of the specific course instance
+     validates :week_day, presence: true  # Day of the week (1-7)
+   end
+   ```
+
+### Examination Date Removal
+We initially had a separate `expected_date` field for examinations but removed it for several reasons:
+
+1. **Data Redundancy**
+   - Examinations are always linked to a specific course instance
+   - The course already contains the date information
+   - Having a separate date field was redundant and could lead to inconsistencies
+
+2. **Business Logic**
+   - In a school setting, examinations always occur during their respective courses
+   - The course date provides the temporal context for the examination
+   - Grades and other related data can reference the course date when needed
+
+Doing so simplify examination create process, eliminate the potential date mismatch between courses and examinations.

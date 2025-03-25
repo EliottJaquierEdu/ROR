@@ -119,7 +119,6 @@
           <thead class="table-light">
             <tr>
               <th>Title</th>
-              <th>Date</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -127,7 +126,6 @@
             <% @course.examinations.each do |examination| %>
               <tr>
                 <td><%= examination.title %></td>
-                <td><%= examination.expected_date&.strftime("%d %b %Y") %></td>
                 <td>
                   <%= link_to examination, class: "btn btn-sm btn-outline-primary" do %>
                     <i class="bi bi-eye"></i> View

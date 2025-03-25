@@ -18,7 +18,6 @@
         <thead class="table-light">
           <tr>
             <th>Title</th>
-            <th>Date</th>
             <th>Course</th>
             <th>Subject</th>
             <th>Actions</th>
@@ -28,7 +27,6 @@
           <% @examinations.each do |examination| %>
             <tr>
               <td><%= examination.title %></td>
-              <td><%= examination.expected_date&.strftime("%d %b %Y") %></td>
               <td>
                 <% if examination.course %>
                   <%= link_to "Term #{examination.course.term}", examination.course %>

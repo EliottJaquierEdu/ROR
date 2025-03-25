@@ -3,11 +3,10 @@ class Examination < ApplicationRecord
   has_many :grades, dependent: :destroy
 
   validates :title, presence: true
-  validates :expected_date, presence: true
 
   # String representation of an Examination
   def to_s
-    "#{title} (#{expected_date&.strftime('%Y-%m-%d')})"
+    title
   end
 
   # JSON representation of an Examination

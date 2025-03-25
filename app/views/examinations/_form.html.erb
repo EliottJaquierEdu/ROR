@@ -24,13 +24,6 @@
         </div>
         
         <div class="col-md-6">
-          <div class="form-floating mb-3">
-            <%= form.date_field :expected_date, class: "form-control", placeholder: "Expected date" %>
-            <%= form.label :expected_date, "Expected Date" %>
-          </div>
-        </div>
-        
-        <div class="col-md-6">
           <% if params[:course_id].present? %>
             <%= form.hidden_field :course_id, value: params[:course_id] %>
             <% course = Course.find_by(id: params[:course_id]) %>

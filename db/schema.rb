@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_28_084500) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_25_195454) do
   create_table "addresses", force: :cascade do |t|
     t.integer "zip"
     t.string "town"
@@ -37,7 +37,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_28_084500) do
 
   create_table "examinations", force: :cascade do |t|
     t.string "title"
-    t.datetime "expected_date"
     t.integer "course_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

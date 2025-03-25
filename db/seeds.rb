@@ -317,7 +317,6 @@ term_dates.each do |term_name, dates|
         if rand < 0.3 # 30% chance of having an exam this week
           examination = Examination.create!(
             title: "#{['Contrôle', 'Test', 'Examen'].sample} - #{period[:subject]}",
-            expected_date: combine_date_time(weekday_date, period[:start_time]),
             course: course
           )
 
@@ -325,7 +324,7 @@ term_dates.each do |term_name, dates|
           students.each do |student|
             Grade.create!(
               value: rand(3.5..6.0).round(1),
-              effective_date: examination.expected_date + 1.week,
+              effective_date: course.start_at + 1.week,
               student: student,
               examination: examination
             )

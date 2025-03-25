@@ -26,10 +26,6 @@ class SchoolClassesController < ApplicationController
                                 .where("DATE(start_at) BETWEEN ? AND ?", week_start, week_end)
                                 .order(:week_day, :start_at)
 
-    # Eager load examinations with their courses and subjects
-    @examinations = @school_class.examinations
-                                .includes(course: :subject)
-                                .order(expected_date: :desc)
   end
 
   # GET /school_classes/new

@@ -19,7 +19,7 @@ class ExaminationsController < ApplicationController
   def new
     @examination = Examination.new
     @examination.course_id = params[:course_id] if params[:course_id].present?
-    
+
     # If a course_id is provided, check if the user can create an examination for this course
     if params[:course_id].present?
       course = Course.find_by(id: params[:course_id])
@@ -37,7 +37,7 @@ class ExaminationsController < ApplicationController
   # POST /examinations or /examinations.json
   def create
     @examination = Examination.new(examination_params)
-    
+
     # Check if the user can create an examination for this course
     unless helpers.can_create_examination_for_course?(Course.find_by(id: @examination.course_id))
       redirect_to examinations_path, alert: "You are not authorized to create examinations for this course."
@@ -86,28 +86,28 @@ class ExaminationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def examination_params
-      params.require(:examination).permit(:title, :expected_date, :course_id)
+      params.require(:examination).permit(:title, :course_id)
     end
-    
+
     # Authorization methods
     def authorize_view
       unless helpers.can_view_examination?(@examination)
         redirect_to examinations_path, alert: "You are not authorized to view this examination."
       end
     end
-    
+
     def authorize_edit
       unless helpers.can_edit_examination?(@examination)
         redirect_to examinations_path, alert: "You are not authorized to edit this examination."
       end
     end
-    
+
     def authorize_create
       unless helpers.can_create_examination?
         redirect_to examinations_path, alert: "You are not authorized to create examinations."
       end
     end
-    
+
     def authorize_delete
       unless helpers.can_delete_examination?(@examination)
         redirect_to examinations_path, alert: "You are not authorized to delete this examination."
