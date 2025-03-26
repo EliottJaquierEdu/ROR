@@ -24,6 +24,18 @@ We renamed the class model to school_class to avoid conflicts with the reserved 
 We removed the propotions_asserts table because it was not useful for the project. 
 It was used to store which ruby functions to call to know if a student passed but we decided to store this information in the student model (more related to business logic).
 
+### Examination Date Removal
+We initially had a separate `expected_date` field for examinations but removed it for several reasons:
+Examinations are always linked to a specific course instance (see course design chapter for more info) and the course already contains the date information
+- In a school setting, examinations always occur during their respective courses
+- The course date provides the temporal context for the examination
+- Grades and other related data can reference the course date when needed
+This eliminate the potential date mismatch between courses and examinations (making it compliant with SQL normal forms)
+
+### Teacher-Course Relationship
+We added a direct relationship between teachers and courses to establish clear ownership and responsibility within the academic system:
+   - Each course must have an assigned teacher. This creates clear accountability for course delivery and enables tracking of teacher workload and scheduling
+
 ## Authentication
 References :
 - https://guides.rubyonrails.org/security.html
@@ -110,18 +122,13 @@ We added a Dean role to provide administrative capabilities within the school ma
 - Centralized management of school resources (people, classes, rooms, etc.)
 
 #### Implementation Approach
-We implemented the Dean role using inheritance, making Dean inherit from Teacher:
+We implemented the Dean role using inheritance, making Dean inherit from Teacher (so Deans inherit all Teacher attributes and validations (including IBAN and teacher_status), No need for additional tables or complex relationships, Deans can do everything Teachers can do, plus administrative tasks):
 
 ```ruby
 class Dean < Teacher
   # Dean inherits all Teacher attributes and validations
 end
 ```
-
-This approach offers several advantages:
-1. **Reuse of Teacher attributes**: Deans inherit all Teacher attributes and validations (including IBAN and teacher_status)
-2. **Simplified model structure**: No need for additional tables or complex relationships
-3. **Clear permission hierarchy**: Deans can do everything Teachers can do, plus administrative tasks
 
 #### Authorization Implementation
 We implemented resource management authorization using a before_action filter in controllers:
@@ -168,52 +175,6 @@ Our course system is designed to handle recurring weekly schedules in an academi
    end
    ```
 
-### Examination Date Removal
-We initially had a separate `expected_date` field for examinations but removed it for several reasons:
-
-1. **Data Redundancy**
-   - Examinations are always linked to a specific course instance
-   - The course already contains the date information
-   - Having a separate date field was redundant and could lead to inconsistencies
-
-2. **Business Logic**
-   - In a school setting, examinations always occur during their respective courses
-   - The course date provides the temporal context for the examination
-   - Grades and other related data can reference the course date when needed
-
-Doing so simplify examination create process, eliminate the potential date mismatch between courses and examinations.
-
-### Teacher-Course Relationship
-We added a direct relationship between teachers and courses to establish clear ownership and responsibility within the academic system:
-
-1. **Course Ownership**
-   - Each course must have an assigned teacher
-   - This creates clear accountability for course delivery
-   - Enables tracking of teacher workload and scheduling
-
-2. **Implementation Benefits**
-   ```ruby
-   class Course < ApplicationRecord
-     belongs_to :teacher, class_name: 'Person'
-   end
-
-   class Teacher < Person
-     has_many :courses, foreign_key: 'teacher_id'
-   end
-   ```
-
-3. **Key Advantages**
-   - **Schedule Management**: Teachers can easily view their course schedule
-   - **Permission Control**: Simplifies access control for course-related operations
-   - **Resource Planning**: Helps in managing teacher workload and availability
-   - **Reporting**: Enables generation of teacher-specific reports and analytics
-
-4. **System Integration**
-   - Teachers can view and manage their assigned courses
-   - The relationship supports the examination and grading system
-   - Facilitates communication between teachers and students
-   - Helps in organizing the school's academic structure
-
 ## Concerns and Modules
 Our application uses several concerns to encapsulate shared functionality across different models. Here's an overview of each concern:
 
@@ -225,64 +186,11 @@ This concern provides functionality for filtering courses based on weekly schedu
 - Ensures courses are properly filtered by both weekday and date range
 - Includes necessary associations and ordering
 
-#### Implementation
-```ruby
-module WeeklyCourseable
-  extend ActiveSupport::Concern
-
-  def courses_for_week(date = Date.current)
-    week_start = date.beginning_of_week
-    week_end = date.end_of_week
-
-    courses.where(week_day: 1..5)
-           .where('DATE(start_at) <= ? AND DATE(end_at) >= ?', week_end, week_start)
-           .includes(:subject, :school_class)
-           .order(:week_day, :start_at)
-  end
-end
-```
-
 #### Usage
 Used by:
 - `Subject` model - for viewing subject's weekly schedule
 - `SchoolClass` model - for class schedule display
 - `Teachable` concern - for teacher's schedule management
-
-### Teachable
-This concern encapsulates all teacher-related functionality.
-
-#### Purpose
-- Manages teacher-specific relationships and methods
-- Handles course and class associations
-- Provides methods for loading teacher data efficiently
-
-#### Implementation
-```ruby
-module Teachable
-  extend ActiveSupport::Concern
-  include WeeklyCourseable
-
-  included do
-    has_many :mastered_classes, class_name: 'SchoolClass'
-    has_many :courses, foreign_key: 'teacher_id'
-    has_many :taught_classes, through: :courses
-    has_many :subjects, -> { distinct }, through: :courses
-  end
-
-  def school_classes
-    # Returns all classes where person is either master or teacher
-  end
-
-  def load_show_data(selected_week = nil)
-    # Loads teacher data with proper associations
-  end
-end
-```
-
-#### Usage
-- Included in the `Teacher` model
-- Provides teacher-specific functionality
-- Manages relationships between teachers and their classes/courses
 
 ### Gradeable
 This concern handles grade-related functionality for students.
@@ -292,37 +200,6 @@ This concern handles grade-related functionality for students.
 - Provides methods for viewing grades by term and subject
 - Calculates various types of averages
 
-#### Implementation
-```ruby
-module Gradeable
-  extend ActiveSupport::Concern
-
-  included do
-    has_many :grades, foreign_key: "person_id"
-  end
-
-  def grades_by_term
-    # Organizes grades by term
-  end
-
-  def grades_by_term_and_subject
-    # Organizes grades by term and subject
-  end
-
-  def term_average(term)
-    # Calculates average for a specific term
-  end
-
-  def overall_average
-    # Calculates overall grade average
-  end
-end
-```
-
-#### Usage
-- Included in the `Student` model
-- Provides comprehensive grade management
-- Supports grade reporting and analysis
 
 ### WeeklySchedulable
 This concern provides helper methods for handling week-based date ranges.
@@ -332,46 +209,14 @@ This concern provides helper methods for handling week-based date ranges.
 - Provides consistent week selection logic
 - Supports weekly view functionality
 
-#### Implementation
-```ruby
-module WeeklySchedulable
-  extend ActiveSupport::Concern
-
-  def selected_week_range(selected_week = nil)
-    week = selected_week ? Date.parse(selected_week.to_s) : Date.current
-    {
-      start: week.beginning_of_week,
-      end: week.end_of_week
-    }
-  end
-end
-```
-
 #### Usage
 - Used across models that need week-based date handling
 - Supports weekly schedule views
 - Provides consistent week range calculations
 
 ### Benefits of Using Concerns
-1. **Code Organization**
-   - Separates distinct functionalities into manageable modules
-   - Makes the codebase more maintainable
-   - Improves code readability
-
-2. **Reusability**
-   - Allows sharing of common functionality across models
-   - Reduces code duplication
-   - Makes it easier to maintain consistent behavior
-
-3. **Modularity**
-   - Each concern has a single, well-defined responsibility
-   - Makes the code easier to test
-   - Facilitates future modifications and extensions
-
-4. **Performance**
-   - Includes proper database optimizations
-   - Uses eager loading where appropriate
-   - Reduces N+1 query problems
+Benefits of Using Concerns: Enhances code organization, readability, and modularity by separating functionalities into reusable modules. 
+Improves performance through database optimizations and reduced code duplication.
 
 ## Shared Components and Partials
 Our application uses several shared components to maintain consistency and reduce code duplication across views.
@@ -414,37 +259,6 @@ The `_edit_actions.html.erb` partial provides a standardized way to display acti
 - Maintains uniform styling and behavior
 - Reduces code duplication
 
-#### Implementation
-```erb
-<%# app/views/shared/_edit_actions.html.erb %>
-<%= render 'shared/edit_actions',
-           resource: @resource,
-           resource_name: 'resource',
-           index_path: resources_path %>
-```
-
-#### Parameters
-- `resource`: The resource object to perform actions on
-- `resource_name`: The name of the resource (e.g., 'person', 'course')
-- `index_path`: The path to return to (e.g., courses_path)
-
-#### Features
-- Automatic permission checks for view action
-- Consistent button styling
-- Bootstrap Icons integration
-- Proper routing to index pages
-
-#### Usage Example
-```erb
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>Editing Course</h1>
-  <%= render 'shared/edit_actions',
-             resource: @course,
-             resource_name: 'course',
-             index_path: courses_path %>
-</div>
-```
-
 These components are used throughout the application in:
 - Address views
 - Course views
@@ -455,64 +269,23 @@ These components are used throughout the application in:
 - School Class views
 - Subject views
 
-### Benefits of Using These Components
-1. **Code Reusability**
-2. **Permission Management**
-3. **UI Consistency**
-4. **Maintainability**
-
 ## Pagination Implementation
 
 ### Kaminari Integration
-We chose Kaminari for implementing pagination in our application for several reasons:
-
-1. **Rails Integration**
-   - Native Rails integration
-   - Seamless ActiveRecord support
-   - Built-in view helpers
-   - Compatible with Rails' asset pipeline
-
-2. **Feature Set**
-   - Configurable page size
-   - Customizable view templates
-   - Support for complex queries
-   - Maintains existing scopes and includes
-
-3. **Bootstrap Compatibility**
-   - Easy integration with Bootstrap styling
-   - Responsive design support
-   - Consistent UI/UX with our existing theme
+Kaminari was chosen for its seamless Rails and ActiveRecord integration, built-in view helpers, and asset pipeline support. 
+It offers configurable pagination, customizable templates, and maintains scopes. 
+Additionally, it integrates well with Bootstrap for a responsive and consistent UI.
 
 ### Implementation Approach
-
-1. **Configuration**
-```ruby
-# config/initializers/kaminari_config.rb
-Kaminari.configure do |config|
-  config.default_per_page = 10
-  config.window = 2          # Number of pages to show around the current page
-  config.outer_window = 1    # Number of pages to show at the beginning/end
-  config.left = 2           # Number of pages to always show at the beginning
-  config.right = 2          # Number of pages to always show at the end
-end
-```
-
-2. **Controller Integration**
+**Controller Integration**
 ```ruby
 def index
   @courses = @courses.page(params[:page]).per(10)
 end
 ```
+**View Templates**
 
-3. **View Templates**
-We created custom Bootstrap-styled templates for Kaminari in `app/views/kaminari/`:
-- `_paginator.html.erb`: Main pagination container
-- `_first_page.html.erb`: First page link
-- `_last_page.html.erb`: Last page link
-- `_next_page.html.erb`: Next page link
-- `_prev_page.html.erb`: Previous page link
-- `_page.html.erb`: Individual page links
-- `_gap.html.erb`: Ellipsis for skipped pages
+We created custom Bootstrap-styled templates for Kaminari in `app/views/kaminari/`
 
 ### Integration with Existing Features
 
@@ -559,5 +332,3 @@ Sorting is preserved across pagination:
   <%= paginate @courses, theme: 'bootstrap5' %>
 </div>
 ```
-
-This implementation provides a robust, maintainable, and user-friendly pagination system that integrates seamlessly with our existing application architecture and design.
