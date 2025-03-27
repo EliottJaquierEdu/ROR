@@ -1,0 +1,59 @@
+<% content_for :title, "Transfer Students with Insufficient Grades" %>
+
+<div class="card shadow-sm">
+  <div class="card-header bg-light">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">Transfer Students from <%= "#{@school_class.year}-#{@school_class.name}" %></h5>
+      <%= link_to @school_class, class: "btn btn-sm btn-outline-secondary" do %>
+        <i class="bi bi-arrow-left"></i> Back to Class
+      <% end %>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="mb-4">
+      <h6 class="text-muted">Students to be transferred (insufficient grades):</h6>
+      <div class="list-group list-group-flush">
+        <% @students_to_move.each do |student| %>
+          <div class="list-group-item">
+            <%= student.full_name %>
+            <span class="badge bg-warning text-dark ms-2">Average: <%= student.overall_average(@school_class.id) %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <%= form_with(url: move_to_rest_school_class_students_path(@school_class), method: :post) do |f| %>
+      <div class="mb-3">
+        <h6 class="text-muted mb-2">Select Target Class</h6>
+        <div class="row">
+          <div class="col-md-6">
+            <%= f.collection_select :target_class_id,
+                SchoolClass.where(year: @school_class.year)
+                          .where.not(id: @school_class.id)
+                          .order(:name),
+                :id,
+                ->(sc) { "#{sc.name}" },
+                { include_blank: "Select class" },
+                { class: "form-select" } %>
+          </div>
+          <div class="col-md-6">
+            <%= f.submit "Transfer Students", class: "btn btn-warning", disabled: true, id: "move-button" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const select = document.querySelector('select[name="target_class_id"]');
+      const button = document.getElementById('move-button');
+      
+      select.addEventListener('change', function() {
+        button.disabled = !this.value;
+      });
+    });
+  </script>
+<% end %> 

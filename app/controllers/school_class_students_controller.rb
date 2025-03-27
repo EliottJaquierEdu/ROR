@@ -27,6 +27,40 @@ class SchoolClassStudentsController < ApplicationController
     redirect_to @school_class, notice: 'Student was successfully removed from the class.'
   end
 
+  # GET /school_classes/:school_class_id/students/select_rest_class
+  def select_rest_class
+    @students_to_move = @school_class.students.select { |student| !student.has_sufficient_grades?(@school_class.id) }
+    
+    if @students_to_move.empty?
+      redirect_to @school_class, notice: 'No students have insufficient grades to transfer.'
+    end
+  end
+
+  # POST /school_classes/:school_class_id/students/move_to_rest
+  def move_to_rest
+    target_class_id = params[:target_class_id]
+    
+    unless target_class_id.present?
+      redirect_to select_rest_class_school_class_students_path(@school_class), alert: 'Please select a target class.'
+      return
+    end
+
+    target_class = SchoolClass.find(target_class_id)
+    students_to_move = @school_class.students.select { |student| !student.has_sufficient_grades?(@school_class.id) }
+    
+    if students_to_move.any?
+      # Move students to target class
+      students_to_move.each do |student|
+        @school_class.students.delete(student)
+        target_class.students << student
+      end
+
+      redirect_to @school_class, notice: "#{students_to_move.size} student(s) with insufficient grades were transferred to #{target_class.name}."
+    else
+      redirect_to @school_class, notice: 'No students have insufficient grades to transfer.'
+    end
+  end
+
   private
 
   def set_school_class

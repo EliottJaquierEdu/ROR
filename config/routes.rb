@@ -24,7 +24,12 @@ Rails.application.routes.draw do
   end
   resources :rooms, concerns: :archivable
   resources :school_classes, concerns: :archivable do
-    resources :students, only: [:new, :create, :destroy], controller: 'school_class_students'
+    resources :students, only: [:new, :create, :destroy], controller: 'school_class_students' do
+      collection do
+        get :select_rest_class
+        post :move_to_rest
+      end
+    end
   end
 
   resources :people, concerns: :archivable
