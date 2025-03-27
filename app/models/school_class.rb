@@ -2,7 +2,7 @@ class SchoolClass < ApplicationRecord
   include WeeklyCourseable
   include Archivable
 
-  belongs_to :room, optional: true
+  belongs_to :room
   belongs_to :master, class_name: "Person", optional: true
   has_and_belongs_to_many :students, class_name: "Person", join_table: "people_school_classes"
 
@@ -11,6 +11,7 @@ class SchoolClass < ApplicationRecord
 
   validates :name, presence: true
   validates :year, presence: true, numericality: { only_integer: true }
+  validates :room_id, presence: true
 
   # String representation of a SchoolClass
   def to_s

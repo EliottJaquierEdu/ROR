@@ -75,6 +75,18 @@
             <%= form.label :subject_id, "Subject" %>
           </div>
         </div>
+
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.collection_select :teacher_id, 
+                Person.where(type: ['Teacher', 'Dean']), 
+                :id, 
+                :full_name, 
+                { include_blank: "Select teacher" }, 
+                { class: "form-select" } %>
+            <%= form.label :teacher_id, "Teacher" %>
+          </div>
+        </div>
       </div>
     </div>
   </div>
