@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   resources :courses, concerns: :archivable
   resources :rooms, concerns: :archivable
   resources :school_classes, concerns: :archivable do
-    resources :students, only: [:new, :create], controller: 'school_class_students'
+    resources :students, only: [:new, :create, :destroy], controller: 'school_class_students'
   end
 
   resources :people, concerns: :archivable
