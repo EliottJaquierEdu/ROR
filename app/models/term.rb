@@ -8,6 +8,10 @@ class Term < ApplicationRecord
   validates :end_at, presence: true
   validate :end_at_after_start_at
 
+  def to_s
+    name
+  end
+
   private
 
   def end_at_after_start_at

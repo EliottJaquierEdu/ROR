@@ -18,8 +18,13 @@
       <div class="row g-3">
         <div class="col-md-6">
           <div class="form-floating mb-3">
-            <%= form.text_field :term, class: "form-control", placeholder: "Term" %>
-            <%= form.label :term %>
+            <%= form.collection_select :term_id, 
+                Term.all, 
+                :id, 
+                :name, 
+                { include_blank: "Select term" }, 
+                { class: "form-select" } %>
+            <%= form.label :term_id, "Term" %>
           </div>
         </div>
         

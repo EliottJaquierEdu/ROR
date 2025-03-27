@@ -176,29 +176,7 @@ Our course system is designed to handle recurring weekly schedules in an academi
    - Each course instance has a specific date, representing when that particular session occurs
    - Courses are linked to a school class and subject (global information about the module, not specific about a particular date)
 
-2. **Term Management**
-   ```ruby
-   class Term < ApplicationRecord
-     has_many :courses
-     validates :name, presence: true, uniqueness: true
-     validates :start_at, :end_at, presence: true
-     validate :end_at_after_start_at
-   end
-
-   class Course < ApplicationRecord
-     belongs_to :term
-     validates :start_at, :end_at, :week_day, presence: true
-   end
-   ```
-
-   This design:
-   - Ensures data consistency by centralizing term information
-   - Prevents duplicate term names
-   - Validates term date ranges
-   - Makes it easier to manage and query courses by term
-   - Supports proper date validation within term boundaries
-
-3. **Weekly Schedule**
+2. **Weekly Schedule**
    ```ruby
    class Course < ApplicationRecord
      ...
