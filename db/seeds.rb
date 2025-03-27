@@ -222,7 +222,23 @@ end
 # Create School Class 1M1 with full schedule
 class_1m1 = SchoolClass.create!(
   year: 2024,
-  name: '1M1',
+  name: 'SI-T1A',
+  room: rooms[0],
+  master: teachers[0]  # Math teacher is class master
+)
+
+# School class for repeating student (failed grades)
+SchoolClass.create!(
+  year: 2025,
+  name: 'SI-T1A',
+  room: rooms[1],
+  master: teachers[2]
+)
+
+# School class for continuing SI-T1A 2024 students
+SchoolClass.create!(
+  year: 2025,
+  name: 'SI-T2A',
   room: rooms[0],
   master: teachers[0]  # Math teacher is class master
 )

@@ -210,7 +210,38 @@ This concern handles grade-related functionality for students.
 - Manages grade calculations and aggregations
 - Provides methods for viewing grades by term and subject
 - Calculates various types of averages
+- Handles grade filtering for failed school years
 
+#### Grade Filtering System
+The system implements a sophisticated filtering mechanism to handle grades from failed school years:
+
+1. **Time-Based Filtering**
+   - Grades are filtered based on their `effective_date`
+   - School year dates are defined by constants:
+     ```ruby
+     SCHOOL_YEAR_START_MONTH = 9  # September
+     SCHOOL_YEAR_END_MONTH = 8    # August
+     ```
+
+2. **Grade Categories**
+   - `applicable_grades`: Grades outside the failed school year period
+   - `failed_period_grades`: Grades from the failed school year period
+   - All calculations (averages, etc.) use only applicable grades
+
+3. **Failed Year Detection**
+   - Uses the new vs old school class year to determine the date range
+   - Only considers the most recent failed year (if a student fail in it's second year, his first year grade needs to remain)
+
+4. **Visual Representation**
+   - Applicable grades are displayed normally
+   - Failed period grades are shown with reduced opacity (to show visually that they are no longer applicable, but remains for a full historical purpose)
+   - All averages exclude grades from the failed period
+
+This system ensures that:
+- Grades from failed years don't affect current performance metrics
+- Historical data is preserved but visually distinguished
+- Calculations accurately reflect current academic standing
+- The system maintains data integrity while providing clear visual feedback
 
 ### WeeklySchedulable
 This concern provides helper methods for handling week-based date ranges.
@@ -343,3 +374,37 @@ Sorting is preserved across pagination:
   <%= paginate @courses, theme: 'bootstrap5' %>
 </div>
 ```
+
+## Student Promotion System
+
+### Overview
+The student promotion system handles the end-of-year process where students are either promoted to the next year or required to repeat their current year based on their academic performance.
+
+### Grade Requirements
+- Students with sufficient grades (average >= 4.0) are eligible for promotion to the next year
+- Students with insufficient grades remain in their current year and are moved to a repeat class
+- The system maintains historical grade data while ensuring only applicable grades affect current academic standing
+
+### Promotion Process
+1. **Initial Assessment**
+   - System identifies students eligible for promotion based on their grades
+   - Students are split into two groups:
+     - `@students_to_promote`: Students with sufficient grades
+     - `@students_to_repeat`: Students with insufficient grades
+
+2. **Class Selection**
+   - For promotion: Select a target (more advanced one, in level / difficulty) class in the next year (year + 1)
+   - For repeating: Select a repeat class in the next year (but with the same level)
+   - Both selections can be made independently
+
+3. **Processing**
+   - Students with sufficient grades are moved to the selected promotion class
+   - Students with insufficient grades are moved to the selected repeat class
+   - The system maintains all historical grade data while ensuring only applicable grades affect current academic standing
+
+4. **Grade Handling**
+   - Grades from failed years are preserved but marked as non-applicable
+   - Only grades from the current academic year affect promotion decisions
+   - Historical grades remain visible for reference but don't impact current standing
+
+NOTE: For now, we only know if a student repeat class by the master_id of the two class being different. If the master_id is not guarenteed to be the same accroos all year of one class, we will need to add a level/difficulty field to identify repeated classes.

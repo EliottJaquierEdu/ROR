@@ -29,35 +29,50 @@ class SchoolClassStudentsController < ApplicationController
 
   # GET /school_classes/:school_class_id/students/select_rest_class
   def select_rest_class
-    @students_to_move = @school_class.students.select { |student| !student.has_sufficient_grades?(@school_class.id) }
+    @students_to_promote = @school_class.students.select { |student| student.has_sufficient_grades?(@school_class.id) }
+    @students_to_repeat = @school_class.students.reject { |student| student.has_sufficient_grades?(@school_class.id) }
     
-    if @students_to_move.empty?
-      redirect_to @school_class, notice: 'No students have insufficient grades to transfer.'
+    if @students_to_promote.empty? && @students_to_repeat.empty?
+      redirect_to @school_class, notice: 'No students to process.'
     end
   end
 
   # POST /school_classes/:school_class_id/students/move_to_rest
   def move_to_rest
     target_class_id = params[:target_class_id]
+    repeat_class_id = params[:repeat_class_id]
     
-    unless target_class_id.present?
-      redirect_to select_rest_class_school_class_students_path(@school_class), alert: 'Please select a target class.'
+    unless target_class_id.present? || repeat_class_id.present?
+      redirect_to select_rest_class_school_class_students_path(@school_class), 
+                  alert: 'Please select at least one target class.'
       return
     end
 
-    target_class = SchoolClass.find(target_class_id)
-    students_to_move = @school_class.students.select { |student| !student.has_sufficient_grades?(@school_class.id) }
+    students_to_promote = @school_class.students.select { |student| student.has_sufficient_grades?(@school_class.id) }
+    students_to_repeat = @school_class.students.reject { |student| student.has_sufficient_grades?(@school_class.id) }
     
-    if students_to_move.any?
-      # Move students to target class
-      students_to_move.each do |student|
-        @school_class.students.delete(student)
-        target_class.students << student
+    success_messages = []
+    
+    if target_class_id.present? && students_to_promote.any?
+      target_class = SchoolClass.find(target_class_id)
+      students_to_promote.each do |student|
+        target_class.students << student unless target_class.students.include?(student)
       end
+      success_messages << "#{students_to_promote.size} student(s) were promoted to #{target_class.name}."
+    end
 
-      redirect_to @school_class, notice: "#{students_to_move.size} student(s) with insufficient grades were transferred to #{target_class.name}."
+    if repeat_class_id.present? && students_to_repeat.any?
+      repeat_class = SchoolClass.find(repeat_class_id)
+      students_to_repeat.each do |student|
+        repeat_class.students << student unless repeat_class.students.include?(student)
+      end
+      success_messages << "#{students_to_repeat.size} student(s) were moved to repeat class #{repeat_class.name}."
+    end
+
+    if success_messages.any?
+      redirect_to @school_class, notice: success_messages.join(' ')
     else
-      redirect_to @school_class, notice: 'No students have insufficient grades to transfer.'
+      redirect_to @school_class, notice: 'No students were processed.'
     end
   end
 

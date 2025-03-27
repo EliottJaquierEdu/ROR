@@ -107,7 +107,7 @@ class Person < ApplicationRecord
     # This method returns a hash of grades grouped by term
     grades_hash = {}
 
-    filtered_grades = grades_with_associations
+    filtered_grades = applicable_grades
     if school_class_id.present?
       filtered_grades = filtered_grades.joins(examination: { course: :school_class })
                                      .where(courses: { school_class_id: school_class_id })
@@ -169,7 +169,7 @@ class Person < ApplicationRecord
 
   # Calculate overall average across all grades or for a specific class
   def overall_average(school_class_id = nil)
-    filtered_grades = grades
+    filtered_grades = applicable_grades
     if school_class_id.present?
       filtered_grades = filtered_grades.joins(examination: { course: :school_class })
                                      .where(courses: { school_class_id: school_class_id })

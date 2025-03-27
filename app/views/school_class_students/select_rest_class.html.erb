@@ -1,59 +1,95 @@
-<% content_for :title, "Transfer Students with Insufficient Grades" %>
+<% content_for :title, "Process End of Year" %>
 
 <div class="card shadow-sm">
   <div class="card-header bg-light">
     <div class="d-flex justify-content-between align-items-center">
-      <h5 class="card-title mb-0">Transfer Students from <%= "#{@school_class.year}-#{@school_class.name}" %></h5>
+      <h5 class="card-title mb-0">Process End of Year for <%= "#{@school_class.year}-#{@school_class.name}" %></h5>
       <%= link_to @school_class, class: "btn btn-sm btn-outline-secondary" do %>
         <i class="bi bi-arrow-left"></i> Back to Class
       <% end %>
     </div>
   </div>
   <div class="card-body">
-    <div class="mb-4">
-      <h6 class="text-muted">Students to be transferred (insufficient grades):</h6>
-      <div class="list-group list-group-flush">
-        <% @students_to_move.each do |student| %>
-          <div class="list-group-item">
-            <%= student.full_name %>
-            <span class="badge bg-warning text-dark ms-2">Average: <%= student.overall_average(@school_class.id) %></span>
-          </div>
-        <% end %>
-      </div>
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle"></i>
+      This process will promote students with sufficient grades to year <%= @school_class.year + 1 %> and move students with insufficient grades to a repeat class.
     </div>
 
-    <%= form_with(url: move_to_rest_school_class_students_path(@school_class), method: :post) do |f| %>
-      <div class="mb-3">
-        <h6 class="text-muted mb-2">Select Target Class</h6>
-        <div class="row">
-          <div class="col-md-6">
+    <%= form_with(url: move_to_rest_school_class_students_path(@school_class), method: :post, id: "end-year-form") do |f| %>
+      <% if @students_to_promote.any? %>
+        <div class="mb-4">
+          <h6 class="text-muted">Students to be promoted to Year <%= @school_class.year + 1 %>:</h6>
+          <div class="list-group list-group-flush mb-3">
+            <% @students_to_promote.each do |student| %>
+              <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <%= student.full_name %>
+                    <span class="badge bg-success text-white ms-2">Average: <%= sprintf('%.1f', student.overall_average(@school_class.id)) %></span>
+                  </div>
+                  <i class="bi bi-arrow-up-circle text-success"></i>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">Select Target Class for Year <%= @school_class.year + 1 %></h6>
             <%= f.collection_select :target_class_id,
-                SchoolClass.where(year: @school_class.year)
+                SchoolClass.where(year: @school_class.year + 1)
+                          .order(:name),
+                :id,
+                ->(sc) { "#{sc.name} (#{sc.year})" },
+                { include_blank: "Select promotion class" },
+                { class: "form-select", id: "target-class-select", onchange: "window.checkForm()" } %>
+            <% if SchoolClass.where(year: @school_class.year + 1).empty? %>
+              <div class="text-muted mt-2">
+                <small>No classes available in year <%= @school_class.year + 1 %></small>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @students_to_repeat.any? %>
+        <div class="mb-4">
+          <h6 class="text-muted">Students to repeat Year <%= @school_class.year %>:</h6>
+          <div class="list-group list-group-flush mb-3">
+            <% @students_to_repeat.each do |student| %>
+              <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <%= student.full_name %>
+                    <span class="badge bg-danger text-white ms-2">Average: <%= sprintf('%.1f', student.overall_average(@school_class.id)) %></span>
+                  </div>
+                  <i class="bi bi-arrow-repeat text-danger"></i>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">Select Repeat Class for Year <%= @school_class.year + 1 %></h6>
+            <%= f.collection_select :repeat_class_id,
+                SchoolClass.where(year: @school_class.year + 1)
                           .where.not(id: @school_class.id)
                           .order(:name),
                 :id,
-                ->(sc) { "#{sc.name}" },
-                { include_blank: "Select class" },
-                { class: "form-select" } %>
-          </div>
-          <div class="col-md-6">
-            <%= f.submit "Transfer Students", class: "btn btn-warning", disabled: true, id: "move-button" %>
+                ->(sc) { "#{sc.name} (#{sc.year})" },
+                { include_blank: "Select repeat class" },
+                { class: "form-select", id: "repeat-class-select", onchange: "window.checkForm()" } %>
+            <% if SchoolClass.where(year: @school_class.year+1).where.not(id: @school_class.id).empty? %>
+              <div class="text-muted mt-2">
+                <small>No repeat classes available in year <%= @school_class.year+1 %></small>
+              </div>
+            <% end %>
           </div>
         </div>
+      <% end %>
+
+      <div class="d-flex justify-content-end">
+        <%= f.submit "Process End of Year", class: "btn btn-primary" do %>
+          <i class="bi bi-check-circle"></i> Process End of Year
+        <% end %>
       </div>
     <% end %>
   </div>
 </div>
-
-<% content_for :javascript do %>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const select = document.querySelector('select[name="target_class_id"]');
-      const button = document.getElementById('move-button');
-      
-      select.addEventListener('change', function() {
-        button.disabled = !this.value;
-      });
-    });
-  </script>
-<% end %> 
