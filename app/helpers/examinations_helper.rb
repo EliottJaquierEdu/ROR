@@ -101,6 +101,21 @@ module ExaminationsHelper
     false
   end
   
+  # Check if the current user can manage examinations for a course
+  def can_manage_examinations?(course)
+    return false unless person_signed_in?
+    
+    # Deans can manage examinations for all courses
+    return true if current_person.dean?
+    
+    # Teachers who are class masters can manage examinations for their classes
+    if current_person.teacher?
+      return course.school_class&.master_id == current_person.id
+    end
+    
+    false
+  end
+  
   # Get the list of examinations the current user can see
   def visible_examinations
     return [] unless person_signed_in?
