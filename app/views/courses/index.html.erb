@@ -2,107 +2,74 @@
 
 <% content_for :title, "Courses" %>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>Courses</h1>
-  <% if can_create_course? %>
-    <%= link_to new_course_path, class: "btn btn-primary" do %>
-      <i class="bi bi-plus-circle"></i> New course
-    <% end %>
-  <% end %>
-</div>
-
-<div class="card shadow-sm mb-4">
-  <div class="card-body">
-    <%= form_tag courses_path, method: :get, class: "row g-3" do %>
-      <div class="col-md-3">
-        <%= label_tag :term, "Term", class: "form-label" %>
-        <%= select_tag :term, 
-            options_for_select(Course.joins(:term).distinct.pluck('terms.name').compact, params[:term]),
-            prompt: "All Terms",
-            class: "form-select" %>
-      </div>
-      
-      <div class="col-md-3">
-        <%= label_tag :week_day, "Day", class: "form-label" %>
-        <%= select_tag :week_day,
-            options_for_select([
-              ["Monday", 1], ["Tuesday", 2], ["Wednesday", 3],
-              ["Thursday", 4], ["Friday", 5], ["Saturday", 6], ["Sunday", 7]
-            ], params[:week_day]),
-            prompt: "All Days",
-            class: "form-select" %>
-      </div>
-      
-      <div class="col-md-3">
-        <%= label_tag :year, "Year", class: "form-label" %>
-        <%= select_tag :year,
-            options_for_select(SchoolClass.distinct.pluck(:year).compact.sort, params[:year]),
-            prompt: "All Years",
-            class: "form-select" %>
-      </div>
-      
-      <div class="col-md-3">
-        <%= label_tag :subject_id, "Subject", class: "form-label" %>
-        <%= select_tag :subject_id,
-            options_from_collection_for_select(Subject.all, :id, :name, params[:subject_id]),
-            prompt: "All Subjects",
-            class: "form-select" %>
-      </div>
-      
-      <div class="col-12">
-        <%= submit_tag "Filter", class: "btn btn-primary me-2" %>
-        <%= link_to "Clear Filters", courses_path, class: "btn btn-outline-secondary" %>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-<div class="card shadow-sm">
-  <div class="card-body">
-    <div class="table-responsive">
-      <table class="table table-hover">
-        <thead class="table-light">
-          <tr>
-            <th><%= sortable "term" %></th>
-            <th><%= sortable "week_day", "Day" %></th>
-            <th><%= sortable "start_at", "Time" %></th>
-            <th><%= sortable "school_classes.name", "Class" %></th>
-            <th><%= sortable "subjects.name", "Subject" %></th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @courses.each do |course| %>
-            <tr>
-              <td><%= course.term %></td>
-              <td>
-                <% days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %>
-                <%= days[course.week_day - 1] if course.week_day.between?(1, 7) %>
-              </td>
-              <td>
-                <%= course.start_at&.strftime("%H:%M") %> - <%= course.end_at&.strftime("%H:%M") %>
-              </td>
-              <td>
-                <% if course.school_class %>
-                  <%= link_to "#{course.school_class.name} (Year #{course.school_class.year})", course.school_class %>
-                <% end %>
-              </td>
-              <td>
-                <% if course.subject %>
-                  <%= link_to course.subject.name, course.subject %>
-                <% end %>
-              </td>
-              <td>
-                <%= render 'shared/table_actions', resource: course, resource_name: 'course' %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Courses</h1>
+    <div>
+      <% if current_person.dean? %>
+        <%= link_to "New Course", new_course_path, class: "btn btn-primary me-2" %>
+        <%= link_to "Batch Create", batch_new_courses_path, class: "btn btn-success" %>
+      <% end %>
     </div>
-    
-    <div class="d-flex justify-content-center mt-4">
-      <%= paginate @courses %>
+  </div>
+
+  <% if params[:show_archived] %>
+    <div class="alert alert-info">
+      Showing archived courses. <%= link_to "Show active courses", courses_path, class: "alert-link" %>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      Showing active courses. <%= link_to "Show archived courses", courses_path(show_archived: true), class: "alert-link" %>
+    </div>
+  <% end %>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Term</th>
+              <th>Class</th>
+              <th>Teacher</th>
+              <th>Day</th>
+              <th>Time</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @courses.each do |course| %>
+              <tr>
+                <td><%= course.subject&.name %></td>
+                <td><%= course.term&.name %></td>
+                <td><%= course.school_class&.name %></td>
+                <td><%= course.teacher&.full_name %></td>
+                <td><%= course.weekday_name %></td>
+                <td><%= course.start_at.strftime("%H:%M") %> - <%= course.end_at.strftime("%H:%M") %></td>
+                <td>
+                  <div class="btn-group">
+                    <%= link_to "View", course, class: "btn btn-sm btn-outline-primary" %>
+                    <% if current_person.dean? %>
+                      <%= link_to "Edit", edit_course_path(course), class: "btn btn-sm btn-outline-secondary" %>
+                    <% end %>
+                    <% if current_person.dean? %>
+                      <%= button_to course.archived? ? "Unarchive" : "Archive", 
+                          course.archived? ? unarchive_course_path(course) : archive_course_path(course),
+                          method: :patch,
+                          class: "btn btn-sm #{course.archived? ? 'btn-outline-success' : 'btn-outline-warning'}" %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-center mt-4">
+        <%= paginate @courses %>
+      </div>
     </div>
   </div>
 </div>

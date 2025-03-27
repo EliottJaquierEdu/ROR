@@ -1,0 +1,142 @@
+<% content_for :title, "Batch Create Courses" %>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h1 class="h3 mb-0">Batch Create Courses</h1>
+        </div>
+        <div class="card-body">
+          <%= form_with(model: @course, url: batch_create_courses_path, class: "needs-validation") do |form| %>
+            <% if @course.errors.any? %>
+              <div class="alert alert-danger">
+                <h5><%= pluralize(@course.errors.count, "error") %> prohibited this course from being saved:</h5>
+                <ul class="mb-0">
+                  <% @course.errors.each do |error| %>
+                    <li><%= error.full_message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <% if flash[:alert] %>
+              <div class="alert alert-warning">
+                <%= flash[:alert] %>
+              </div>
+            <% end %>
+
+            <div class="card shadow-sm mb-4">
+              <div class="card-header bg-light">
+                <h5 class="card-title mb-0">Course Information</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                      <%= form.collection_select :term_id, 
+                          Term.all, 
+                          :id, 
+                          :name, 
+                          { include_blank: "Select term" }, 
+                          { class: "form-select" } %>
+                      <%= form.label :term_id, "Term" %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                      <%= form.select :week_day, 
+                          [['Monday', 1], ['Tuesday', 2], ['Wednesday', 3], ['Thursday', 4], ['Friday', 5], ['Saturday', 6], ['Sunday', 7]], 
+                          { include_blank: "Select day" }, 
+                          { class: "form-select" } %>
+                      <%= form.label :week_day, "Day of Week" %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                      <%= form.time_field :start_at, class: "form-control", placeholder: "Start time" %>
+                      <%= form.label :start_at, "Start Time" %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                      <%= form.time_field :end_at, class: "form-control", placeholder: "End time" %>
+                      <%= form.label :end_at, "End Time" %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                      <%= form.collection_select :school_class_id, 
+                          SchoolClass.all, 
+                          :id, 
+                          ->(sc) { "#{sc.name} (Year #{sc.year})" }, 
+                          { include_blank: "Select class" }, 
+                          { class: "form-select" } %>
+                      <%= form.label :school_class_id, "School Class" %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                      <%= form.collection_select :subject_id, 
+                          Subject.all, 
+                          :id, 
+                          :name, 
+                          { include_blank: "Select subject" }, 
+                          { class: "form-select" } %>
+                      <%= form.label :subject_id, "Subject" %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                      <%= form.collection_select :teacher_id, 
+                          Person.where(type: ['Teacher', 'Dean']), 
+                          :id, 
+                          :full_name, 
+                          { include_blank: "Select teacher" }, 
+                          { class: "form-select" } %>
+                      <%= form.label :teacher_id, "Teacher" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+              <div class="card-header bg-light">
+                <h5 class="card-title mb-0">Date Range</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                      <%= form.date_field :start_date, class: "form-control", placeholder: "Start date" %>
+                      <%= form.label :start_date, "Start Date" %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                      <%= form.date_field :end_date, class: "form-control", placeholder: "End date" %>
+                      <%= form.label :end_date, "End Date" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <%= form.submit "Create Courses", class: "btn btn-primary" %>
+              <%= link_to "Cancel", courses_path, class: "btn btn-outline-secondary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

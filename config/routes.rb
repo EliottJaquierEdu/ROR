@@ -16,7 +16,12 @@ Rails.application.routes.draw do
   resources :grades, concerns: :archivable
   resources :examinations, concerns: :archivable
   resources :subjects, concerns: :archivable
-  resources :courses, concerns: :archivable
+  resources :courses, concerns: :archivable do
+    collection do
+      get :batch_new
+      post :batch_create
+    end
+  end
   resources :rooms, concerns: :archivable
   resources :school_classes, concerns: :archivable do
     resources :students, only: [:new, :create, :destroy], controller: 'school_class_students'

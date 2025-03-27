@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   before_action :set_course, only: %i[ show edit update archive unarchive ]
   before_action :authorize_view, only: %i[ show ]
   before_action :authorize_edit, only: %i[ edit update ]
-  before_action :authorize_create, only: %i[ new create ]
+  before_action :authorize_create, only: %i[ new create batch_create ]
   before_action :authorize_archive, only: %i[ archive ]
   before_action :authorize_unarchive, only: %i[ unarchive ]
 
@@ -27,6 +27,11 @@ class CoursesController < ApplicationController
   def edit
   end
 
+  # GET /courses/batch_new
+  def batch_new
+    @course = Course.new
+  end
+
   # POST /courses or /courses.json
   def create
     @course = Course.new(course_params)
@@ -38,6 +43,50 @@ class CoursesController < ApplicationController
       else
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @course.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # POST /courses/batch_create
+  def batch_create
+    @course = Course.new(course_params)
+    start_date = Date.parse(params[:course][:start_date])
+    end_date = Date.parse(params[:course][:end_date])
+    week_day = params[:course][:week_day].to_i
+
+    # Calculate all dates between start_date and end_date that match the week_day
+    dates = (start_date..end_date).select { |d| d.wday == week_day }
+
+    # Create a course for each date
+    courses_created = 0
+    errors = []
+
+    dates.each do |date|
+      course = Course.new(course_params)
+      course.start_at = date.to_time.change(
+        hour: @course.start_at.hour,
+        min: @course.start_at.min
+      )
+      course.end_at = date.to_time.change(
+        hour: @course.end_at.hour,
+        min: @course.end_at.min
+      )
+      
+      if course.save
+        courses_created += 1
+      else
+        errors << "Failed to create course for #{date}: #{course.errors.full_messages.join(', ')}"
+      end
+    end
+
+    respond_to do |format|
+      if errors.empty?
+        format.html { redirect_to courses_path, notice: "Successfully created #{courses_created} courses." }
+      else
+        format.html { 
+          flash.now[:alert] = "Created #{courses_created} courses with errors: #{errors.join('; ')}"
+          render :batch_new, status: :unprocessable_entity 
+        }
       end
     end
   end
