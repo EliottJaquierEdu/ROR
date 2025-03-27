@@ -334,12 +334,45 @@ term_dates.each do |term_name, dates|
 
           # Create grades for each student
           students.each do |student|
-            Grade.create!(
-              value: rand(3.5..6.0).round(1),
-              effective_date: course.start_at + 1.week,
-              student: student,
-              examination: examination
-            )
+            # Determine student's performance category based on their first grade
+            if student.grades.empty?
+              # For new students, randomly assign their category
+              student_category = rand
+            else
+              # For existing students, use their average to determine category
+              avg_grade = student.grades.average(:value)
+              if avg_grade < 4.0
+                student_category = 0.0 # Failing
+              elsif avg_grade < 4.5
+                student_category = 0.5 # At risk
+              else
+                student_category = 1.0 # Passing
+              end
+            end
+
+            # Generate grade based on student's category
+            if student_category < 0.2 # Failing students (20% of class)
+              Grade.create!(
+                value: rand(1.0..3.9).round(1),
+                effective_date: course.start_at + 1.week,
+                student: student,
+                examination: examination
+              )
+            elsif student_category < 0.5 # At-risk students (30% of class)
+              Grade.create!(
+                value: rand(4.0..4.4).round(1),
+                effective_date: course.start_at + 1.week,
+                student: student,
+                examination: examination
+              )
+            else # Passing students (50% of class)
+              Grade.create!(
+                value: rand(4.5..6.0).round(1),
+                effective_date: course.start_at + 1.week,
+                student: student,
+                examination: examination
+              )
+            end
           end
         end
       end
