@@ -54,6 +54,9 @@
                 <% if @course.school_class.room %>
                   <p class="text-muted mb-0">Room: <%= @course.school_class.room.name %></p>
                 <% end %>
+                <% if @course.school_class.master %>
+                  <p class="text-muted mb-0">Master: <%= @course.school_class.master.full_name %></p>
+                <% end %>
               </div>
             </div>
             <div class="mt-2">
