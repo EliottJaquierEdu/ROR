@@ -39,21 +39,61 @@
               <label>Student (pre-selected)</label>
             <% else %>
               <% if current_person.dean? %>
-                <%= form.collection_select :person_id, 
-                    Student.all, 
-                    :id, 
-                    ->(student) { "#{student.firstname} #{student.lastname}" }, 
-                    { include_blank: "Select student" }, 
-                    { class: "form-select" } %>
+                <% if params[:examination_id].present? %>
+                  <% examination = Examination.find_by(id: params[:examination_id]) %>
+                  <% if examination&.course&.school_class %>
+                    <%= form.collection_select :person_id, 
+                        examination.course.school_class.students, 
+                        :id, 
+                        ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                        { include_blank: "Select student" }, 
+                        { class: "form-select" } %>
+                  <% else %>
+                    <%= form.collection_select :person_id, 
+                        Student.all, 
+                        :id, 
+                        ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                        { include_blank: "Select student" }, 
+                        { class: "form-select" } %>
+                  <% end %>
+                <% else %>
+                  <%= form.collection_select :person_id, 
+                      Student.all, 
+                      :id, 
+                      ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                      { include_blank: "Select student" }, 
+                      { class: "form-select" } %>
+                <% end %>
               <% elsif current_person.teacher? %>
-                <% class_ids = SchoolClass.where(master_id: current_person.id).pluck(:id) %>
-                <% students = Student.joins(:school_classes).where(school_classes: { id: class_ids }).distinct %>
-                <%= form.collection_select :person_id, 
-                    students, 
-                    :id, 
-                    ->(student) { "#{student.firstname} #{student.lastname}" }, 
-                    { include_blank: "Select student" }, 
-                    { class: "form-select" } %>
+                <% if params[:examination_id].present? %>
+                  <% examination = Examination.find_by(id: params[:examination_id]) %>
+                  <% if examination&.course&.school_class %>
+                    <%= form.collection_select :person_id, 
+                        examination.course.school_class.students, 
+                        :id, 
+                        ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                        { include_blank: "Select student" }, 
+                        { class: "form-select" } %>
+                  <% else %>
+                    <% class_ids = SchoolClass.where(master_id: current_person.id).pluck(:id) %>
+                    <% students = Student.joins(:school_classes).where(school_classes: { id: class_ids }).distinct %>
+                    <%= form.collection_select :person_id, 
+                        students, 
+                        :id, 
+                        ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                        { include_blank: "Select student" }, 
+                        { class: "form-select" } %>
+                  <% end %>
+                <% else %>
+                  <% class_ids = SchoolClass.where(master_id: current_person.id).pluck(:id) %>
+                  <% students = Student.joins(:school_classes).where(school_classes: { id: class_ids }).distinct %>
+                  <%= form.collection_select :person_id, 
+                      students, 
+                      :id, 
+                      ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                      { include_blank: "Select student" }, 
+                      { class: "form-select" } %>
+                <% end %>
               <% end %>
               <%= form.label :person_id, "Student" %>
             <% end %>

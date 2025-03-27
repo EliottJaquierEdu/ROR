@@ -30,6 +30,11 @@ class GradesController < ApplicationController
         redirect_to examinations_path, alert: "You are not authorized to create grades for this examination."
         return
       end
+      
+      # Pre-fill the effective_date with the course's date if available
+      if examination.course&.start_at
+        @grade.effective_date = examination.course.start_at
+      end
     end
   end
 
@@ -42,9 +47,20 @@ class GradesController < ApplicationController
     @grade = Grade.new(grade_params)
 
     # Check if the user can create a grade for this examination
-    unless helpers.can_create_grade_for_examination?(Examination.find_by(id: @grade.examination_id))
+    examination = Examination.find_by(id: @grade.examination_id)
+    unless helpers.can_create_grade_for_examination?(examination)
       redirect_to grades_path, alert: "You are not authorized to create grades for this examination."
       return
+    end
+
+    # Validate that the student belongs to the examination's course's school class
+    if examination&.course&.school_class
+      student = Person.find_by(id: @grade.person_id)
+      unless student&.school_classes&.include?(examination.course.school_class)
+        @grade.errors.add(:person_id, "must be a student in the class associated with this examination")
+        render :new, status: :unprocessable_entity
+        return
+      end
     end
 
     respond_to do |format|
