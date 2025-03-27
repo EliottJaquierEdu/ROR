@@ -77,18 +77,15 @@
                     <%= link_to student.full_name, student, class: "text-decoration-none" %>
                     <% if current_person.teacher? %>
                       <% average = student.overall_average(@school_class.id) %>
-                      <% if average < 4.0 %>
+                      <% if !student.has_sufficient_grades?(@school_class.id) %>
                         <span class="badge bg-danger text-white ms-2">
                           <i class="bi bi-exclamation-triangle"></i> Failing (Avg: <%= sprintf('%.1f', average) %>)
                         </span>
-                      <% elsif average < 4.5 %>
+                      <% elsif student.has_warning_grades?(@school_class.id) %>
                         <span class="badge bg-warning text-dark ms-2">
                           <i class="bi bi-exclamation-circle"></i> At Risk (Avg: <%= sprintf('%.1f', average) %>)
                         </span>
                       <% end %>
-                    <% end %>
-                    <% if !student.has_sufficient_grades?(@school_class.id) %>
-                      <span class="badge bg-warning text-dark ms-2">Insufficient Grades</span>
                     <% end %>
                   </div>
                   <% if can_manage_students?(@school_class) %>

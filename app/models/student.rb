@@ -39,4 +39,20 @@ class Student < Person
     # Consider grades sufficient if average is at least 4.0
     average_grade >= 4.0
   end
+
+  # Check if a student need attentions 
+  def has_warning_grades?(school_class_id)
+    # Get all grades for the class
+    class_grades = grades.joins(examination: { course: :school_class })
+                        .where(courses: { school_class_id: school_class_id })
+
+    # Check if there are any grades
+    return false if class_grades.empty?
+
+    # Calculate average grade
+    average_grade = class_grades.average(:value).to_f
+
+    # Consider attentionn needed if < 4.5
+    average_grade < 4.5
+  end
 end
