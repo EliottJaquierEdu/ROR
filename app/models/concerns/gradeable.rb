@@ -6,7 +6,7 @@ module Gradeable
   end
 
   def grades_with_associations
-    grades.includes(examination: { course: :subject })
+    grades.includes(examination: { course: [:subject, :term] })
   end
 
   def grades_by_term(school_class_id = nil)
@@ -21,8 +21,8 @@ module Gradeable
     filtered_grades.each do |grade|
       term = grade.examination&.course&.term
       next unless term
-      grades_hash[term] ||= []
-      grades_hash[term] << grade
+      grades_hash[term.name] ||= []
+      grades_hash[term.name] << grade
     end
 
     grades_hash
@@ -31,30 +31,30 @@ module Gradeable
   def grades_by_term_and_subject(school_class_id = nil)
     result = {}
 
-    grades_by_term(school_class_id).each do |term, term_grades|
-      result[term] = {}
+    grades_by_term(school_class_id).each do |term_name, term_grades|
+      result[term_name] = {}
 
       term_grades.each do |grade|
         subject = grade.examination&.course&.subject
         next unless subject
 
-        result[term][subject] ||= []
-        result[term][subject] << grade
+        result[term_name][subject] ||= []
+        result[term_name][subject] << grade
       end
     end
 
     result
   end
 
-  def term_average(term, school_class_id = nil)
-    term_grades = grades_by_term(school_class_id)[term]
+  def term_average(term_name, school_class_id = nil)
+    term_grades = grades_by_term(school_class_id)[term_name]
     return 0 if term_grades.nil? || term_grades.empty?
 
     term_grades.sum { |g| g.value } / term_grades.size
   end
 
-  def subject_average(term, subject, school_class_id = nil)
-    term_subject_data = grades_by_term_and_subject(school_class_id)[term]
+  def subject_average(term_name, subject, school_class_id = nil)
+    term_subject_data = grades_by_term_and_subject(school_class_id)[term_name]
     return 0 if term_subject_data.nil?
 
     subject_grades = term_subject_data[subject]

@@ -29,24 +29,24 @@
             <% course = Course.find_by(id: params[:course_id]) %>
             <% if course %>
               <div class="form-control-plaintext">
-                <strong>Course:</strong> <%= course.subject&.name %> - Term <%= course.term %>
+                <strong>Course:</strong> <%= course.subject&.name %> - Term <%= course.term&.name %>
               </div>
             <% end %>
           <% else %>
             <div class="form-floating mb-3">
               <% if current_person.dean? %>
                 <%= form.collection_select :course_id, 
-                    Course.includes(:subject).all, 
+                    Course.includes(:subject, :term).all, 
                     :id, 
-                    ->(course) { "#{course.subject&.name} - Term #{course.term}" }, 
+                    ->(course) { "#{course.subject&.name} - Term #{course.term&.name}" }, 
                     { include_blank: "Select course" }, 
                     { class: "form-select" } %>
               <% elsif current_person.teacher? %>
                 <%= form.collection_select :course_id, 
-                    Course.includes(:subject, :school_class)
+                    Course.includes(:subject, :term, :school_class)
                           .where(school_class: { master_id: current_person.id }), 
                     :id, 
-                    ->(course) { "#{course.subject&.name} - Term #{course.term}" }, 
+                    ->(course) { "#{course.subject&.name} - Term #{course.term&.name}" }, 
                     { include_blank: "Select course" }, 
                     { class: "form-select" } %>
               <% end %>

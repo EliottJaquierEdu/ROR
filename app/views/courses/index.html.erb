@@ -17,7 +17,7 @@
       <div class="col-md-3">
         <%= label_tag :term, "Term", class: "form-label" %>
         <%= select_tag :term, 
-            options_for_select(Course.distinct.pluck(:term).compact, params[:term]),
+            options_for_select(Course.joins(:term).distinct.pluck('terms.name').compact, params[:term]),
             prompt: "All Terms",
             class: "form-select" %>
       </div>

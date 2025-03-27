@@ -289,6 +289,13 @@ def combine_date_time(date, time_str)
 end
 
 term_dates.each do |term_name, dates|
+  # Create the term first
+  term = Term.create!(
+    name: term_name,
+    start_at: dates[:start],
+    end_at: dates[:end]
+  )
+
   # For each week in the term
   current_date = dates[:start]
   while current_date <= dates[:end]
@@ -309,7 +316,7 @@ term_dates.each do |term_name, dates|
 
         # Create the course with proper start and end times
         course = Course.create!(
-          term: term_name,
+          term: term,
           start_at: combine_date_time(weekday_date, period[:start_time]),
           end_at: combine_date_time(weekday_date, period[:end_time]),
           week_day: day,

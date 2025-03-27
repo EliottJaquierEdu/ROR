@@ -4,9 +4,9 @@ class Course < ApplicationRecord
   belongs_to :school_class
   belongs_to :subject
   belongs_to :teacher, class_name: 'Person'
+  belongs_to :term
   has_many :examinations, dependent: :destroy
 
-  validates :term, presence: true
   validates :start_at, presence: true
   validates :end_at, presence: true
   validates :week_day, presence: true,
@@ -14,7 +14,7 @@ class Course < ApplicationRecord
 
   # String representation of a Course
   def to_s
-    "#{subject&.name} - #{term} (#{school_class&.name})"
+    "#{subject&.name} - #{term&.name} (#{school_class&.name})"
   end
 
   # JSON representation of a Course
@@ -22,7 +22,8 @@ class Course < ApplicationRecord
     super(options.merge(
       include: {
         subject: { only: [:id, :name] },
-        school_class: { only: [:id, :name, :year] }
+        school_class: { only: [:id, :name, :year] },
+        term: { only: [:id, :name] }
       },
       methods: [:weekday_name]
     ))

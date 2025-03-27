@@ -32,6 +32,16 @@ Examinations are always linked to a specific course instance (see course design 
 - Grades and other related data can reference the course date when needed
 This eliminate the potential date mismatch between courses and examinations (making it compliant with SQL normal forms)
 
+### Term Externalization
+We externalized the term from courses into its own table to improve data consistency and management:
+- Terms are now first-class entities with their own attributes (name, start_at, end_at)
+- Prevents duplicate term names through database constraints
+- Centralizes term date validation and management
+- Makes it easier to query and manage courses by term
+- Reduces data redundancy by storing term information once
+- Maintains referential integrity through foreign key constraints
+This change follows database normalization principles and makes the system more maintainable.
+
 ### Teacher-Course Relationship
 We added a direct relationship between teachers and courses to establish clear ownership and responsibility within the academic system:
    - Each course must have an assigned teacher. This creates clear accountability for course delivery and enables tracking of teacher workload and scheduling
@@ -160,12 +170,35 @@ The views adapt their content based on user type (ex. show only the grades of th
 Our course system is designed to handle recurring weekly schedules in an academic setting:
 
 1. **Course Structure**
-   - Each course has a specific term (e.g., "Autumn Semester 2024")
+   - Each course belongs to a specific term (e.g., "Autumn Semester 2024")
+   - Terms have their own start and end dates, ensuring data consistency
    - Courses occur on fixed weekdays with set start and end times
    - Each course instance has a specific date, representing when that particular session occurs
    - Courses are linked to a school class and subject (global information about the module, not specific about a particular date)
 
-2. **Weekly Schedule**
+2. **Term Management**
+   ```ruby
+   class Term < ApplicationRecord
+     has_many :courses
+     validates :name, presence: true, uniqueness: true
+     validates :start_at, :end_at, presence: true
+     validate :end_at_after_start_at
+   end
+
+   class Course < ApplicationRecord
+     belongs_to :term
+     validates :start_at, :end_at, :week_day, presence: true
+   end
+   ```
+
+   This design:
+   - Ensures data consistency by centralizing term information
+   - Prevents duplicate term names
+   - Validates term date ranges
+   - Makes it easier to manage and query courses by term
+   - Supports proper date validation within term boundaries
+
+3. **Weekly Schedule**
    ```ruby
    class Course < ApplicationRecord
      ...

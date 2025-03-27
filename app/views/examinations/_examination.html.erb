@@ -8,7 +8,7 @@
     <p>
       <strong>Course:</strong>
       <% if examination.course %>
-        <%= link_to "#{examination.course.subject&.name} - Term #{examination.course.term}", examination.course %>
+        <%= link_to "#{examination.course.subject&.name} - Term #{examination.course.term&.name}", examination.course %>
       <% else %>
         <span class="text-muted">None</span>
       <% end %>
