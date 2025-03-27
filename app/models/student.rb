@@ -21,7 +21,10 @@ class Student < Person
   end
 
   def load_show_data(selected_week = nil)
-    grades_with_associations.to_a
+    {
+      grades: grades_with_associations.to_a,
+      school_classes: school_classes.includes(:master, :room)
+    }
   end
 
   # Check if a student has sufficient grades in a class

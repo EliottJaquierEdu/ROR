@@ -24,6 +24,8 @@ class PeopleController < ApplicationController
     if @person.teacher?
       @school_classes = data[:school_classes]
       @week_courses = data[:week_courses]
+    elsif @person.student?
+      @school_classes = data[:school_classes]
     end
   end
 
