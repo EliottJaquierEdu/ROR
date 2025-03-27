@@ -76,7 +76,22 @@ rails server
 2. **Access the Application**
    The application will run on [http://localhost:3000](http://localhost:3000).
 
-3. **Environment Variables**
+3. **Example Accounts**
+   After running `rails db:seed`, you can connect with the following accounts:
+
+   **Dean Account:**
+   - Email: `pierre.dubois@example.com`
+   - Password: `password`
+
+   **Teacher Account:**
+   - Email: `sophie.blanc@example.com`
+   - Password: `password`
+
+   **Student Account:**
+   - Email: `marie.favre@example.com`
+   - Password: `password`
+
+4. **Environment Variables**
     - Use `config/master.key` for Rails credentials.
     - For production deployments, pass `RAILS_MASTER_KEY` to the Docker container.
 
@@ -98,7 +113,7 @@ rails test
 ```
 
 2. **System Tests**  
-   To test the application’s end-to-end workflows, run system tests:
+   To test the application's end-to-end workflows, run system tests:
 ```shell script
 rails test:system
 ```
