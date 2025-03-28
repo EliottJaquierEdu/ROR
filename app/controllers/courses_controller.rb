@@ -76,6 +76,13 @@ class CoursesController < ApplicationController
         min: @course.end_at.min
       )
       
+      # Ensure the course is within the term's date range
+      term = Term.find(course.term_id)
+      if date < term.start_at || date > term.end_at
+        errors << "Course for #{date} is outside the term's date range (#{term.start_at.to_date} to #{term.end_at.to_date})"
+        next
+      end
+      
       if course.save
         courses_created += 1
       else
