@@ -260,12 +260,33 @@
                 <h6 class="card-subtitle mb-2 text-muted">Overall Performance</h6>
                 <div class="d-flex align-items-center">
                   <span class="h4 mb-0 me-2">
-                    <span class="badge <%= grade_status_class(student.overall_average(params[:selected_class])) %>">
-                      <%= format_grade(student.overall_average(params[:selected_class])) %>
+                    <span class="badge <%= grade_status_class(student.overall_average) %>">
+                      <%= format_grade(student.overall_average) %>
                     </span>
                   </span>
-                  </div>
                 </div>
+                <small class="text-muted mt-2 d-block">
+                  <i class="bi bi-info-circle"></i>
+                  Only grades from successful school years are included in the overall average.
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 border-0 bg-white shadow-sm">
+              <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Performance This Year</h6>
+                <div class="d-flex align-items-center">
+                  <span class="h4 mb-0 me-2">
+                    <span class="badge <%= grade_status_class(student.overall_average(student.school_classes.last.id)) %>">
+                      <%= format_grade(student.overall_average(student.school_classes.last.id)) %>
+                    </span>
+                  </span>
+                </div>
+                <small class="text-muted mt-2 d-block">
+                  <i class="bi bi-info-circle"></i>
+                  Average grade for the current school year.
+                </small>
               </div>
             </div>
           </div>
