@@ -345,7 +345,7 @@ term_dates.each do |term_name, dates|
         )
 
         # Create examinations (only two per course per term)
-        if rand < 0.3 # 30% chance of having an exam this week
+        if rand < 0.1 # 10% chance of having an exam this week
           examination = Examination.create!(
             title: "#{['Contrôle', 'Test', 'Examen'].sample} - #{period[:subject]}",
             course: course
