@@ -9,12 +9,6 @@
   <% end %>
 </div>
 
-<% if current_person.dean? %>
-  <%= render 'shared/archive_toggle', 
-             resource_path: grades_path,
-             resource_name: 'Grade' %>
-<% end %>
-
 <div class="card shadow-sm">
   <div class="card-body">
     <div class="table-responsive">

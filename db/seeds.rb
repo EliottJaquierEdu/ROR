@@ -197,27 +197,7 @@ end
 # Create Rooms
 rooms = (101..110).map { |num| Room.create!(name: "Salle #{num}") }
 
-# Create Subjects with their respective teachers
-subjects_with_teachers = {
-  'Mathématiques' => teachers[0],
-  'Français' => teachers[1],
-  'Allemand' => teachers[2],
-  'Anglais' => teachers[3],
-  'Histoire' => teachers[4],
-  'Géographie' => teachers[5],
-  'Biologie' => teachers[6],
-  'Chimie' => teachers[7],
-  'Philosophie' => teachers[8],
-  'Éducation physique' => teachers[9],
-  'Physique' => teachers[0],  # Some teachers handle multiple subjects
-  'Arts visuels' => teachers[1],
-  'Musique' => teachers[2],
-  'Informatique' => teachers[3]
-}
-
-subjects_with_teachers.each do |name, teacher|
-  Subject.create!(name: name)
-end
+# Create School Class
 
 # Create School Class 1M1 with full schedule
 class_1m1 = SchoolClass.create!(
@@ -243,7 +223,31 @@ SchoolClass.create!(
   master: teachers[0]  # Math teacher is class master
 )
 
-# Associate all students with 1M1
+# Create Subjects with their respective teachers
+subjects_with_teachers = {
+  'Mathématiques' => teachers[0],
+  'Français' => teachers[1],
+  'Allemand' => teachers[2],
+  'Anglais' => teachers[3],
+  'Histoire' => teachers[4],
+  'Géographie' => teachers[5],
+  'Biologie' => teachers[6],
+  'Chimie' => teachers[7],
+  'Philosophie' => teachers[8],
+  'Éducation physique' => teachers[9],
+  'Physique' => teachers[0],  # Some teachers handle multiple subjects
+  'Arts visuels' => teachers[1],
+  'Musique' => teachers[2],
+  'Informatique' => teachers[3]
+}
+
+# Create subjects first
+subjects = {}
+subjects_with_teachers.each do |name, teacher|
+  subjects[name] = Subject.create!(name: name)
+end
+
+# Associate students with class_1m1
 students.each do |student|
   class_1m1.students << student
 end
@@ -323,7 +327,7 @@ term_dates.each do |term_name, dates|
 
       # Create each course for this day
       day_schedule.each do |period|
-        subject = Subject.find_by(name: period[:subject])
+        subject = subjects[period[:subject]]
         next unless subject # Skip if subject not found
 
         # Find the teacher for this subject
