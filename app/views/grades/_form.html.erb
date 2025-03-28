@@ -106,9 +106,9 @@
         
         <div class="col-md-6">
           <div class="form-floating mb-3">
-            <% if params[:examination_id].present? %>
-              <%= form.hidden_field :examination_id, value: params[:examination_id] %>
-              <% examination = Examination.find_by(id: params[:examination_id]) %>
+            <% if params[:examination_id].present? || grade.examination_id.present? %>
+              <%= form.hidden_field :examination_id, value: params[:examination_id] || grade.examination_id %>
+              <% examination = Examination.find_by(id: params[:examination_id] || grade.examination_id) %>
               <input type="text" class="form-control" value="<%= examination&.title %>" disabled>
               <label>Examination (pre-selected)</label>
             <% else %>
