@@ -335,7 +335,6 @@ term_dates.each do |term_name, dates|
           term: term,
           start_at: combine_date_time(weekday_date, period[:start_time]),
           end_at: combine_date_time(weekday_date, period[:end_time]),
-          week_day: day,
           school_class: class_1m1,
           subject: subject,
           teacher: teacher
