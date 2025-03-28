@@ -98,7 +98,8 @@
             </tr>
           </thead>
           <tbody>
-            <% @examination.grades.includes(:student).each do |grade| %>
+            <% visible_grades = current_person.student? ? @examination.grades.where(person_id: current_person.id) : @examination.grades %>
+            <% visible_grades.includes(:student).each do |grade| %>
               <tr>
                 <td>
                   <% if grade.student %>
