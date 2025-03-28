@@ -52,23 +52,6 @@ module SchoolClassesHelper
     false
   end
 
-  # Check if the current user can manage examinations in a class
-  def can_manage_examinations?(record)
-    return false unless person_signed_in?
-
-    # Deans can manage examinations in all classes
-    return true if current_person.dean?
-
-    # Teachers can manage examinations in classes they teach
-    if current_person.teacher?
-      # Handle both Course and SchoolClass objects
-      school_class = record.is_a?(Course) ? record.school_class : record
-      return school_class.master_id == current_person.id
-    end
-
-    false
-  end
-
   def can_archive_school_class?(school_class)
     current_person.dean?
   end

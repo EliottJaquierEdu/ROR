@@ -47,26 +47,6 @@ module CoursesHelper
     current_person.dean?
   end
   
-  # Check if the current user can manage examinations for a course
-  def can_manage_examinations?(course)
-    return false unless person_signed_in?
-    
-    # Deans can manage examinations for all courses
-    return true if current_person.dean?
-    
-    # Teachers can only manage examinations for courses in subjects they teach
-    if current_person.teacher?
-      # Get the subject of the course
-      subject = course.subject
-      return false unless subject
-
-      # Check if the teacher teaches this subject
-      return current_person.courses.exists?(subject: subject)
-    end
-    
-    false
-  end
-  
   # Get the list of courses the current user can see
   def visible_courses
     return [] unless person_signed_in?
