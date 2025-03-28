@@ -11,7 +11,7 @@ module WeeklyCourseable
     # 2. Fall within the specified week's date range
     courses.where(week_day: 1..5)
            .where('DATE(start_at) <= ? AND DATE(end_at) >= ?', week_end, week_start)
-           .includes(:subject, :school_class)
+           .includes(:subject, :school_class, :teacher)
            .order(:week_day, :start_at)
   end
 end
