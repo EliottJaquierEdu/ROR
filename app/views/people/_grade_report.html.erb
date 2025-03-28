@@ -7,22 +7,35 @@
             margin: 10mm;
         }
 
-        /* Hide all UI elements that shouldn't be printed */
-        .print-button, nav, footer, header,
-        .student-info, .address,
-        label[for="selected_class"], /* Hide class label */
-        select[name="selected_class"], /* Hide class dropdown */
-        .d-flex.align-items-center.gap-3, /* Hide class selection wrapper */
-        button, /* Hide ALL buttons */
+        /* Hide everything except the grade report card */
+        body > *:not(main),
+        main > *:not(.grade-report-container) {
+            display: none !important;
+        }
+
+        /* Hide specific elements */
+        .print-button,
+        nav,
+        footer,
+        header,
+        .student-info,
+        .address,
+        label[for="selected_class"],
+        select[name="selected_class"],
+        .d-flex.align-items-center.gap-3,
+        button,
         input[type="button"],
         input[type="submit"],
         input[type="reset"],
-        .btn, /* Hide any elements using Bootstrap .btn */
-        [onclick], /* Hide elements with JS event handlers */
+        .btn,
+        [onclick],
         [type="button"],
         [type="submit"],
         [role="button"],
-        .card:not(:has(.card-title:contains("Grade Report"))) { /* Hide other cards */
+        .person-details,
+        .personal-info,
+        .contact-info,
+        .address-info {
             display: none !important;
             visibility: hidden !important;
             opacity: 0 !important;
@@ -35,7 +48,8 @@
         }
 
         /* Ensure Grade Report takes full width */
-        main, .card {
+        main,
+        .card {
             display: block !important;
             visibility: visible !important;
             width: 100% !important;
@@ -51,28 +65,31 @@
             border-collapse: collapse !important;
         }
 
-        .table td, .table th {
+        .table td,
+        .table th {
             border: 1px solid black !important;
             padding: 5px !important;
             text-align: left;
         }
 
         /* Ensure readable text */
-        td, th, a {
+        td,
+        th,
+        a {
             color: black !important;
+            text-decoration: none !important;
         }
 
         /* Improve badge visibility */
         .badge {
             color: black !important;
             border: 1px solid black !important;
+            background-color: transparent !important;
         }
     }
-
-
 </style>
 
-<div class="card shadow-sm mb-4">
+<div class="card shadow-sm mb-4 grade-report-container">
   <div class="card-header bg-light">
     <div class="d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0">Grade Report</h5>
