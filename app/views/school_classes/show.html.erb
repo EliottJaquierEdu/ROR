@@ -57,7 +57,7 @@
           <% if can_manage_students?(@school_class) %>
             <div class="btn-group">
               <%= link_to new_school_class_student_path(@school_class), class: "btn btn-sm btn-outline-primary" do %>
-                <i class="bi bi-person-plus"></i> Add Existing Student
+                <i class="bi bi-person-plus"></i> Add Students
               <% end %>
               <%= link_to select_rest_class_school_class_students_path(@school_class), 
                   class: "btn btn-sm btn-outline-success" do %>
