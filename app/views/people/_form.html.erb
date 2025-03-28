@@ -82,6 +82,22 @@
         <%= form.label :teacher_status_id, "Teacher Status" %>
       </div>
     </div>
+
+    <%# IBAN Field %>
+    <div id="iban_field" class="col-md-6" style="<%= @person.type == 'Teacher' || @person.type == 'Dean' ? 'display: block;' : 'display: none;' %>">
+      <div class="form-floating mb-3">
+        <%= form.text_field :iban, 
+            class: "form-control #{'is-invalid' if @person.errors[:iban].any?}", 
+            placeholder: "IBAN",
+            value: @person.iban %>
+        <%= form.label :iban %>
+        <% if @person.errors[:iban].any? %>
+          <div class="invalid-feedback">
+            <%= @person.errors[:iban].join(", ") %>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 
   <hr class="my-4">
@@ -133,14 +149,20 @@
 function handleTypeChange(type) {
   const studentStatusField = document.getElementById('student_status_field');
   const teacherStatusField = document.getElementById('teacher_status_field');
+  const ibanField = document.getElementById('iban_field');
+  const ibanInput = document.querySelector('input[name="person[iban]"]');
 
   studentStatusField.style.display = 'none';
   teacherStatusField.style.display = 'none';
+  ibanField.style.display = 'none';
 
   if (type === 'Student') {
     studentStatusField.style.display = 'block';
-  } else if (type === 'Teacher') {
+    // Clear IBAN when switching to student
+    if (ibanInput) ibanInput.value = '';
+  } else if (type === 'Teacher' || type === 'Dean') {
     teacherStatusField.style.display = 'block';
+    ibanField.style.display = 'block';
   }
 }
 

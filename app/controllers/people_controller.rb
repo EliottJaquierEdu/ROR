@@ -114,6 +114,7 @@ class PeopleController < ApplicationController
         :password_confirmation,
         :student_status_id,
         :teacher_status_id,
+        :iban,
         address_attributes: [:id, :street, :number, :zip, :town]
       )
     end
