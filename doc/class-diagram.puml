@@ -7,6 +7,9 @@ class Address {
   +string street
   +string number
   +Person person
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
 }
 
 class Person {
@@ -26,6 +29,9 @@ class Person {
   +string last_sign_in_ip
   +integer student_status_id
   +integer teacher_status_id
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
   +Address address
 }
 
@@ -33,6 +39,7 @@ class Teacher {
   +string iban
   +TeacherStatus teacher_status
   +SchoolClass[] school_classes
+  +Course[] courses
 }
 
 class Student {
@@ -46,50 +53,83 @@ class SchoolClass {
   +string name
   +Room room
   +Teacher master
-  +Student[] students
+  +Person[] people
   +Course[] courses
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
 }
 
 class Course {
-  +string term
   +datetime start_at
   +datetime end_at
-  +integer week_day
   +SchoolClass school_class
   +Subject subject
+  +Teacher teacher
+  +Term term
   +Examination[] examinations
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
 }
 
 class Subject {
   +string name
   +Course[] courses
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
+}
+
+class Term {
+  +string name
+  +datetime start_at
+  +datetime end_at
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
+  +Course[] courses
 }
 
 class Examination {
   +string title
-  +datetime expected_date
   +Course course
   +Grade[] grades
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
 }
 
 class Grade {
   +decimal value
   +datetime effective_date
   +Examination examination
-  +Student student
+  +Person person
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
 }
 
 class Room {
   +string name
   +SchoolClass[] school_classes
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
 }
 
 class TeacherStatus {
   +string status
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
 }
 
 class StudentStatus {
   +string status
+  +datetime archived_at
+  +datetime created_at
+  +datetime updated_at
 }
 
 Address "1" o-- "1" Person
@@ -97,15 +137,16 @@ Person "0..*" --o "1" StudentStatus
 Person "0..*" --o "1" TeacherStatus
 SchoolClass "0..*" -- "0..*" Person
 SchoolClass "0..*" --o "1" Room
-SchoolClass "0..*" --o "1" Person
-SchoolClass "1" o-- "0..*" Course
 SchoolClass "0..*" --o "1" Teacher
+SchoolClass "1" o-- "0..*" Course
+Course "0..*" --o "1" Term
+Course "0..*" --o "1" Teacher
 Course "1" *-- "1" Subject
 Examination "1" *-- "1" Course
 Grade "1" *-- "1" Examination
-Grade "1" *-- "1" Student
+Grade "1" *-- "1" Person
 
-Teacher <|-- Person
-Student <|-- Person
+Teacher --|> Person
+Student --|> Person
 
 @enduml
