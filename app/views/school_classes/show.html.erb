@@ -79,11 +79,11 @@
                       <% average = student.overall_average(@school_class.id) %>
                       <% if !student.has_sufficient_grades?(@school_class.id) %>
                         <span class="badge bg-danger text-white ms-2">
-                          <i class="bi bi-exclamation-triangle"></i> Failing (Avg: <%= sprintf('%.1f', average) %>)
+                          <i class="bi bi-exclamation-triangle"></i> Failing (Avg: <%= sprintf('%.1f', average) %> this year only)
                         </span>
                       <% elsif student.has_warning_grades?(@school_class.id) %>
                         <span class="badge bg-warning text-dark ms-2">
-                          <i class="bi bi-exclamation-circle"></i> At Risk (Avg: <%= sprintf('%.1f', average) %>)
+                          <i class="bi bi-exclamation-circle"></i> At Risk (Avg: <%= sprintf('%.1f', average) %> this year only)
                         </span>
                       <% end %>
                     <% end %>
