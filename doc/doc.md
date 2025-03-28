@@ -1,5 +1,103 @@
-# Doc
-## Inheritance :
+# Ruby on rails project documentation
+
+## Table of Contents
+1. [Features](#features)
+   - [User Management & Authentication](#user-management--authentication)
+   - [Academic Management](#academic-management)
+   - [Administrative Features](#administrative-features)
+   - [User Interface](#user-interface)
+   - [Data Management](#data-management)
+2. [Inheritance (STI)](#inheritance-sti)
+3. [Models / Schema Modifications](#models--schema-modifications)
+   - [Rename class to school_class](#rename-class-to-school_class)
+   - [Remove propotions_asserts](#remove-propotions_asserts)
+   - [Week Day Removal from Courses](#week-day-removal-from-courses)
+   - [Examination Date Removal](#examination-date-removal)
+   - [Term Externalization](#term-externalization)
+   - [Teacher-Course Relationship](#teacher-course-relationship)
+4. [Authentication](#authentication)
+   - [Devise Implementation](#devise-implementation)
+5. [Access Management](#access-management)
+   - [User Types and Permissions](#user-types-and-permissions)
+   - [Dean Role Implementation](#dean-role-implementation)
+   - [Controller-Level Authorization](#controller-level-authorization)
+   - [View-Level Access Control](#view-level-access-control)
+6. [Course System and Examinations](#course-system-and-examinations)
+   - [Course Design](#course-design)
+7. [Concerns and Modules](#concerns-and-modules)
+   - [WeeklyCourseable](#weeklycourseable)
+   - [Gradeable](#gradeable)
+   - [WeeklySchedulable](#weeklyschedulable)
+8. [Shared Components and Partials](#shared-components-and-partials)
+   - [Table Actions Component](#table-actions-component)
+   - [Show Actions Component](#show-actions-component)
+   - [Edit Actions Component](#edit-actions-component)
+9. [Pagination Implementation](#pagination-implementation)
+   - [Kaminari Integration](#kaminari-integration)
+   - [Implementation Approach](#implementation-approach)
+   - [Integration with Existing Features](#integration-with-existing-features)
+10. [Student Promotion System](#student-promotion-system)
+    - [Overview](#overview)
+    - [Grade Requirements](#grade-requirements)
+    - [Promotion Process](#promotion-process)
+
+Welcome to this documentation. Here are som equick links to get to :
+
+## **Features**
+
+### User Management & Authentication
+- Multi-role user system (Dean, Teacher, Student)
+- Secure authentication using Devise
+- Role-based access control for all features
+- User archiving functionality
+
+### Academic Management
+- **School Classes**
+  - Create and manage school classes with assigned rooms
+  - Assign class masters (teachers)
+  - Track student enrollment
+  - View class schedules and course assignments
+
+- **Course Management**
+  - Schedule courses with specific time slots
+  - Assign teachers to courses
+  - Link courses to subjects and terms
+  - Weekly schedule view
+  - Course archiving system
+
+- **Grade Management**
+  - Record and track student grades
+  - Calculate grade averages (per term, subject, and overall)
+  - Grade sufficiency checking (pass/fail system)
+  - Warning system for students with low grades
+
+- **Examination System**
+  - Create and manage examinations
+  - Link examinations to specific courses
+  - Track examination results through grades
+
+### Administrative Features
+- **Term System**
+  - Organize courses by academic terms
+  - Track term-specific performance
+  - Manage academic calendar
+
+- **Reporting & Analytics**
+  - View student performance reports
+  - Track class performance metrics
+  - Monitor grade distributions
+
+### User Interface
+- Interactive JavaScript features with Stimulus
+- Pagination for large data sets
+
+### Data Management
+- Archiving system for all major entities
+- Data consistency and referential integrity
+- Efficient database querying and caching
+
+
+## Inheritance (STI) :
 Use this technique :
 https://api.rubyonrails.org/classes/ActiveRecord/Inheritance.html
 
@@ -177,22 +275,12 @@ The views adapt their content based on user type (ex. show only the grades of th
 ### Course Design
 Our course system is designed to handle recurring weekly schedules in an academic setting:
 
-1. **Course Structure**
-   - Each course belongs to a specific term (e.g., "Autumn Semester 2024")
-   - Terms have their own start and end dates, ensuring data consistency
-   - Courses occur on fixed weekdays with set start and end times
-   - Each course instance has a specific date, representing when that particular session occurs
-   - Courses are linked to a school class and subject (global information about the module, not specific about a particular date)
-
-2. **Weekly Schedule**
-   ```ruby
-   class Course < ApplicationRecord
-     ...
-     validates :start_at, presence: true  # DateTime of the specific course instance
-     validates :end_at, presence: true    # DateTime of the specific course instance
-     validates :week_day, presence: true  # Day of the week (1-7)
-   end
-   ```
+- Each course belongs to a specific term (e.g., "Autumn Semester 2024")
+- Terms have their own start and end dates, ensuring data consistency
+- Courses occur on fixed weekdays with set start and end times
+- Each course instance has a specific date, representing when that particular session occurs
+- Courses are linked to a school class and subject (global information about the module, not specific about a particular date)
+- Because courses can be moved for one instance (or a techer is replacing an other), we need this granularity in our system. BUT, we have added a '**BATCH CREATE**' functionnality to create repeated ones.
 
 ## Concerns and Modules
 Our application uses several concerns to encapsulate shared functionality across different models. Here's an overview of each concern:
@@ -377,12 +465,6 @@ Sorting is preserved across pagination:
    - Optimized database queries
    - Efficient resource utilization
 
-### Usage Example
-```erb
-<div class="d-flex justify-content-center mt-4">
-  <%= paginate @courses, theme: 'bootstrap5' %>
-</div>
-```
 
 ## Student Promotion System
 
