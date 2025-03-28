@@ -1,9 +1,9 @@
-<%= form_with(model: person, class: "needs-validation") do |form| %>
-  <% if person.errors.any? %>
+<%= form_with(model: @person, class: "needs-validation") do |form| %>
+  <% if @person.errors.any? %>
     <div class="alert alert-danger">
-      <h5><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h5>
+      <h5><%= pluralize(@person.errors.count, "error") %> prohibited this person from being saved:</h5>
       <ul class="mb-0">
-        <% person.errors.each do |error| %>
+        <% @person.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
       </ul>
@@ -62,19 +62,19 @@
             </div>
           </div>
         <% else %>
-          <%= form.hidden_field :type, value: person.type %>
+          <%= form.hidden_field :type, value: @person.type %>
         <% end %>
       </div>
     </div>
   </div>
 
-  <% if can_view_address?(person) %>
+  <% if can_view_address?(@person) %>
     <div class="card shadow-sm mb-4">
       <div class="card-header bg-light">
         <h5 class="card-title mb-0">Address</h5>
       </div>
       <div class="card-body">
-        <%= render "address_form", form: form, person: person %>
+        <%= render "address_form", form: form, person: @person %>
       </div>
     </div>
   <% end %>

@@ -21,7 +21,7 @@
 
 <div class="card shadow-sm mb-4">
   <div class="card-body p-4">
-    <%= render local_assigns.fetch(:form_partial, "form"), resource.class.name.underscore.to_sym => resource %>
+    <%= render 'form', person: resource %>
   </div>
 </div>
 
