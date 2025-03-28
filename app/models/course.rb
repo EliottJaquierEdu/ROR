@@ -9,8 +9,6 @@ class Course < ApplicationRecord
 
   validates :start_at, presence: true
   validates :end_at, presence: true
-  validates :week_day, presence: true,
-            numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 7 }
 
   # String representation of a Course
   def to_s
@@ -32,6 +30,11 @@ class Course < ApplicationRecord
   # Helper method to get the weekday name
   def weekday_name
     Date::DAYNAMES[week_day]
+  end
+
+  # Compute week_day from start_at
+  def week_day
+    start_at.wday
   end
 
   private

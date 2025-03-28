@@ -56,10 +56,10 @@ class CoursesController < ApplicationController
     @course = Course.new(course_params)
     start_date = Date.parse(params[:course][:start_date])
     end_date = Date.parse(params[:course][:end_date])
-    week_day = params[:course][:week_day].to_i
+    target_week_day = @course.start_at.wday
 
     # Calculate all dates between start_date and end_date that match the week_day
-    dates = (start_date..end_date).select { |d| d.wday == week_day }
+    dates = (start_date..end_date).select { |d| d.wday == target_week_day }
 
     # Create a course for each date
     courses_created = 0
@@ -132,7 +132,7 @@ class CoursesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def course_params
-      params.require(:course).permit(:term_id, :start_at, :end_at, :week_day, :school_class_id, :subject_id, :teacher_id)
+      params.require(:course).permit(:term_id, :start_at, :end_at, :school_class_id, :subject_id, :teacher_id)
     end
 
     # Authorization methods

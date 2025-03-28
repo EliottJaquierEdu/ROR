@@ -24,6 +24,14 @@ We renamed the class model to school_class to avoid conflicts with the reserved 
 We removed the propotions_asserts table because it was not useful for the project. 
 It was used to store which ruby functions to call to know if a student passed but we decided to store this information in the student model (more related to business logic).
 
+### Week Day Removal from Courses
+We removed the `week_day` field from courses because it was redundant with the `start_at` timestamp:
+- The day of the week can be computed from `start_at` using `start_at.wday`
+- This eliminates data redundancy and potential inconsistencies
+- The change simplifies the data model while maintaining all functionality
+- Views and controllers have been updated to compute the day of the week from `start_at` when needed
+- This follows the DRY (Don't Repeat Yourself) principle and improves data integrity
+
 ### Examination Date Removal
 We initially had a separate `expected_date` field for examinations but removed it for several reasons:
 Examinations are always linked to a specific course instance (see course design chapter for more info) and the course already contains the date information

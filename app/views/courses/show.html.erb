@@ -30,10 +30,7 @@
           <dd class="col-sm-8"><%= @course.start_at&.strftime("%d %b %Y") %></dd>
           
           <dt class="col-sm-4">Day</dt>
-          <dd class="col-sm-8">
-            <% days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %>
-            <%= days[@course.week_day - 1] if @course.week_day.between?(1, 7) %>
-          </dd>
+          <dd class="col-sm-8"><%= @course.start_at&.strftime("%A") %></dd>
           
           <dt class="col-sm-4">Start Time</dt>
           <dd class="col-sm-8"><%= @course.start_at&.strftime("%H:%M") %></dd>

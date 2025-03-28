@@ -69,7 +69,7 @@
                     <% period_start = Time.new(2000, 1, 1, hour, minutes) %>
                     <% period_end = period_start + 45.minutes %>
                     <% day_courses = courses.select do |course| 
-                      course.week_day == day && 
+                      course.start_at.wday == day && 
                       course.start_at.strftime("%H:%M") == period_start.strftime("%H:%M")
                     end %>
                     

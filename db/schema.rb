@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_27_163831) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_28_010228) do
   create_table "addresses", force: :cascade do |t|
     t.integer "zip"
     t.string "town"
@@ -27,7 +27,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_27_163831) do
   create_table "courses", force: :cascade do |t|
     t.datetime "start_at", null: false
     t.datetime "end_at", null: false
-    t.integer "week_day", null: false
     t.integer "school_class_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -30,16 +30,6 @@
         
         <div class="col-md-6">
           <div class="form-floating mb-3">
-            <%= form.select :week_day, 
-                [['Monday', 1], ['Tuesday', 2], ['Wednesday', 3], ['Thursday', 4], ['Friday', 5], ['Saturday', 6], ['Sunday', 7]], 
-                { include_blank: "Select day" }, 
-                { class: "form-select" } %>
-            <%= form.label :week_day, "Day of Week" %>
-          </div>
-        </div>
-        
-        <div class="col-md-6">
-          <div class="form-floating mb-3">
             <%= form.datetime_field :start_at, class: "form-control", placeholder: "Start time" %>
             <%= form.label :start_at, "Start Time" %>
           </div>

@@ -36,9 +36,7 @@
               <div>
                 <h5 class="mb-1">Term <%= @examination.course.term %></h5>
                 <p class="text-muted mb-0">
-                  <% days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %>
-                  <%= days[@examination.course.week_day - 1] if @examination.course.week_day.between?(1, 7) %>
-                  <%= @examination.course.start_at&.strftime("%H:%M") %> - <%= @examination.course.end_at&.strftime("%H:%M") %>
+                  <%= @examination.course.start_at&.strftime("%A %H:%M") %> - <%= @examination.course.end_at&.strftime("%H:%M") %>
                 </p>
                 <% if @examination.course.subject %>
                   <p class="mb-0">Subject: <%= @examination.course.subject.name %></p>
