@@ -143,7 +143,7 @@ module Gradeable
 
   def failed_school_year_date_ranges
     # Get all school classes the student has been in, ordered by year
-    student_classes = self.school_classes.where(archived_at: [nil, nil]).order(year: :asc)
+    student_classes = self.school_classes.or(self.school_classes.unscoped.where.not(archived_at: nil)).order(year: :asc)
     return [] if student_classes.empty?
 
     failed_ranges = []
