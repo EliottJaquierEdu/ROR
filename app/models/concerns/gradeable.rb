@@ -143,7 +143,7 @@ module Gradeable
 
   def failed_school_year_date_ranges
     # Get all school classes the student has been in, ordered by year
-    student_classes = self.school_classes.order(year: :asc)
+    student_classes = self.school_classes.without_default_scope.order(year: :asc)
     return [] if student_classes.empty?
 
     failed_ranges = []
@@ -153,7 +153,7 @@ module Gradeable
       if previous_class
         # If the master_id is different and the current class is in the same year or next year,
         # it means the student failed and had to repeat
-        if current_class.master_id != previous_class.master_id && 
+        if current_class.master_id != previous_class.master_id &&
            (current_class.year == previous_class.year || current_class.year == previous_class.year + 1)
           # Add the date range for the failed year
           failed_ranges << (school_year_start_date(previous_class.year)..school_year_end_date(previous_class.year))
