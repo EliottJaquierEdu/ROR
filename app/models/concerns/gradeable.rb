@@ -131,6 +131,24 @@ module Gradeable
     filtered_grades.average(:value).to_f
   end
 
+  def current_year_average(school_class_id = nil)
+    current_year = Time.current.year
+    start_date = school_year_start_date(current_year)
+    end_date = school_year_end_date(current_year)
+
+    filtered_grades = grades_with_associations.where(
+      effective_date: start_date..end_date
+    )
+
+    if school_class_id.present?
+      filtered_grades = filtered_grades.joins(examination: { course: :school_class })
+                                     .where(courses: { school_class_id: school_class_id })
+    end
+
+    return 0 if filtered_grades.empty?
+    filtered_grades.average(:value).to_f
+  end
+
   private
 
   def school_year_start_date(year)
