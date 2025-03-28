@@ -11,7 +11,7 @@ module Teachable
 
   def school_classes
     SchoolClass.where(id: SchoolClass.select(:id)
-      .left_joins(:courses)
+      .joins(:courses)
       .where('school_classes.master_id = :person_id OR courses.teacher_id = :person_id', person_id: id)
       .distinct)
   end

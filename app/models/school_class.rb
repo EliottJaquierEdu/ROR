@@ -6,8 +6,7 @@ class SchoolClass < ApplicationRecord
   belongs_to :master, class_name: "Person", optional: true
   has_and_belongs_to_many :students, class_name: "Person", join_table: "people_school_classes"
 
-  has_many :course_school_classes
-  has_many :courses, through: :course_school_classes
+  has_many :courses
   has_many :examinations, through: :courses
 
   validates :name, presence: true
