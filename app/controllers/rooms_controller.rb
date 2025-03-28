@@ -10,7 +10,11 @@ class RoomsController < ApplicationController
   # GET /rooms or /rooms.json
   def index
     base_scope = helpers.visible_rooms
-    @rooms = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @rooms = if params[:show_archived]
+               base_scope.without_default_scope.where.not(archived_at: nil)
+             else
+               base_scope
+             end
     @rooms = @rooms.page(params[:page]).per(10)
   end
 
@@ -74,7 +78,7 @@ class RoomsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_room
-      @room = Room.find(params[:id])
+      @room = Room.without_default_scope.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.

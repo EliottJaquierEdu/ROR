@@ -1,5 +1,6 @@
 class Subject < ApplicationRecord
   include WeeklyCourseable
+  include Archivable
 
   has_many :courses, dependent: :destroy
 
@@ -20,5 +21,15 @@ class Subject < ApplicationRecord
   # Helper method to get the number of courses
   def course_count
     courses.count
+  end
+
+  private
+
+  def archive_dependencies
+    courses.each(&:archive!)
+  end
+
+  def unarchive_dependencies
+    # Don't automatically unarchive courses as they might have been archived for other reasons
   end
 end

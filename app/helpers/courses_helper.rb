@@ -77,4 +77,20 @@ module CoursesHelper
     
     []
   end
+
+  def can_archive_course?(course)
+    return false unless person_signed_in?
+    return false unless course
+    
+    # Only deans can archive courses
+    current_person.dean?
+  end
+
+  def can_unarchive_course?(course)
+    return false unless person_signed_in?
+    return false unless course
+    
+    # Only deans can unarchive courses
+    current_person.dean?
+  end
 end

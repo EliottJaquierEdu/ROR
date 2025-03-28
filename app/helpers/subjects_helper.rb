@@ -67,4 +67,20 @@ module SubjectsHelper
     
     []
   end
+
+  def can_archive_subject?(subject)
+    return false unless person_signed_in?
+    return false unless subject
+    
+    # Only deans can archive subjects
+    current_person.dean?
+  end
+
+  def can_unarchive_subject?(subject)
+    return false unless person_signed_in?
+    return false unless subject
+    
+    # Only deans can unarchive subjects
+    current_person.dean?
+  end
 end

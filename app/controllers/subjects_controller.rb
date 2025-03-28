@@ -10,7 +10,11 @@ class SubjectsController < ApplicationController
   # GET /subjects or /subjects.json
   def index
     base_scope = helpers.visible_subjects
-    @subjects = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @subjects = if params[:show_archived]
+                  base_scope.without_default_scope.where.not(archived_at: nil)
+                else
+                  base_scope
+                end
     @subjects = @subjects.page(params[:page]).per(10)
   end
 
@@ -68,7 +72,7 @@ class SubjectsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_subject
-      @subject = Subject.find(params[:id])
+      @subject = Subject.without_default_scope.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.

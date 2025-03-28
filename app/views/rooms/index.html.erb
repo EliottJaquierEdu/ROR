@@ -28,7 +28,7 @@
         </thead>
         <tbody>
           <% @rooms.each do |room| %>
-            <tr>
+            <tr class="<%= 'table-secondary' if room.archived? %>">
               <td><%= room.name %></td>
               <td>
                 <% if room.school_classes.any? %>

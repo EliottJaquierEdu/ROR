@@ -60,4 +60,20 @@ module RoomsHelper
     
     []
   end
+
+  def can_archive_room?(room)
+    return false unless person_signed_in?
+    return false unless room
+    
+    # Only deans can archive rooms
+    current_person.dean?
+  end
+
+  def can_unarchive_room?(room)
+    return false unless person_signed_in?
+    return false unless room
+    
+    # Only deans can unarchive rooms
+    current_person.dean?
+  end
 end
