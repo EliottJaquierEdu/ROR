@@ -1,9 +1,9 @@
-<%= form_with(model: @person, class: "needs-validation") do |form| %>
-  <% if @person.errors.any? %>
+<%= form_with(model: person, class: "needs-validation") do |form| %>
+  <% if person.errors.any? %>
     <div class="alert alert-danger">
-      <h5><%= pluralize(@person.errors.count, "error") %> prohibited this person from being saved:</h5>
+      <h5><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h5>
       <ul class="mb-0">
-        <% @person.errors.each do |error| %>
+        <% person.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
       </ul>
@@ -58,7 +58,7 @@
         </div>
       </div>
     <% else %>
-      <%= form.hidden_field :type, value: @person.type %>
+      <%= form.hidden_field :type, value: person.type %>
     <% end %>
 
     <%# Student Status Field %>
@@ -84,16 +84,16 @@
     </div>
 
     <%# IBAN Field %>
-    <div id="iban_field" class="col-md-6" style="<%= @person.type == 'Teacher' || @person.type == 'Dean' ? 'display: block;' : 'display: none;' %>">
+    <div id="iban_field" class="col-md-6" style="<%= person.type == 'Teacher' || person.type == 'Dean' ? 'display: block;' : 'display: none;' %>">
       <div class="form-floating mb-3">
         <%= form.text_field :iban, 
-            class: "form-control #{'is-invalid' if @person.errors[:iban].any?}", 
+            class: "form-control #{'is-invalid' if person.errors[:iban].any?}", 
             placeholder: "IBAN",
-            value: @person.iban %>
+            value: person.iban %>
         <%= form.label :iban %>
-        <% if @person.errors[:iban].any? %>
+        <% if person.errors[:iban].any? %>
           <div class="invalid-feedback">
-            <%= @person.errors[:iban].join(", ") %>
+            <%= person.errors[:iban].join(", ") %>
           </div>
         <% end %>
       </div>

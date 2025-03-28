@@ -21,7 +21,7 @@
 
 <div class="card shadow-sm mb-4">
   <div class="card-body p-4">
-    <%= render partial: 'form', locals: { school_class: resource } %>
+    <%= render partial: 'form', locals: { resource_name.underscore.to_sym => resource } %>
   </div>
 </div>
 
