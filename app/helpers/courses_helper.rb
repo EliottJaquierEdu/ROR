@@ -54,9 +54,14 @@ module CoursesHelper
     # Deans can manage examinations for all courses
     return true if current_person.dean?
     
-    # Teachers who are class masters can manage examinations for their classes
+    # Teachers can only manage examinations for courses in subjects they teach
     if current_person.teacher?
-      return course.school_class&.master_id == current_person.id
+      # Get the subject of the course
+      subject = course.subject
+      return false unless subject
+
+      # Check if the teacher teaches this subject
+      return current_person.courses.exists?(subject: subject)
     end
     
     false

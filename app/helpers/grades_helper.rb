@@ -41,9 +41,14 @@ module GradesHelper
     # Deans can create grades for any examination
     return true if current_person.dean?
 
-    # Teachers who are class masters can create grades for their classes
+    # Teachers can only create grades for examinations in subjects they teach
     if current_person.teacher?
-      return examination.course&.school_class&.master_id == current_person.id
+      # Get the subject of the examination through its course
+      subject = examination.course&.subject
+      return false unless subject
+
+      # Check if the teacher teaches this subject
+      return current_person.courses.exists?(subject: subject)
     end
 
     # Students cannot create grades
@@ -57,9 +62,14 @@ module GradesHelper
     # Deans can edit all grades
     return true if current_person.dean?
 
-    # Teachers who are class masters can edit grades for their classes
+    # Teachers can only edit grades for examinations in subjects they teach
     if current_person.teacher?
-      return grade.examination&.course&.school_class&.master_id == current_person.id
+      # Get the subject of the grade through its examination and course
+      subject = grade.examination&.course&.subject
+      return false unless subject
+
+      # Check if the teacher teaches this subject
+      return current_person.courses.exists?(subject: subject)
     end
 
     # Students cannot edit grades
@@ -73,9 +83,14 @@ module GradesHelper
     # Deans can delete all grades
     return true if current_person.dean?
 
-    # Teachers who are class masters can delete grades for their classes
+    # Teachers can only delete grades for examinations in subjects they teach
     if current_person.teacher?
-      return grade.examination&.course&.school_class&.master_id == current_person.id
+      # Get the subject of the grade through its examination and course
+      subject = grade.examination&.course&.subject
+      return false unless subject
+
+      # Check if the teacher teaches this subject
+      return current_person.courses.exists?(subject: subject)
     end
 
     # Students cannot delete grades
