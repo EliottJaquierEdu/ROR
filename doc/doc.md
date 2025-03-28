@@ -219,6 +219,7 @@ This concern handles grade-related functionality for students.
 - Provides methods for viewing grades by term and subject
 - Calculates various types of averages
 - Handles grade filtering for failed school years
+- Ensures each student can only have one grade per examination through uniqueness validation
 
 #### Grade Filtering System
 The system implements a sophisticated filtering mechanism to handle grades from failed school years:
