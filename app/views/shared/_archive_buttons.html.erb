@@ -3,17 +3,17 @@
 <% if resource.archived? %>
   <%= button_to send("unarchive_#{resource.class.name.underscore}_path", resource),
                 method: :patch,
-                class: "btn btn-light text-success hover-scale me-1",
+                class: "btn btn-success hover-scale me-1",
                 form: { class: "d-inline" },
                 data: { turbo_confirm: "Are you sure you want to unarchive this #{resource.class.name.downcase}?" } do %>
-    <i class="bi bi-box-arrow-up"></i><% unless local_assigns[:compact] %> <span class="ms-1">Unarchive</span><% end %>
+    <i class="bi bi-box-arrow-in-up text-white"></i><% unless local_assigns[:compact] %> <span class="ms-1 text-white">Unarchive</span><% end %>
   <% end %>
 <% else %>
   <%= button_to send("archive_#{resource.class.name.underscore}_path", resource),
                 method: :patch,
-                class: "btn btn-light text-warning hover-scale me-1",
+                class: "btn btn-warning hover-scale me-1",
                 form: { class: "d-inline" },
                 data: { turbo_confirm: "Are you sure you want to archive this #{resource.class.name.downcase}?" } do %>
-    <i class="bi bi-archive"></i><% unless local_assigns[:compact] %> <span class="ms-1">Archive</span><% end %>
+    <i class="bi bi-archive-fill text-white"></i><% unless local_assigns[:compact] %> <span class="ms-1 text-white">Archive</span><% end %>
   <% end %>
 <% end %> 
