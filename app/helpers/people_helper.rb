@@ -74,9 +74,9 @@ module PeopleHelper
   # Get the list of people the current user can see filtered by type
   def visible_people_by_type(type = nil)
     base_scope = if current_person.dean?
-                   Person.all
+                   Person.without_default_scope
                  else
-                   Person.where(id: current_person.id)
+                   Person.without_default_scope.where(id: current_person.id)
                  end
 
     base_scope = base_scope.where(type: type) if type.present?
