@@ -194,6 +194,43 @@ students = students_data.map.with_index do |student_data, index|
   student
 end
 
+# Create additional historical students (graduated and repeating)
+historical_students_data = [
+  { firstname: 'Antoine', lastname: 'Laurent', status: 'graduated' },
+  { firstname: 'Céline', lastname: 'Dupuis', status: 'graduated' },
+  { firstname: 'Marc', lastname: 'Berger', status: 'graduated' },
+  { firstname: 'Isabelle', lastname: 'Moreau', status: 'graduated' },
+  { firstname: 'Simon', lastname: 'Fournier', status: 'repeating' },
+  { firstname: 'Julia', lastname: 'Mercier', status: 'repeating' },
+  { firstname: 'Alexandre', lastname: 'Dumont', status: 'graduated' },
+  { firstname: 'Elodie', lastname: 'Leroy', status: 'graduated' },
+  { firstname: 'Vincent', lastname: 'Petit', status: 'repeating' },
+  { firstname: 'Caroline', lastname: 'Richard', status: 'graduated' }
+]
+
+historical_students = historical_students_data.map.with_index do |student_data, index|
+  student = Student.create!(
+    username: "ancien_etudiant_#{index + 1}",
+    lastname: student_data[:lastname],
+    firstname: student_data[:firstname],
+    email: "#{student_data[:firstname].downcase}.#{student_data[:lastname].downcase}@example.com",
+    phone_number: "+41 7#{rand(6..9)} #{rand(100..999)} #{rand(10..99)} #{rand(10..99)}",
+    student_status: student_data[:status] == 'graduated' ? student_status_graduated : student_status_enrolled,
+    type: 'Student',
+    password: 'password',
+    password_confirmation: 'password'
+  )
+
+  student.create_address!(
+    zip: rand(1000..1008),
+    town: ['Lausanne', 'Pully', 'Renens', 'Prilly', 'Morges'].sample,
+    street: ['Avenue de la Gare', 'Rue du Lac', 'Chemin des Fleurs', 'Route de Berne', 'Avenue des Alpes'].sample,
+    number: "#{rand(1..50)}"
+  )
+
+  student
+end
+
 # Create Rooms
 rooms = (101..110).map { |num| Room.create!(name: "Salle #{num}") }
 
@@ -399,5 +436,32 @@ term_dates.each do |term_name, dates|
 
     # Move to next week
     current_date = current_date + 1.week
+  end
+end
+
+# Create Historical School Classes
+historical_classes = [
+  {
+    year: 2022,
+    name: 'SI-T1A',
+    students: historical_students.select { |s| s.student_status == student_status_enrolled }
+  },
+  {
+    year: 2023,
+    name: 'SI-T2A',
+    students: historical_students.select { |s| s.student_status == student_status_graduated }
+  }
+]
+
+historical_classes.each do |class_data|
+  historical_class = SchoolClass.create!(
+    year: class_data[:year],
+    name: class_data[:name],
+    room: rooms.sample,
+    master: teachers.sample
+  )
+  
+  class_data[:students].each do |student|
+    historical_class.students << student
   end
 end
