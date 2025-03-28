@@ -1,15 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  term: MyString
-  start_at: 2025-02-07 08:56:17
-  end_at: 2025-02-07 08:56:17
-  week_day: 1
+  term: one
+  start_at: <%= Time.current %>
+  end_at: <%= Time.current + 1.hour %>
   school_class: one
+  subject: one
+  teacher: one
 
 two:
-  term: MyString
-  start_at: 2025-02-07 08:56:17
-  end_at: 2025-02-07 08:56:17
-  week_day: 1
+  term: two
+  start_at: <%= Time.current %>
+  end_at: <%= Time.current + 1.hour %>
   school_class: two
+  subject: two
+  teacher: two

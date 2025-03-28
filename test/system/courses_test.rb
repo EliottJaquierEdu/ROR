@@ -18,7 +18,6 @@ class CoursesTest < ApplicationSystemTestCase
     fill_in "End at", with: @course.end_at
     fill_in "Start at", with: @course.start_at
     fill_in "Term", with: @course.term
-    fill_in "Week day", with: @course.week_day
     click_on "Create Course"
 
     assert_text "Course was successfully created"
@@ -33,7 +32,6 @@ class CoursesTest < ApplicationSystemTestCase
     fill_in "End at", with: @course.end_at.to_s
     fill_in "Start at", with: @course.start_at.to_s
     fill_in "Term", with: @course.term
-    fill_in "Week day", with: @course.week_day
     click_on "Update Course"
 
     assert_text "Course was successfully updated"

@@ -211,9 +211,9 @@ class Person < ApplicationRecord
   def load_teacher_week_courses(week_range)
     courses
       .includes(:subject, school_class: [:room, :master])
-      .where(week_day: 1..5)
+      .where(Arel.sql("CAST(strftime('%w', start_at) AS INTEGER) BETWEEN 1 AND 5"))
       .where("DATE(start_at) BETWEEN ? AND ?", week_range[:start], week_range[:end])
-      .order(:week_day, :start_at)
+      .order(Arel.sql("CAST(strftime('%w', start_at) AS INTEGER)"), :start_at)
   end
 
   def archive_dependencies

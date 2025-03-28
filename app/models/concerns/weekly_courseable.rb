@@ -7,11 +7,11 @@ module WeeklyCourseable
     week_end = date.end_of_week
 
     # Filter courses that:
-    # 1. Have week_day between Monday (1) and Friday (5)
+    # 1. Have start_at.wday between Monday (1) and Friday (5)
     # 2. Fall within the specified week's date range
-    courses.where(week_day: 1..5)
+    courses.where(Arel.sql("CAST(strftime('%w', start_at) AS INTEGER) BETWEEN 1 AND 5"))
            .where('DATE(start_at) <= ? AND DATE(end_at) >= ?', week_end, week_start)
            .includes(:subject, :school_class, :teacher)
-           .order(:week_day, :start_at)
+           .order(Arel.sql("CAST(strftime('%w', start_at) AS INTEGER)"), :start_at)
   end
 end
