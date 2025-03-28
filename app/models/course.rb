@@ -10,6 +10,29 @@ class Course < ApplicationRecord
   validates :start_at, presence: true
   validates :end_at, presence: true
 
+  # Scopes for filtering
+  scope :by_subject, ->(subject_id) { where(subject_id: subject_id) if subject_id.present? }
+  scope :by_school_class, ->(school_class_id) { where(school_class_id: school_class_id) if school_class_id.present? }
+  scope :by_term, ->(term_id) { where(term_id: term_id) if term_id.present? }
+  scope :by_teacher, ->(teacher_id) { where(teacher_id: teacher_id) if teacher_id.present? }
+  
+  # Scopes for sorting
+  scope :order_by_subject, ->(direction = :asc) { 
+    joins(:subject).order("subjects.name #{direction}") 
+  }
+  
+  scope :order_by_term, ->(direction = :asc) { 
+    joins(:term).order("terms.name #{direction}") 
+  }
+  
+  scope :order_by_school_class, ->(direction = :asc) { 
+    joins(:school_class).order("school_classes.name #{direction}") 
+  }
+  
+  scope :order_by_teacher, ->(direction = :asc) { 
+    joins(:teacher).order("people.lastname #{direction}, people.firstname #{direction}") 
+  }
+
   # String representation of a Course
   def to_s
     "#{subject&.name} - #{term&.name} (#{school_class&.name})"

@@ -5,6 +5,7 @@
                 method: :patch,
                 class: "btn btn-success hover-scale me-1",
                 form: { class: "d-inline" },
+                params: params.permit(:subject_id, :school_class_id, :term_id, :teacher_id, :weekday, :sort, :direction, :show_archived).to_h,
                 data: { turbo_confirm: "Are you sure you want to unarchive this #{resource.class.name.downcase}?" } do %>
     <i class="bi bi-box-arrow-in-up text-white"></i><% unless local_assigns[:compact] %> <span class="ms-1 text-white">Unarchive</span><% end %>
   <% end %>
@@ -13,6 +14,7 @@
                 method: :patch,
                 class: "btn btn-warning hover-scale me-1",
                 form: { class: "d-inline" },
+                params: params.permit(:subject_id, :school_class_id, :term_id, :teacher_id, :weekday, :sort, :direction, :show_archived).to_h,
                 data: { turbo_confirm: "Are you sure you want to archive this #{resource.class.name.downcase}?" } do %>
     <i class="bi bi-archive-fill text-white"></i><% unless local_assigns[:compact] %> <span class="ms-1 text-white">Archive</span><% end %>
   <% end %>

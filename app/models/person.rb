@@ -13,6 +13,9 @@ class Person < ApplicationRecord
          :recoverable, :rememberable, :trackable,
          :validatable
 
+  # Scopes
+  scope :teachers, -> { where(type: ['Teacher', 'Dean']) }
+
   has_one :address, dependent: :destroy
   accepts_nested_attributes_for :address, allow_destroy: true
 

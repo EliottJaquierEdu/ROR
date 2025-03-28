@@ -15,18 +15,87 @@
              resource_path: courses_path,
              resource_name: 'Course' %>
 
+  <div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Filter Courses</h5>
+    </div>
+    <div class="card-body">
+      <%= form_with(url: courses_path, method: :get, class: "row g-3") do |form| %>
+        <div class="col-md-3">
+          <%= form.label :subject_id, "Subject", class: "form-label" %>
+          <%= form.select :subject_id, 
+                         options_from_collection_for_select(@subjects, :id, :name, params[:subject_id]), 
+                         { include_blank: "All Subjects" }, 
+                         class: "form-select" %>
+        </div>
+        
+        <div class="col-md-3">
+          <%= form.label :school_class_id, "Class", class: "form-label" %>
+          <%= form.select :school_class_id, 
+                         options_from_collection_for_select(@school_classes, :id, :name, params[:school_class_id]), 
+                         { include_blank: "All Classes" }, 
+                         class: "form-select" %>
+        </div>
+        
+        <div class="col-md-3">
+          <%= form.label :term_id, "Term", class: "form-label" %>
+          <%= form.select :term_id, 
+                         options_from_collection_for_select(@terms, :id, :name, params[:term_id]), 
+                         { include_blank: "All Terms" }, 
+                         class: "form-select" %>
+        </div>
+        
+        <div class="col-md-3">
+          <%= form.label :teacher_id, "Teacher", class: "form-label" %>
+          <%= form.select :teacher_id, 
+                         options_from_collection_for_select(@teachers, :id, :full_name, params[:teacher_id]), 
+                         { include_blank: "All Teachers" }, 
+                         class: "form-select" %>
+        </div>
+        
+        <div class="col-md-3">
+          <%= form.label :weekday, "Day of Week", class: "form-label" %>
+          <%= form.select :weekday, 
+                         options_for_select((0..6).map { |day| [Date::DAYNAMES[day], day] }, params[:weekday]), 
+                         { include_blank: "All Days" }, 
+                         class: "form-select" %>
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+          <%= form.submit "Apply Filters", class: "btn btn-primary me-2" %>
+          <%= link_to "Clear", courses_path, class: "btn btn-outline-secondary" %>
+        </div>
+        
+        <% if @filtered_by.present? %>
+          <div class="col-12 mt-3">
+            <div class="alert alert-info">
+              <strong>Filtering by:</strong>
+              <% @filtered_by.each do |key, value| %>
+                <span class="badge bg-secondary"><%= key.to_s.titleize %>: <%= value %></span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+        
+        <%= form.hidden_field :show_archived, value: params[:show_archived] if params[:show_archived].present? %>
+        <%= form.hidden_field :sort, value: @sort_column %>
+        <%= form.hidden_field :direction, value: @sort_direction %>
+      <% end %>
+    </div>
+  </div>
+
   <div class="card shadow-sm">
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>Subject</th>
-              <th>Term</th>
-              <th>Class</th>
-              <th>Teacher</th>
+              <th><%= link_to "Subject", courses_path(request.params.merge(sort: 'subject_id', direction: @sort_column == 'subject_id' && @sort_direction == 'asc' ? 'desc' : 'asc')), class: 'text-decoration-none' %> <%= sort_indicator('subject_id') %></th>
+              <th><%= link_to "Term", courses_path(request.params.merge(sort: 'term_id', direction: @sort_column == 'term_id' && @sort_direction == 'asc' ? 'desc' : 'asc')), class: 'text-decoration-none' %> <%= sort_indicator('term_id') %></th>
+              <th><%= link_to "Class", courses_path(request.params.merge(sort: 'school_class_id', direction: @sort_column == 'school_class_id' && @sort_direction == 'asc' ? 'desc' : 'asc')), class: 'text-decoration-none' %> <%= sort_indicator('school_class_id') %></th>
+              <th><%= link_to "Teacher", courses_path(request.params.merge(sort: 'teacher_id', direction: @sort_column == 'teacher_id' && @sort_direction == 'asc' ? 'desc' : 'asc')), class: 'text-decoration-none' %> <%= sort_indicator('teacher_id') %></th>
               <th>Day</th>
-              <th>Time</th>
+              <th><%= link_to "Time", courses_path(request.params.merge(sort: 'start_at', direction: @sort_column == 'start_at' && @sort_direction == 'asc' ? 'desc' : 'asc')), class: 'text-decoration-none' %> <%= sort_indicator('start_at') %></th>
               <th>Actions</th>
             </tr>
           </thead>

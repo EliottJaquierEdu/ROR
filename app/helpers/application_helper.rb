@@ -52,4 +52,13 @@ module ApplicationHelper
       raw("#{title} <i class='bi #{icon} ms-1'></i>")
     end
   end
+
+  def sort_indicator(column)
+    return "" unless params[:sort] == column
+    
+    direction = params[:direction] == "asc" ? "asc" : "desc"
+    icon_class = direction == "asc" ? "bi-sort-down" : "bi-sort-up"
+    
+    raw("<i class='bi #{icon_class} ms-1'></i>")
+  end
 end

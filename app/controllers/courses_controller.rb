@@ -10,12 +10,75 @@ class CoursesController < ApplicationController
   # GET /courses or /courses.json
   def index
     base_scope = helpers.visible_courses
+    
+    # Apply filters
+    @filtered_by = {}
+    
+    if params[:subject_id].present?
+      base_scope = base_scope.by_subject(params[:subject_id])
+      @filtered_by[:subject] = Subject.find_by(id: params[:subject_id])&.name
+    end
+    
+    if params[:school_class_id].present?
+      base_scope = base_scope.by_school_class(params[:school_class_id])
+      @filtered_by[:school_class] = SchoolClass.find_by(id: params[:school_class_id])&.name
+    end
+    
+    if params[:term_id].present?
+      base_scope = base_scope.by_term(params[:term_id])
+      @filtered_by[:term] = Term.find_by(id: params[:term_id])&.name
+    end
+    
+    if params[:teacher_id].present?
+      base_scope = base_scope.by_teacher(params[:teacher_id])
+      @filtered_by[:teacher] = Person.find_by(id: params[:teacher_id])&.full_name
+    end
+    
+    if params[:weekday].present?
+      # Find courses with the specified weekday
+      # Need to filter in Ruby since weekday is a calculated field
+      @weekday_filter = params[:weekday].to_i
+      @filtered_by[:weekday] = Date::DAYNAMES[@weekday_filter]
+    end
+    
+    # Apply archived filter
     @courses = if params[:show_archived]
                  base_scope.without_default_scope.where.not(archived_at: nil)
                else
                  base_scope
                end
-    @courses = @courses.page(params[:page]).per(10)
+               
+    # Apply sorting
+    @sort_column = params[:sort] || 'subject_id'
+    @sort_direction = %w[asc desc].include?(params[:direction]) ? params[:direction].to_sym : :asc
+    
+    # Apply sorting based on column
+    case @sort_column
+    when 'subject_id'
+      @courses = @courses.order_by_subject(@sort_direction)
+    when 'term_id'
+      @courses = @courses.order_by_term(@sort_direction)
+    when 'school_class_id'
+      @courses = @courses.order_by_school_class(@sort_direction)
+    when 'teacher_id'
+      @courses = @courses.order_by_teacher(@sort_direction)  
+    when 'start_at'
+      @courses = @courses.order(start_at: @sort_direction)
+    end
+    
+    # Apply weekday filter after query if needed (since it's a calculated field)
+    if @weekday_filter.present?
+      @courses = @courses.select { |course| course.week_day == @weekday_filter }
+    end
+    
+    # Paginate results
+    @courses = Kaminari.paginate_array(@courses).page(params[:page]).per(10)
+    
+    # Load filter options for dropdowns
+    @subjects = Subject.order(:name)
+    @school_classes = SchoolClass.order(:name)
+    @terms = Term.order(:start_at)
+    @teachers = Person.teachers.order(:lastname, :firstname)
   end
 
   # GET /courses/1 or /courses/1.json
@@ -118,7 +181,9 @@ class CoursesController < ApplicationController
   def archive
     @course.archive!
     respond_to do |format|
-      format.html { redirect_to courses_path, notice: "Course was successfully archived." }
+      # Preserve filter and sort parameters when redirecting
+      preserved_params = params.permit(:subject_id, :school_class_id, :term_id, :teacher_id, :weekday, :sort, :direction, :show_archived)
+      format.html { redirect_to courses_path(preserved_params), notice: "Course was successfully archived." }
       format.json { head :no_content }
     end
   end
@@ -126,7 +191,9 @@ class CoursesController < ApplicationController
   def unarchive
     @course.unarchive!
     respond_to do |format|
-      format.html { redirect_to courses_path, notice: "Course was successfully unarchived." }
+      # Preserve filter and sort parameters when redirecting
+      preserved_params = params.permit(:subject_id, :school_class_id, :term_id, :teacher_id, :weekday, :sort, :direction, :show_archived)
+      format.html { redirect_to courses_path(preserved_params), notice: "Course was successfully unarchived." }
       format.json { head :no_content }
     end
   end
