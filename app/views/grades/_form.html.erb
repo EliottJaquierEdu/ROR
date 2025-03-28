@@ -42,15 +42,17 @@
                 <% if params[:examination_id].present? %>
                   <% examination = Examination.find_by(id: params[:examination_id]) %>
                   <% if examination&.course&.school_class %>
+                    <% students_without_grade = examination.course.school_class.students.where.not(id: examination.grades.pluck(:person_id)) %>
                     <%= form.collection_select :person_id, 
-                        examination.course.school_class.students, 
+                        students_without_grade, 
                         :id, 
                         ->(student) { "#{student.firstname} #{student.lastname}" }, 
                         { include_blank: "Select student" }, 
                         { class: "form-select" } %>
                   <% else %>
+                    <% students_without_grade = Student.all.where.not(id: examination.grades.pluck(:person_id)) %>
                     <%= form.collection_select :person_id, 
-                        Student.all, 
+                        students_without_grade, 
                         :id, 
                         ->(student) { "#{student.firstname} #{student.lastname}" }, 
                         { include_blank: "Select student" }, 
@@ -68,8 +70,9 @@
                 <% if params[:examination_id].present? %>
                   <% examination = Examination.find_by(id: params[:examination_id]) %>
                   <% if examination&.course&.school_class %>
+                    <% students_without_grade = examination.course.school_class.students.where.not(id: examination.grades.pluck(:person_id)) %>
                     <%= form.collection_select :person_id, 
-                        examination.course.school_class.students, 
+                        students_without_grade, 
                         :id, 
                         ->(student) { "#{student.firstname} #{student.lastname}" }, 
                         { include_blank: "Select student" }, 
@@ -77,8 +80,9 @@
                   <% else %>
                     <% class_ids = SchoolClass.where(master_id: current_person.id).pluck(:id) %>
                     <% students = Student.joins(:school_classes).where(school_classes: { id: class_ids }).distinct %>
+                    <% students_without_grade = students.where.not(id: examination.grades.pluck(:person_id)) %>
                     <%= form.collection_select :person_id, 
-                        students, 
+                        students_without_grade, 
                         :id, 
                         ->(student) { "#{student.firstname} #{student.lastname}" }, 
                         { include_blank: "Select student" }, 
