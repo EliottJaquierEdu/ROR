@@ -203,8 +203,8 @@ rooms = (101..110).map { |num| Room.create!(name: "Salle #{num}") }
 class_1m1 = SchoolClass.create!(
   year: 2024,
   name: 'SI-T1A',
-  room: rooms[0],
-  master: teachers[0]  # Math teacher is class master
+  room: rooms[3],
+  master: teachers[3]
 )
 
 # School class for repeating student (failed grades)
@@ -219,8 +219,8 @@ SchoolClass.create!(
 SchoolClass.create!(
   year: 2025,
   name: 'SI-T2A',
-  room: rooms[0],
-  master: teachers[0]  # Math teacher is class master
+  room: rooms[3],
+  master: teachers[3]
 )
 
 # Create Subjects with their respective teachers
