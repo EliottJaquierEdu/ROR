@@ -1,0 +1,145 @@
+<% content_for :title, "Course Details" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1>Course Details</h1>
+    <% if @course.archived? %>
+      <div class="badge bg-warning text-dark mt-2">
+        <i class="bi bi-archive-fill"></i> Archived
+      </div>
+    <% end %>
+  </div>
+  <%= render 'shared/show_actions',
+             resource: @course,
+             resource_name: 'course',
+             index_path: courses_path %>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Course Information</h5>
+      </div>
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-4">Term</dt>
+          <dd class="col-sm-8"><%= @course.term %></dd>
+          
+          <dt class="col-sm-4">Date</dt>
+          <dd class="col-sm-8"><%= @course.start_at&.strftime("%d %b %Y") %></dd>
+          
+          <dt class="col-sm-4">Day</dt>
+          <dd class="col-sm-8"><%= @course.start_at&.strftime("%A") %></dd>
+          
+          <dt class="col-sm-4">Start Time</dt>
+          <dd class="col-sm-8"><%= @course.start_at&.strftime("%H:%M") %></dd>
+          
+          <dt class="col-sm-4">End Time</dt>
+          <dd class="col-sm-8"><%= @course.end_at&.strftime("%H:%M") %></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Class & Subject</h5>
+      </div>
+      <div class="card-body">
+        <% if @course.school_class %>
+          <div class="mb-4">
+            <h6 class="text-muted mb-2">School Class</h6>
+            <div class="d-flex align-items-center">
+              <div>
+                <h5 class="mb-1"><%= @course.school_class.name %></h5>
+                <p class="text-muted mb-0">Year <%= @course.school_class.year %></p>
+                <% if @course.school_class.room %>
+                  <p class="text-muted mb-0">Room: <%= @course.school_class.room.name %></p>
+                <% end %>
+                <% if @course.school_class.master %>
+                  <p class="text-muted mb-0">Master: <%= @course.school_class.master.full_name %></p>
+                <% end %>
+              </div>
+            </div>
+            <div class="mt-2">
+              <%= link_to @course.school_class, class: "btn btn-sm btn-outline-primary" do %>
+                <i class="bi bi-eye"></i> View Class
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <p class="text-muted">No class assigned to this course.</p>
+        <% end %>
+        
+        <% if @course.subject %>
+          <div class="mb-4">
+            <h6 class="text-muted mb-2">Subject</h6>
+            <div class="d-flex align-items-center">
+              <div>
+                <h5 class="mb-1"><%= @course.subject.name %></h5>
+                <% if @course.teacher %>
+                  <p class="text-muted mb-0">Teacher: <%= @course.teacher.full_name %></p>
+                <% end %>
+              </div>
+            </div>
+            <div class="mt-2">
+              <%= link_to @course.subject, class: "btn btn-sm btn-outline-primary" do %>
+                <i class="bi bi-eye"></i> View Subject
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <p class="text-muted">No subject assigned to this course.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if @course.examinations.any? %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">Examinations</h5>
+      <% if can_manage_examinations?(@course) %>
+        <%= link_to new_examination_path(course_id: @course.id), class: "btn btn-sm btn-outline-primary" do %>
+          <i class="bi bi-plus-circle"></i> Add Examination
+        <% end %>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Title</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @course.examinations.each do |examination| %>
+              <tr>
+                <td><%= examination.title %></td>
+                <td>
+                  <%= link_to examination, class: "btn btn-sm btn-outline-primary" do %>
+                    <i class="bi bi-eye"></i> View
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% elsif can_manage_examinations?(@course) %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body text-center py-4">
+      <p class="text-muted mb-3">No examinations have been added to this course yet.</p>
+      <%= link_to new_examination_path(course_id: @course.id), class: "btn btn-outline-primary" do %>
+        <i class="bi bi-plus-circle"></i> Add First Examination
+      <% end %>
+    </div>
+  </div>
+<% end %>

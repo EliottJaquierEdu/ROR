@@ -1,0 +1,6 @@
+<% content_for :title, "New Address" %>
+
+<%= render 'shared/new_resource',
+  resource: @address,
+  resource_name: 'Address',
+  index_path: addresses_path %>

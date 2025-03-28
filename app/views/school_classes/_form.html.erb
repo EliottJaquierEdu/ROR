@@ -1,0 +1,64 @@
+<%= form_with(model: school_class, class: "needs-validation") do |form| %>
+  <% if school_class.errors.any? %>
+    <div class="alert alert-danger">
+      <h5><%= pluralize(school_class.errors.count, "error") %> prohibited this school class from being saved:</h5>
+      <ul class="mb-0">
+        <% school_class.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0">Class Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.number_field :year, class: "form-control", placeholder: "Year" %>
+            <%= form.label :year %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.text_field :name, class: "form-control", placeholder: "Name" %>
+            <%= form.label :name %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.collection_select :room_id, 
+                Room.all, 
+                :id, 
+                :name, 
+                { include_blank: "Select room" }, 
+                { class: "form-select" } %>
+            <%= form.label :room_id, "Room" %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.collection_select :master_id, 
+                Teacher.all, 
+                :id, 
+                ->(teacher) { "#{teacher.firstname} #{teacher.lastname}" }, 
+                { include_blank: "Select master teacher" }, 
+                { class: "form-select" } %>
+            <%= form.label :master_id, "Master Teacher" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", school_classes_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

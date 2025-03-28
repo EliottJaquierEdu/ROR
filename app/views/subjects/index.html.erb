@@ -1,0 +1,53 @@
+<% content_for :title, "Subjects" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Subjects</h1>
+  <% if can_create_subject? %>
+    <%= link_to new_subject_path, class: "btn btn-primary" do %>
+      <i class="bi bi-plus-circle"></i> New Subject
+    <% end %>
+  <% end %>
+</div>
+
+<% if current_person.dean? %>
+  <%= render 'shared/archive_toggle', 
+             resource_path: subjects_path,
+             resource_name: 'Subject' %>
+<% end %>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Courses</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @subjects.each do |subject| %>
+            <tr>
+              <td><%= subject.name %></td>
+              <td>
+                <% if subject.courses.any? %>
+                  <span class="badge bg-info"><%= subject.courses.count %> courses</span>
+                <% else %>
+                  <span class="text-muted">No courses</span>
+                <% end %>
+              </td>
+              <td>
+                <%= render 'shared/table_actions', resource: subject, resource_name: 'subject' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="d-flex justify-content-center mt-4">
+      <%= paginate @subjects %>
+    </div>
+  </div>
+</div>

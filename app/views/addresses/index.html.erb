@@ -1,0 +1,53 @@
+<% content_for :title, "Addresses" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Addresses</h1>
+  <% if can_create_address? %>
+    <%= link_to new_address_path, class: "btn btn-primary" do %>
+      <i class="bi bi-plus-circle"></i> New address
+    <% end %>
+  <% end %>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Street</th>
+            <th>Number</th>
+            <th>ZIP</th>
+            <th>Town</th>
+            <th>Person</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @addresses.each do |address| %>
+            <tr>
+              <td><%= address.street %></td>
+              <td><%= address.number %></td>
+              <td><%= address.zip %></td>
+              <td><%= address.town %></td>
+              <td>
+                <% if address.person %>
+                  <%= link_to "#{address.person.firstname} #{address.person.lastname}", address.person %>
+                <% else %>
+                  <span class="text-muted">None</span>
+                <% end %>
+              </td>
+              <td>
+                <%= render 'shared/table_actions', resource: address, resource_name: 'address' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="d-flex justify-content-center mt-4">
+      <%= paginate @addresses %>
+    </div>
+  </div>
+</div>

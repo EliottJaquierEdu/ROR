@@ -1,0 +1,131 @@
+<% content_for :title, "Examination Details" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= @examination.title %></h1>
+  <%= render 'shared/show_actions',
+             resource: @examination,
+             resource_name: 'examination',
+             index_path: examinations_path %>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Examination Information</h5>
+      </div>
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-4">Title</dt>
+          <dd class="col-sm-8"><%= @examination.title %></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Course Information</h5>
+      </div>
+      <div class="card-body">
+        <% if @examination.course %>
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">Course</h6>
+            <div class="d-flex align-items-center">
+              <div>
+                <h5 class="mb-1">Term <%= @examination.course.term %></h5>
+                <p class="text-muted mb-0">
+                  <%= @examination.course.start_at&.strftime("%A %H:%M") %> - <%= @examination.course.end_at&.strftime("%H:%M") %>
+                </p>
+                <% if @examination.course.subject %>
+                  <p class="mb-0">Subject: <%= @examination.course.subject.name %></p>
+                <% end %>
+              </div>
+            </div>
+            <div class="mt-2">
+              <%= link_to @examination.course, class: "btn btn-sm btn-outline-primary" do %>
+                <i class="bi bi-eye"></i> View Course
+              <% end %>
+            </div>
+          </div>
+          
+          <% if @examination.course.school_class %>
+            <div>
+              <h6 class="text-muted mb-2">Class</h6>
+              <div class="d-flex align-items-center">
+                <div>
+                  <h5 class="mb-1"><%= @examination.course.school_class.name %></h5>
+                  <p class="text-muted mb-0">Year <%= @examination.course.school_class.year %></p>
+                </div>
+              </div>
+              <div class="mt-2">
+                <%= link_to @examination.course.school_class, class: "btn btn-sm btn-outline-primary" do %>
+                  <i class="bi bi-eye"></i> View Class
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-muted">No course associated with this examination.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if @examination.grades.any? %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Grades</h5>
+        <% if can_manage_grades?(@examination) %>
+          <%= link_to new_grade_path(examination_id: @examination.id), class: "btn btn-sm btn-outline-primary" do %>
+            <i class="bi bi-plus-circle"></i> Add Grade
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Student</th>
+              <th>Value</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @examination.grades.includes(:student).each do |grade| %>
+              <tr>
+                <td>
+                  <% if grade.student %>
+                    <%= link_to "#{grade.student.firstname} #{grade.student.lastname}", grade.student %>
+                  <% end %>
+                </td>
+                <td><%= grade.value %></td>
+                <td><%= grade.effective_date&.strftime("%d %b %Y") %></td>
+                <td>
+                  <%= render 'shared/table_actions',
+                            resource: grade,
+                            resource_name: 'grade' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% elsif can_manage_grades?(@examination) %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body text-center py-5">
+      <p class="text-muted mb-3">No grades have been recorded for this examination yet.</p>
+      <%= link_to new_grade_path(examination_id: @examination.id), class: "btn btn-primary" do %>
+        <i class="bi bi-plus-circle"></i> Add First Grade
+      <% end %>
+    </div>
+  </div>
+<% end %>

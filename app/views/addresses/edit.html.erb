@@ -1,0 +1,15 @@
+<% content_for :title, "Editing Address" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Editing Address</h1>
+  <%= render 'shared/edit_actions',
+             resource: @address,
+             resource_name: 'address',
+             index_path: addresses_path %>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= render "form", address: @address %>
+  </div>
+</div>

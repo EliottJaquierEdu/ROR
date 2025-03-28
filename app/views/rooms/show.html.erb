@@ -1,0 +1,62 @@
+<% content_for :title, "Room Details" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Room Details</h1>
+  <%= render 'shared/show_actions',
+             resource: @room,
+             resource_name: 'room',
+             index_path: rooms_path %>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Room Information</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <h6 class="text-muted mb-2">Name</h6>
+          <p class="mb-0"><%= @room.name %></p>
+        </div>
+        
+        <div class="mb-3">
+          <h6 class="text-muted mb-2">Classes</h6>
+          <p class="mb-0">
+            <% if @room.school_classes.any? %>
+              <span class="badge bg-info"><%= @room.class_count %> classes</span>
+            <% else %>
+              <span class="text-muted">No classes assigned</span>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Classes</h5>
+      </div>
+      <div class="card-body">
+        <% if @room.school_classes.any? %>
+          <div class="list-group list-group-flush">
+            <% @room.school_classes.each do |school_class| %>
+              <%= link_to school_class_path(school_class), class: "list-group-item list-group-item-action" do %>
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1"><%= "#{school_class.year}-#{school_class.name}" %></h6>
+                  <% if school_class.master %>
+                    <small class="text-muted">Master: <%= school_class.master.full_name %></small>
+                  <% end %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-muted mb-0">No classes assigned to this room.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

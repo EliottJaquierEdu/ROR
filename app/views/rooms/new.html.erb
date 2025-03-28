@@ -1,0 +1,6 @@
+<% content_for :title, "New Room" %>
+
+<%= render 'shared/new_resource',
+  resource: @room,
+  resource_name: 'Room',
+  index_path: rooms_path %>

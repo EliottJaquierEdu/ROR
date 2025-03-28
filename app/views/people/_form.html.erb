@@ -1,0 +1,175 @@
+<%= form_with(model: person, class: "needs-validation") do |form| %>
+  <% if person.errors.any? %>
+    <div class="alert alert-danger">
+      <h5><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h5>
+      <ul class="mb-0">
+        <% person.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        <%= form.text_field :firstname, class: "form-control", placeholder: "First name" %>
+        <%= form.label :firstname %>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        <%= form.text_field :lastname, class: "form-control", placeholder: "Last name" %>
+        <%= form.label :lastname %>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        <%= form.email_field :email, class: "form-control", placeholder: "Email" %>
+        <%= form.label :email %>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        <%= form.password_field :password, class: "form-control", placeholder: "Password" %>
+        <%= form.label :password %>
+        <small class="text-muted">Leave blank if you don't want to change it</small>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        <%= form.password_field :password_confirmation, class: "form-control", placeholder: "Password confirmation" %>
+        <%= form.label :password_confirmation %>
+      </div>
+    </div>
+    
+    <% if current_person.dean? %>
+      <div class="col-md-6">
+        <div class="form-floating mb-3">
+          <%= form.select :type, 
+              [["Student", "Student"], ["Teacher", "Teacher"], ["Dean", "Dean"]], 
+              { include_blank: "Select type" }, 
+              { class: "form-select", onchange: "handleTypeChange(this.value)" } %>
+          <%= form.label :type %>
+        </div>
+      </div>
+    <% else %>
+      <%= form.hidden_field :type, value: person.type %>
+    <% end %>
+
+    <%# Student Status Field %>
+    <div id="student_status_field" class="col-md-6" style="display: none;">
+      <div class="form-floating mb-3">
+        <%= form.select :student_status_id,
+            StudentStatus.where(archived_at: nil).map { |status| [status.status, status.id] },
+            { include_blank: "Select student status" },
+            { class: "form-select" } %>
+        <%= form.label :student_status_id, "Student Status" %>
+      </div>
+    </div>
+
+    <%# Teacher Status Field %>
+    <div id="teacher_status_field" class="col-md-6" style="display: none;">
+      <div class="form-floating mb-3">
+        <%= form.select :teacher_status_id,
+            TeacherStatus.where(archived_at: nil).map { |status| [status.status, status.id] },
+            { include_blank: "Select teacher status" },
+            { class: "form-select" } %>
+        <%= form.label :teacher_status_id, "Teacher Status" %>
+      </div>
+    </div>
+
+    <%# IBAN Field %>
+    <div id="iban_field" class="col-md-6" style="<%= person.type == 'Teacher' || person.type == 'Dean' ? 'display: block;' : 'display: none;' %>">
+      <div class="form-floating mb-3">
+        <%= form.text_field :iban, 
+            class: "form-control #{'is-invalid' if person.errors[:iban].any?}", 
+            placeholder: "IBAN",
+            value: person.iban %>
+        <%= form.label :iban %>
+        <% if person.errors[:iban].any? %>
+          <div class="invalid-feedback">
+            <%= person.errors[:iban].join(", ") %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <%# Address Section %>
+  <div class="row g-3">
+    <div class="col-12">
+      <h5 class="mb-3">Address Information</h5>
+    </div>
+    
+    <%= form.fields_for :address do |address_form| %>
+      <div class="col-md-6">
+        <div class="form-floating mb-3">
+          <%= address_form.text_field :street, class: "form-control", placeholder: "Street" %>
+          <%= address_form.label :street %>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="form-floating mb-3">
+          <%= address_form.text_field :number, class: "form-control", placeholder: "Number" %>
+          <%= address_form.label :number %>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-floating mb-3">
+          <%= address_form.number_field :zip, class: "form-control", placeholder: "ZIP" %>
+          <%= address_form.label :zip %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-floating mb-3">
+          <%= address_form.text_field :town, class: "form-control", placeholder: "Town" %>
+          <%= address_form.label :town %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", people_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>
+
+<script>
+function handleTypeChange(type) {
+  const studentStatusField = document.getElementById('student_status_field');
+  const teacherStatusField = document.getElementById('teacher_status_field');
+  const ibanField = document.getElementById('iban_field');
+  const ibanInput = document.querySelector('input[name="person[iban]"]');
+
+  studentStatusField.style.display = 'none';
+  teacherStatusField.style.display = 'none';
+  ibanField.style.display = 'none';
+
+  if (type === 'Student') {
+    studentStatusField.style.display = 'block';
+    // Clear IBAN when switching to student
+    if (ibanInput) ibanInput.value = '';
+  } else if (type === 'Teacher' || type === 'Dean') {
+    teacherStatusField.style.display = 'block';
+    ibanField.style.display = 'block';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const typeSelect = document.querySelector('select[name="person[type]"]');
+  if (typeSelect) {
+    handleTypeChange(typeSelect.value);
+  }
+});
+</script>

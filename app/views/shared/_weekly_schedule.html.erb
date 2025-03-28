@@ -1,0 +1,146 @@
+<%# Weekly Schedule Component %>
+<%# courses: Collection of Course objects to display %>
+<%# class_name: Optional name of the class to display in the header %>
+<%# selected_week: The currently selected week (Date object) %>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-light">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="card-title mb-0">
+        Weekly Schedule
+        <% if local_assigns[:class_name].present? %>
+          for <%= class_name %>
+        <% end %>
+      </h5>
+      
+      <div class="text-muted small">
+        <i class="bi bi-journal-check"></i> Indicates course has examination(s)
+      </div>
+    </div>
+    
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="btn-group">
+        <%= link_to url_for(week: selected_week.prev_week.to_date), 
+            class: "btn btn-sm btn-outline-secondary" do %>
+          <i class="bi bi-chevron-left"></i> Previous Week
+        <% end %>
+        
+        <%= link_to url_for(week: selected_week.next_week.to_date), 
+            class: "btn btn-sm btn-outline-secondary" do %>
+          Next Week <i class="bi bi-chevron-right"></i>
+        <% end %>
+      </div>
+      
+      <div class="text-muted">
+        <%= selected_week.strftime("%B %d") %> - <%= selected_week.end_of_week.strftime("%B %d, %Y") %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="table-light">
+          <tr>
+            <th style="width: 100px">Time</th>
+            <% (1..5).each do |day| %>
+              <th>
+                <%= (selected_week + (day - 1).days).strftime("%A") %><br>
+                <small class="text-muted">
+                  <%= (selected_week + (day - 1).days).strftime("%b %d") %>
+                </small>
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% # Generate time slots for 45-minute periods from 8:00 to 17:00 %>
+          <% (8..16).each do |hour| %>
+            <% [0, 45].each do |minutes| %>
+              <tr style="height: 45px;">
+                <td class="text-center align-middle">
+                  <%= format('%02d:%02d', hour, minutes) %>
+                </td>
+                
+                <% # For each day of the week (1-5, Monday to Friday) %>
+                <% (1..5).each do |day| %>
+                  <td class="position-relative">
+                    <% # Find courses for this day and time period %>
+                    <% period_start = Time.new(2000, 1, 1, hour, minutes) %>
+                    <% period_end = period_start + 45.minutes %>
+                    <% day_courses = courses.select do |course| 
+                      course.start_at.wday == day && 
+                      course.start_at.strftime("%H:%M") == period_start.strftime("%H:%M")
+                    end %>
+                    
+                    <% day_courses.each do |course| %>
+                      <% # Calculate duration in minutes %>
+                      <% duration_minutes = ((course.end_at - course.start_at) / 60).round %>
+                      <% height = (duration_minutes.to_f / 45 * 45).round %>
+                      
+                      <% if can_view_course?(course) %>
+                        <%= link_to course_path(course), class: "text-decoration-none" do %>
+                          <div class="position-absolute top-0 start-0 end-0 p-1"
+                               style="background-color: rgba(var(--bs-primary-rgb), 0.1); 
+                                      border-left: 4px solid var(--bs-primary);
+                                      height: <%= height %>px;
+                                      z-index: 1;"
+                               data-bs-toggle="tooltip"
+                               title="<%= course.examinations.any? ? 'Has examination(s)' : '' %>">
+                            <div class="small">
+                              <strong>
+                                <%= course.subject&.name || 'No Subject' %>
+                                <% if course.examinations.any? %>
+                                  <i class="bi bi-journal-check text-primary"></i>
+                                <% end %>
+                              </strong><br>
+                              <%= course.start_at.strftime("%H:%M") %> - <%= course.end_at.strftime("%H:%M") %>
+                              <% if course.school_class.present? %>
+                                <br><span class="text-muted"><%= course.school_class.name %></span>
+                              <% end %>
+                            </div>
+                          </div>
+                        <% end %>
+                      <% else %>
+                        <div class="position-absolute top-0 start-0 end-0 p-1"
+                             style="background-color: rgba(var(--bs-primary-rgb), 0.1); 
+                                    border-left: 4px solid var(--bs-primary);
+                                    height: <%= height %>px;
+                                    z-index: 1;"
+                             data-bs-toggle="tooltip"
+                             title="<%= course.examinations.any? ? 'Has examination(s)' : '' %>">
+                          <div class="small">
+                            <strong>
+                              <%= course.subject&.name || 'No Subject' %>
+                              <% if course.examinations.any? %>
+                                <i class="bi bi-journal-check text-primary"></i>
+                              <% end %>
+                            </strong><br>
+                            <%= course.start_at.strftime("%H:%M") %> - <%= course.end_at.strftime("%H:%M") %>
+                            <% if course.school_class.present? %>
+                              <br><span class="text-muted"><%= course.school_class.name %></span>
+                            <% end %>
+                          </div>
+                        </div>
+                      <% end %>
+                    <% end %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%# Initialize tooltips %>
+<script>
+  document.addEventListener('turbo:load', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  })
+</script> 

@@ -1,0 +1,24 @@
+<div id="<%= dom_id examination %>">
+  <p>
+    <strong>Title:</strong>
+    <%= examination.title %>
+  </p>
+
+  <% if current_person.dean? || current_person.teacher? %>
+    <p>
+      <strong>Course:</strong>
+      <% if examination.course %>
+        <%= link_to "#{examination.course.subject&.name} - Term #{examination.course.term&.name}", examination.course %>
+      <% else %>
+        <span class="text-muted">None</span>
+      <% end %>
+    </p>
+    
+    <% if examination.course&.school_class %>
+      <p>
+        <strong>Class:</strong>
+        <%= link_to examination.course.school_class.name, examination.course.school_class %>
+      </p>
+    <% end %>
+  <% end %>
+</div>

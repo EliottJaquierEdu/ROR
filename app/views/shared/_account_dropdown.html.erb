@@ -1,0 +1,38 @@
+<%# Account dropdown for signed-in users %>
+<% if person_signed_in? %>
+  <div class="dropdown" data-controller="dropdown">
+    <button class="btn btn-outline-light dropdown-toggle" type="button" id="accountDropdown" data-bs-toggle="dropdown" data-turbo="false" aria-expanded="false">
+      <i class="bi bi-person-circle me-1"></i>
+      <%= current_person.full_name %>
+      <% if current_person.type %>
+        <span class="badge <%= current_person.dean? ? 'bg-danger' : (current_person.teacher? ? 'bg-warning' : 'bg-info') %> ms-1">
+          <%= current_person.type %>
+        </span>
+      <% end %>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown" data-turbo="false">
+      <li class="dropdown-item-text">
+        <small class="text-muted d-block">Signed in as</small>
+        <strong><%= current_person.email %></strong>
+      </li>
+      <li><hr class="dropdown-divider"></li>
+      <li>
+        <%= link_to person_path(current_person), class: "dropdown-item" do %>
+          <i class="bi bi-person me-2"></i> My Profile
+        <% end %>
+      </li>
+      <li><hr class="dropdown-divider"></li>
+      <li>
+        <%= button_to destroy_person_session_path, method: :delete, class: "dropdown-item text-danger", form: { data: { turbo: true } } do %>
+          <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+        <% end %>
+      </li>
+    </ul>
+  </div>
+<% else %>
+  <div class="d-flex">
+    <%= link_to new_person_session_path, class: "btn btn-outline-light" do %>
+      <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+    <% end %>
+  </div>
+<% end %> 

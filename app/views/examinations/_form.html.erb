@@ -1,0 +1,65 @@
+<%= form_with(model: examination, class: "needs-validation") do |form| %>
+  <% if examination.errors.any? %>
+    <div class="alert alert-danger">
+      <h5><%= pluralize(examination.errors.count, "error") %> prohibited this examination from being saved:</h5>
+      <ul class="mb-0">
+        <% examination.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0">Examination Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-12">
+          <div class="form-floating mb-3">
+            <%= form.text_field :title, class: "form-control", placeholder: "Title" %>
+            <%= form.label :title %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <% if params[:course_id].present? %>
+            <%= form.hidden_field :course_id, value: params[:course_id] %>
+            <% course = Course.find_by(id: params[:course_id]) %>
+            <% if course %>
+              <div class="form-control-plaintext">
+                <strong>Course:</strong> <%= course.subject&.name %> - Term <%= course.term&.name %>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="form-floating mb-3">
+              <% if current_person.dean? %>
+                <%= form.collection_select :course_id, 
+                    Course.includes(:subject, :term).all, 
+                    :id, 
+                    ->(course) { "#{course.subject&.name} - Term #{course.term&.name}" }, 
+                    { include_blank: "Select course" }, 
+                    { class: "form-select" } %>
+              <% elsif current_person.teacher? %>
+                <%= form.collection_select :course_id, 
+                    Course.includes(:subject, :term, :school_class)
+                          .where(school_class: { master_id: current_person.id }), 
+                    :id, 
+                    ->(course) { "#{course.subject&.name} - Term #{course.term&.name}" }, 
+                    { include_blank: "Select course" }, 
+                    { class: "form-select" } %>
+              <% end %>
+              <%= form.label :course_id, "Course" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", examinations_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

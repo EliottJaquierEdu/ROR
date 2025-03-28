@@ -1,0 +1,15 @@
+<% content_for :title, "Editing Class" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Editing Class</h1>
+  <%= render 'shared/edit_actions',
+             resource: @school_class,
+             resource_name: 'school_class',
+             index_path: school_classes_path %>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= render "form", school_class: @school_class %>
+  </div>
+</div>

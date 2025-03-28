@@ -1,0 +1,71 @@
+<% content_for :title, "School Classes" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>School Classes</h1>
+  <% if can_create_school_class? %>
+    <%= link_to new_school_class_path, class: "btn btn-primary" do %>
+      <i class="bi bi-plus-circle"></i> New class
+    <% end %>
+  <% end %>
+</div>
+
+<% if current_person.dean? %>
+  <%= render 'shared/archive_toggle', 
+             resource_path: school_classes_path,
+             resource_name: 'Class' %>
+<% end %>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Year</th>
+            <th>Name</th>
+            <th>Master Teacher</th>
+            <th>Students</th>
+            <th>Room</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @school_classes.each do |school_class| %>
+            <tr>
+              <td><%= school_class.year %></td>
+              <td><%= school_class.name %></td>
+              <td>
+                <% if school_class.master %>
+                  <%= link_to school_class.master.full_name, school_class.master %>
+                <% else %>
+                  <span class="text-muted">None</span>
+                <% end %>
+              </td>
+              <td>
+                <% if school_class.students.any? %>
+                  <span class="badge bg-info"><%= school_class.students.count %> students</span>
+                <% else %>
+                  <span class="text-muted">No students</span>
+                <% end %>
+              </td>
+              <td>
+                <% if school_class.room %>
+                  <%= link_to school_class.room.name, school_class.room %>
+                <% else %>
+                  <span class="text-muted">No room</span>
+                <% end %>
+              </td>
+              <td>
+                <%= render 'shared/table_actions', resource: school_class, resource_name: 'school_class' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="d-flex justify-content-center mt-4">
+      <%= paginate @school_classes %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+@startuml
+top to bottom direction
+
+actor person
+actor student
+actor teacher
+actor dean
+
+person <|-- teacher
+person <|-- student
+teacher <|-- dean
+
+package connection {
+    (login)
+    (logout)
+}
+person --> connection
+
+package grades {
+    (check grades)
+    (add grades)
+    (modify grades)
+    (generate score sheet)
+}
+student --> (check grades) : <<only own grades>>
+teacher --> (add grades) : <<only for taught courses>>
+teacher --> (modify grades) : <<only for taught courses>>
+dean --> (generate score sheet)
+
+package examination {
+    (add an examination)
+    (modify an examination)
+}
+teacher --> (add an examination) : <<only for taught courses>>
+teacher --> (modify an examination) : <<only for taught courses>>
+
+package student_management {
+    (create a student)
+    (modify a student)
+    (archive a student)
+}
+dean --> student_management
+
+package teacher_management {
+    (create a teacher)
+    (modify a teacher)
+    (archive a teacher)
+}
+dean --> teacher_management
+
+package class_management {
+    (create a class)
+    (archive a class)
+    (modify a class)
+    (assign students to a class)
+}
+dean --> class_management
+
+package course {
+    (add a course)
+    (modify a course)
+    (archive a course)
+    (add a teacher to a course)
+}
+dean --> course
+
+@enduml

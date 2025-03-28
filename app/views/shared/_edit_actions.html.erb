@@ -1,0 +1,39 @@
+<%#
+  Params:
+  - resource: The resource object to perform actions on
+  - resource_name: The name of the resource (e.g., 'person', 'course')
+  - index_path: The path to return to (e.g., courses_path)
+%>
+
+<div class="btn-group action-group shadow-sm rounded">
+  <% if respond_to?("can_view_#{resource_name}?") && send("can_view_#{resource_name}?", resource) %>
+    <%= link_to resource, class: "btn btn-light text-primary hover-scale me-1" do %>
+      <i class="bi bi-eye-fill"></i> <span class="ms-1">View</span>
+    <% end %>
+  <% end %>
+  
+  <% # Preserve filter and sort parameters %>
+  <% preserved_params = params.permit(:subject_id, :school_class_id, :term_id, :teacher_id, :weekday, :sort, :direction, :show_archived).to_h %>
+  <%= link_to url_for(controller: index_path.split('/').last.gsub('_path', ''), action: :index, **preserved_params), class: "btn btn-light text-secondary hover-scale me-1" do %>
+    <i class="bi bi-arrow-left"></i> <span class="ms-1">Back</span>
+  <% end %>
+
+  <% if respond_to?("can_archive_#{resource_name}?") && send("can_archive_#{resource_name}?", resource) %>
+    <%= render 'shared/archive_buttons', resource: resource %>
+  <% end %>
+</div>
+
+<% content_for :styles do %>
+  <style>
+    .action-group .btn {
+      padding: 0.5rem 1rem;
+      transition: all 0.2s ease;
+      border: 1px solid #e9ecef;
+    }
+    
+    .hover-scale:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+<% end %> 

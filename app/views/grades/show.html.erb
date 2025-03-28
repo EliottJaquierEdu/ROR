@@ -1,0 +1,90 @@
+<% content_for :title, "Grade Details" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Grade Details</h1>
+  <%= render 'shared/show_actions',
+             resource: @grade,
+             resource_name: 'grade',
+             index_path: grades_path %>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Grade Information</h5>
+      </div>
+      <div class="card-body">
+        <div class="text-center mb-4">
+          <div class="display-1 fw-bold <%= @grade.value >= 4.0 ? 'text-success' : 'text-danger' %>">
+            <%= @grade.value %>
+          </div>
+          <p class="text-muted">Recorded on <%= @grade.effective_date&.strftime("%d %b %Y") %></p>
+        </div>
+        
+        <% if @grade.student %>
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">Student</h6>
+            <div class="d-flex align-items-center">
+              <div>
+                <h5 class="mb-1"><%= @grade.student.firstname %> <%= @grade.student.lastname %></h5>
+                <p class="text-muted mb-0"><%= @grade.student.email %></p>
+              </div>
+            </div>
+            <div class="mt-2">
+              <%= link_to @grade.student, class: "btn btn-sm btn-outline-primary" do %>
+                <i class="bi bi-eye"></i> View Student
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Examination Information</h5>
+      </div>
+      <div class="card-body">
+        <% if @grade.examination %>
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">Examination</h6>
+            <div class="d-flex align-items-center">
+              <div>
+                <h5 class="mb-1"><%= @grade.examination.title %></h5>
+              </div>
+            </div>
+            <div class="mt-2">
+              <%= link_to @grade.examination, class: "btn btn-sm btn-outline-primary" do %>
+                <i class="bi bi-eye"></i> View Examination
+              <% end %>
+            </div>
+          </div>
+          
+          <% if @grade.examination.course %>
+            <div>
+              <h6 class="text-muted mb-2">Course</h6>
+              <div class="d-flex align-items-center">
+                <div>
+                  <h5 class="mb-1">Term <%= @grade.examination.course.term %></h5>
+                  <% if @grade.examination.course.subject %>
+                    <p class="mb-0">Subject: <%= @grade.examination.course.subject.name %></p>
+                  <% end %>
+                </div>
+              </div>
+              <div class="mt-2">
+                <%= link_to @grade.examination.course, class: "btn btn-sm btn-outline-primary" do %>
+                  <i class="bi bi-eye"></i> View Course
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-muted">No examination associated with this grade.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

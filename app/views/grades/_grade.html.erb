@@ -1,0 +1,29 @@
+<div id="<%= dom_id grade %>">
+  <p>
+    <strong>Value:</strong>
+    <span class="<%= grade.value >= 4.0 ? 'text-success' : 'text-danger' %>"><%= grade.value %></span>
+  </p>
+
+  <p>
+    <strong>Effective date:</strong>
+    <%= grade.effective_date&.strftime("%d %b %Y") %>
+  </p>
+
+  <p>
+    <strong>Student:</strong>
+    <% if grade.student %>
+      <%= link_to grade.student.full_name, grade.student %>
+    <% else %>
+      <span class="text-muted">None</span>
+    <% end %>
+  </p>
+
+  <p>
+    <strong>Examination:</strong>
+    <% if grade.examination %>
+      <%= link_to grade.examination.title, grade.examination %>
+    <% else %>
+      <span class="text-muted">None</span>
+    <% end %>
+  </p>
+</div>

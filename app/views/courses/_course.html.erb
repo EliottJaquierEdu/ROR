@@ -1,0 +1,41 @@
+<div id="<%= dom_id course %>">
+  <p>
+    <strong>Term:</strong>
+    <%= course.term %>
+  </p>
+
+  <p>
+    <strong>Start at:</strong>
+    <%= course.start_at&.strftime("%H:%M") %>
+  </p>
+
+  <p>
+    <strong>End at:</strong>
+    <%= course.end_at&.strftime("%H:%M") %>
+  </p>
+
+  <p>
+    <strong>Week day:</strong>
+    <%= course.start_at&.strftime("%A") %>
+  </p>
+
+  <% if current_person.dean? || current_person.teacher? %>
+    <p>
+      <strong>School Class:</strong>
+      <% if course.school_class %>
+        <%= link_to "#{course.school_class.name} (Year #{course.school_class.year})", course.school_class %>
+      <% else %>
+        <span class="text-muted">None</span>
+      <% end %>
+    </p>
+    
+    <p>
+      <strong>Subject:</strong>
+      <% if course.subject %>
+        <%= link_to course.subject.name, course.subject %>
+      <% else %>
+        <span class="text-muted">None</span>
+      <% end %>
+    </p>
+  <% end %>
+</div>

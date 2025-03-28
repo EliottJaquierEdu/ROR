@@ -1,0 +1,127 @@
+<% content_for :title, "Person Details" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Person Details</h1>
+  <%= render 'shared/show_actions',
+             resource: @person,
+             resource_name: 'person',
+             index_path: people_path %>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Personal Information</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <h6 class="text-muted mb-2">Name</h6>
+          <h5 class="mb-1"><%= @person.full_name %></h5>
+          <p class="text-muted mb-0"><%= @person.email %></p>
+        </div>
+        
+        <div class="mb-3">
+          <h6 class="text-muted mb-2">Role</h6>
+          <span class="badge bg-primary"><%= @person.type %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <% if can_view_address?(@person) && @person.address %>
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Address</h5>
+            <% if can_edit_address?(@person) %>
+              <%= link_to edit_person_path(@person), class: "btn btn-sm btn-outline-primary" do %>
+                <i class="bi bi-pencil"></i> Edit
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">Street</h6>
+            <p class="mb-1"><%= @person.address.street %></p>
+            <p class="mb-0"><%= @person.address.number %></p>
+          </div>
+          
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">Location</h6>
+            <p class="mb-1"><%= @person.address.zip %></p>
+            <p class="mb-0"><%= @person.address.town %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if @person.student? %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0">Classes</h5>
+    </div>
+    <div class="card-body">
+      <% if @school_classes&.any? %>
+        <div class="list-group list-group-flush">
+          <% @school_classes.each do |school_class| %>
+            <%= link_to school_class_path(school_class), class: "list-group-item list-group-item-action" do %>
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1"><%= "#{school_class.year}-#{school_class.name}" %></h6>
+                <% if school_class.master %>
+                  <small class="text-muted">Master: <%= school_class.master.full_name %></small>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-muted mb-0">No classes assigned.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <% selected_week = params[:week] ? Date.parse(params[:week]) : Date.current.beginning_of_week %>
+  
+  <%= render 'shared/weekly_schedule', 
+           courses: @week_courses,
+           class_name: "#{@person.full_name}'s Schedule",
+           selected_week: @selected_week %>
+
+  <%= render 'grade_report', student: @person %>
+<% end %>
+
+<% if @person.teacher? %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0">Classes</h5>
+    </div>
+    <div class="card-body">
+      <% if @school_classes&.any? %>
+        <div class="list-group list-group-flush">
+          <% @school_classes.each do |school_class| %>
+            <%= link_to school_class_path(school_class), class: "list-group-item list-group-item-action" do %>
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1"><%= "#{school_class.year}-#{school_class.name}" %></h6>
+                <small class="text-muted"><%= school_class.students.size %> students</small>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-muted mb-0">No classes assigned.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <% selected_week = params[:week] ? Date.parse(params[:week]) : Date.current.beginning_of_week %>
+  
+  <%= render 'shared/weekly_schedule', 
+           courses: @week_courses,
+           class_name: "#{@person.full_name}'s Schedule",
+           selected_week: @selected_week %>
+<% end %>

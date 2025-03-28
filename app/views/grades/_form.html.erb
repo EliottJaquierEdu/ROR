@@ -1,0 +1,144 @@
+<%= form_with(model: grade, class: "needs-validation") do |form| %>
+  <% if grade.errors.any? %>
+    <div class="alert alert-danger">
+      <h5><%= pluralize(grade.errors.count, "error") %> prohibited this grade from being saved:</h5>
+      <ul class="mb-0">
+        <% grade.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0">Grade Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.number_field :value, step: 0.1, min: 1, max: 6, class: "form-control", placeholder: "Value" %>
+            <%= form.label :value %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.date_field :effective_date, class: "form-control", placeholder: "Effective date" %>
+            <%= form.label :effective_date, "Effective Date" %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <% if grade.person_id.present? %>
+              <%= form.hidden_field :person_id %>
+              <% student = Person.find_by(id: grade.person_id) %>
+              <input type="text" class="form-control" value="<%= student ? "#{student.firstname} #{student.lastname}" : '' %>" disabled>
+              <label>Student (pre-selected)</label>
+            <% else %>
+              <% if current_person.dean? %>
+                <% if params[:examination_id].present? %>
+                  <% examination = Examination.find_by(id: params[:examination_id]) %>
+                  <% if examination&.course&.school_class %>
+                    <% students_without_grade = examination.course.school_class.students.where.not(id: examination.grades.pluck(:person_id)) %>
+                    <%= form.collection_select :person_id, 
+                        students_without_grade, 
+                        :id, 
+                        ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                        { include_blank: "Select student" }, 
+                        { class: "form-select" } %>
+                  <% else %>
+                    <% students_without_grade = Student.all.where.not(id: examination.grades.pluck(:person_id)) %>
+                    <%= form.collection_select :person_id, 
+                        students_without_grade, 
+                        :id, 
+                        ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                        { include_blank: "Select student" }, 
+                        { class: "form-select" } %>
+                  <% end %>
+                <% else %>
+                  <%= form.collection_select :person_id, 
+                      Student.all, 
+                      :id, 
+                      ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                      { include_blank: "Select student" }, 
+                      { class: "form-select" } %>
+                <% end %>
+              <% elsif current_person.teacher? %>
+                <% if params[:examination_id].present? %>
+                  <% examination = Examination.find_by(id: params[:examination_id]) %>
+                  <% if examination&.course&.school_class %>
+                    <% students_without_grade = examination.course.school_class.students.where.not(id: examination.grades.pluck(:person_id)) %>
+                    <%= form.collection_select :person_id, 
+                        students_without_grade, 
+                        :id, 
+                        ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                        { include_blank: "Select student" }, 
+                        { class: "form-select" } %>
+                  <% else %>
+                    <% class_ids = SchoolClass.where(master_id: current_person.id).pluck(:id) %>
+                    <% students = Student.joins(:school_classes).where(school_classes: { id: class_ids }).distinct %>
+                    <% students_without_grade = students.where.not(id: examination.grades.pluck(:person_id)) %>
+                    <%= form.collection_select :person_id, 
+                        students_without_grade, 
+                        :id, 
+                        ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                        { include_blank: "Select student" }, 
+                        { class: "form-select" } %>
+                  <% end %>
+                <% else %>
+                  <% class_ids = SchoolClass.where(master_id: current_person.id).pluck(:id) %>
+                  <% students = Student.joins(:school_classes).where(school_classes: { id: class_ids }).distinct %>
+                  <%= form.collection_select :person_id, 
+                      students, 
+                      :id, 
+                      ->(student) { "#{student.firstname} #{student.lastname}" }, 
+                      { include_blank: "Select student" }, 
+                      { class: "form-select" } %>
+                <% end %>
+              <% end %>
+              <%= form.label :person_id, "Student" %>
+            <% end %>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <% if params[:examination_id].present? || grade.examination_id.present? %>
+              <%= form.hidden_field :examination_id, value: params[:examination_id] || grade.examination_id %>
+              <% examination = Examination.find_by(id: params[:examination_id] || grade.examination_id) %>
+              <input type="text" class="form-control" value="<%= examination&.title %>" disabled>
+              <label>Examination (pre-selected)</label>
+            <% else %>
+              <% if current_person.dean? %>
+                <%= form.collection_select :examination_id, 
+                    Examination.all, 
+                    :id, 
+                    :title, 
+                    { include_blank: "Select examination" }, 
+                    { class: "form-select" } %>
+              <% elsif current_person.teacher? %>
+                <% class_ids = SchoolClass.where(master_id: current_person.id).pluck(:id) %>
+                <% examinations = Examination.joins(course: :school_class).where(course: { school_class_id: class_ids }) %>
+                <%= form.collection_select :examination_id, 
+                    examinations, 
+                    :id, 
+                    :title, 
+                    { include_blank: "Select examination" }, 
+                    { class: "form-select" } %>
+              <% end %>
+              <%= form.label :examination_id, "Examination" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", grades_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

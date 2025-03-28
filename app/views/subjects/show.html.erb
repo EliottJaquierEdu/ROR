@@ -1,0 +1,78 @@
+<% content_for :title, "Subject Details" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Subject Details</h1>
+  <%= render 'shared/show_actions',
+             resource: @subject,
+             resource_name: 'subject',
+             index_path: subjects_path %>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Subject Information</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <h6 class="text-muted mb-2">Name</h6>
+          <p class="mb-0"><%= @subject.name %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-12">
+    <%= render partial: 'shared/weekly_schedule',
+       locals: {
+         courses: @weekly_courses,
+         selected_week: @selected_week,
+         class_name: @subject.name
+       } %>
+  </div>
+</div>
+
+<% if @subject.courses.any? && @subject.courses.flat_map(&:examinations).any? %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0">Examinations</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Title</th>
+              <th>Course</th>
+              <th>Class</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @subject.courses.includes(:school_class, :examinations).flat_map(&:examinations).each do |examination| %>
+              <tr>
+                <td><%= examination.title %></td>
+                <td>
+                  <% if examination.course %>
+                    <%= link_to "Term #{examination.course.term}", examination.course %>
+                  <% end %>
+                </td>
+                <td>
+                  <% if examination.course&.school_class %>
+                    <%= link_to "#{examination.course.school_class.year}-#{examination.course.school_class.name}", examination.course.school_class %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to examination, class: "btn btn-sm btn-outline-primary" do %>
+                    <i class="bi bi-eye"></i> View
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% end %>

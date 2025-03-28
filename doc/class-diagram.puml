@@ -1,0 +1,111 @@
+@startuml
+
+class Address {
+  +integer id
+  +integer zip
+  +string town
+  +string street
+  +string number
+  +Person person
+}
+
+class Person {
+  +string username
+  +string lastname
+  +string firstname
+  +string email
+  +string phone_number
+  +string encrypted_password
+  +string reset_password_token
+  +datetime reset_password_sent_at
+  +datetime remember_created_at
+  +integer sign_in_count
+  +datetime current_sign_in_at
+  +datetime last_sign_in_at
+  +string current_sign_in_ip
+  +string last_sign_in_ip
+  +integer student_status_id
+  +integer teacher_status_id
+  +Address address
+}
+
+class Teacher {
+  +string iban
+  +TeacherStatus teacher_status
+  +SchoolClass[] school_classes
+}
+
+class Student {
+  +StudentStatus student_status
+  +SchoolClass[] school_classes
+  +Grade[] grades
+}
+
+class SchoolClass {
+  +integer year
+  +string name
+  +Room room
+  +Teacher master
+  +Student[] students
+  +Course[] courses
+}
+
+class Course {
+  +string term
+  +datetime start_at
+  +datetime end_at
+  +integer week_day
+  +SchoolClass school_class
+  +Subject subject
+  +Examination[] examinations
+}
+
+class Subject {
+  +string name
+  +Course[] courses
+}
+
+class Examination {
+  +string title
+  +datetime expected_date
+  +Course course
+  +Grade[] grades
+}
+
+class Grade {
+  +decimal value
+  +datetime effective_date
+  +Examination examination
+  +Student student
+}
+
+class Room {
+  +string name
+  +SchoolClass[] school_classes
+}
+
+class TeacherStatus {
+  +string status
+}
+
+class StudentStatus {
+  +string status
+}
+
+Address "1" o-- "1" Person
+Person "0..*" --o "1" StudentStatus
+Person "0..*" --o "1" TeacherStatus
+SchoolClass "0..*" -- "0..*" Person
+SchoolClass "0..*" --o "1" Room
+SchoolClass "0..*" --o "1" Person
+SchoolClass "1" o-- "0..*" Course
+SchoolClass "0..*" --o "1" Teacher
+Course "1" *-- "1" Subject
+Examination "1" *-- "1" Course
+Grade "1" *-- "1" Examination
+Grade "1" *-- "1" Student
+
+Teacher <|-- Person
+Student <|-- Person
+
+@enduml

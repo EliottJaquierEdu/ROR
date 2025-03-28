@@ -1,0 +1,53 @@
+<% content_for :title, "Rooms" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Rooms</h1>
+  <% if can_create_room? %>
+    <%= link_to new_room_path, class: "btn btn-primary" do %>
+      <i class="bi bi-plus-circle"></i> New room
+    <% end %>
+  <% end %>
+</div>
+
+<% if current_person.dean? %>
+  <%= render 'shared/archive_toggle', 
+             resource_path: rooms_path,
+             resource_name: 'Room' %>
+<% end %>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Classes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @rooms.each do |room| %>
+            <tr class="<%= 'table-secondary' if room.archived? %>">
+              <td><%= room.name %></td>
+              <td>
+                <% if room.school_classes.any? %>
+                  <span class="badge bg-info"><%= room.class_count %> classes</span>
+                <% else %>
+                  <span class="text-muted">No classes</span>
+                <% end %>
+              </td>
+              <td>
+                <%= render 'shared/table_actions', resource: room, resource_name: 'room' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="d-flex justify-content-center mt-4">
+      <%= paginate @rooms %>
+    </div>
+  </div>
+</div>

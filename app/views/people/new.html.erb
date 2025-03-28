@@ -1,0 +1,7 @@
+<% content_for :title, "New Person" %>
+
+<%= render 'shared/new_resource',
+  resource: @person,
+  resource_name: 'Person',
+  index_path: people_path,
+  back_text: 'Back' %>

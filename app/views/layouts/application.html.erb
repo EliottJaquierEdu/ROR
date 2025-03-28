@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "School Data Manager" %></title>
+    <title><%= content_for?(:title) ? yield(:title) : "School Management System" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -16,13 +16,95 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
+    
+    <%# Bootstrap Icons CDN %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    
+    <style>
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      main {
+        flex: 1 0 auto;
+      }
+      .navbar-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      @media (max-width: 991.98px) {
+        .navbar-nav {
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+        .nav-link {
+          padding: 0.5rem 1rem;
+          white-space: nowrap;
+        }
+      }
+    </style>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="bg-light">
+    <header class="bg-primary text-white py-3 shadow-sm mb-4">
+      <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+          <h1 class="h3 mb-0">School Management System</h1>
+          <% if current_person %>
+            <nav class="navbar navbar-expand-lg navbar-dark flex-grow-1 justify-content-end">
+              <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                  <% navigation_links.each do |link| %>
+                    <li class="nav-item">
+                      <%= link_to link[:path], class: "nav-link px-3" do %>
+                        <i class="bi <%= link[:icon] %>"></i> <%= link[:text] %>
+                      <% end %>
+                    </li>
+                  <% end %>
+                </ul>
+                
+                <div class="ms-lg-3">
+                  <%= render "shared/account_dropdown" %>
+                </div>
+              </div>
+            </nav>
+          <% end %>
+        </div>
+      </div>
+    </header>
+
+    <main class="container mb-5">
+      <% if notice %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <%= notice %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% end %>
+      
+      <% if alert %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= alert %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% end %>
+      
+      <%= yield %>
+    </main>
+
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+      <div class="container">
+        <p class="mb-0">&copy; <%= Date.today.year %> School Management System</p>
+      </div>
+    </footer>
   </body>
 </html>

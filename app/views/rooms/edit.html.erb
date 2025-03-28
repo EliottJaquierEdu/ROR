@@ -1,0 +1,15 @@
+<% content_for :title, "Editing Room" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Editing Room</h1>
+  <%= render 'shared/edit_actions',
+             resource: @room,
+             resource_name: 'room',
+             index_path: rooms_path %>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= render "form", room: @room %>
+  </div>
+</div>

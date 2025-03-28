@@ -1,0 +1,59 @@
+<% content_for :title, "Grades" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Grades</h1>
+  <% if can_create_grade? %>
+    <%= link_to new_grade_path, class: "btn btn-primary" do %>
+      <i class="bi bi-plus-circle"></i> New grade
+    <% end %>
+  <% end %>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Student</th>
+            <th>Value</th>
+            <th>Date</th>
+            <th>Examination</th>
+            <th>Subject</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @grades.each do |grade| %>
+            <tr>
+              <td>
+                <% if grade.student %>
+                  <%= link_to "#{grade.student.firstname} #{grade.student.lastname}", grade.student %>
+                <% end %>
+              </td>
+              <td><span class="badge <%= grade.value >= 4.0 ? 'bg-success' : 'bg-danger' %>"><%= grade.value %></span></td>
+              <td><%= grade.effective_date&.strftime("%d %b %Y") %></td>
+              <td>
+                <% if grade.examination %>
+                  <%= link_to grade.examination.title, grade.examination %>
+                <% end %>
+              </td>
+              <td>
+                <% if grade.examination&.course&.subject %>
+                  <%= link_to grade.examination.course.subject.name, grade.examination.course.subject %>
+                <% end %>
+              </td>
+              <td>
+                <%= render 'shared/table_actions', resource: grade, resource_name: 'grade' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="d-flex justify-content-center mt-4">
+      <%= paginate @grades %>
+    </div>
+  </div>
+</div>

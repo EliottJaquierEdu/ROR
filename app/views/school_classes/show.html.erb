@@ -1,0 +1,109 @@
+<% content_for :title, "Class Details" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Class Details</h1>
+  <%= render 'shared/show_actions',
+             resource: @school_class,
+             resource_name: 'school_class',
+             index_path: school_classes_path %>
+</div>
+
+<%= render 'shared/weekly_schedule', 
+           courses: @week_courses,
+           class_name: "#{@school_class.year}-#{@school_class.name}",
+           selected_week: @selected_week %>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Class Information</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <h6 class="text-muted mb-2">Name</h6>
+          <p class="mb-0"><%= "#{@school_class.year}-#{@school_class.name}" %></p>
+        </div>
+        
+        <div class="mb-3">
+          <h6 class="text-muted mb-2">Master Teacher</h6>
+          <p class="mb-0">
+            <% if @school_class.master %>
+              <%= link_to @school_class.master.full_name, @school_class.master %>
+            <% else %>
+              <span class="text-muted">None assigned</span>
+            <% end %>
+          </p>
+        </div>
+        
+        <div class="mb-3">
+          <h6 class="text-muted mb-2">Room</h6>
+          <p class="mb-0">
+            <% if @school_class.room %>
+              <%= link_to @school_class.room.name, @school_class.room %>
+            <% else %>
+              <span class="text-muted">No room assigned</span>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">Students</h5>
+          <% if can_manage_students?(@school_class) %>
+            <div class="btn-group">
+              <%= link_to new_school_class_student_path(@school_class), class: "btn btn-sm btn-outline-primary" do %>
+                <i class="bi bi-person-plus"></i> Add Students
+              <% end %>
+              <%= link_to select_rest_class_school_class_students_path(@school_class), 
+                  class: "btn btn-sm btn-outline-success" do %>
+                    <i class="bi bi-arrow-up-circle"></i> Promote Students
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="card-body">
+        <% if @school_class.students.any? %>
+          <div class="list-group list-group-flush">
+            <% @school_class.students.each do |student| %>
+              <div class="list-group-item">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                  <div>
+                    <%= link_to student.full_name, student, class: "text-decoration-none" %>
+                    <% if current_person.teacher? %>
+                      <% average = student.overall_average(@school_class.id) %>
+                      <% if !student.has_sufficient_grades?(@school_class.id) %>
+                        <span class="badge bg-danger text-white ms-2">
+                          <i class="bi bi-exclamation-triangle"></i> Failing (Avg: <%= sprintf('%.1f', average) %> this year only)
+                        </span>
+                      <% elsif student.has_warning_grades?(@school_class.id) %>
+                        <span class="badge bg-warning text-dark ms-2">
+                          <i class="bi bi-exclamation-circle"></i> At Risk (Avg: <%= sprintf('%.1f', average) %> this year only)
+                        </span>
+                      <% end %>
+                    <% end %>
+                  </div>
+                  <% if can_manage_students?(@school_class) %>
+                    <%= button_to school_class_student_path(@school_class, student), 
+                        method: :delete, 
+                        class: "btn btn-sm btn-outline-danger",
+                        form: { data: { turbo_confirm: "Are you sure you want to remove this student from the class?" } } do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-muted mb-0">No students enrolled.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

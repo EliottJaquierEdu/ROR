@@ -1,0 +1,39 @@
+<div id="<%= dom_id address %>">
+  <% if current_person.dean? || current_person.teacher? %>
+    <p>
+      <strong>Id:</strong>
+      <%= address.id %>
+    </p>
+  <% end %>
+
+  <p>
+    <strong>Zip:</strong>
+    <%= address.zip %>
+  </p>
+
+  <p>
+    <strong>Town:</strong>
+    <%= address.town %>
+  </p>
+
+  <p>
+    <strong>Street:</strong>
+    <%= address.street %>
+  </p>
+
+  <p>
+    <strong>Number:</strong>
+    <%= address.number %>
+  </p>
+
+  <% if current_person.dean? || current_person.teacher? %>
+    <p>
+      <strong>Person:</strong>
+      <% if address.person %>
+        <%= link_to address.person.full_name, address.person %>
+      <% else %>
+        <span class="text-muted">None</span>
+      <% end %>
+    </p>
+  <% end %>
+</div>
