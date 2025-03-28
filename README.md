@@ -58,11 +58,10 @@ rails db:seed
 ```
 
 3. **Prepare Test Database**
-   Ensure the `test` database is correctly set up:
+Precompile assets before production to optimize performance:
 ```shell script
-rails db:test:prepare
+rails assets:precompile
 ```
-
 ---
 
 ## **Running the Application**
@@ -94,67 +93,3 @@ rails server
 4. **Environment Variables**
     - Use `config/master.key` for Rails credentials.
     - For production deployments, pass `RAILS_MASTER_KEY` to the Docker container.
-
-Optional: Precompile assets before production to optimize performance:
-```shell script
-rails assets:precompile
-```
-
----
-
-## **Test the Application**
-
-This project includes a rich suite of tests, including system tests. Here's how to run them:
-
-1. **Run All Tests**  
-   Run all available test suites:
-```shell script
-rails test
-```
-
-2. **System Tests**  
-   To test the application's end-to-end workflows, run system tests:
-```shell script
-rails test:system
-```
-
-Ensure you have the WebDriver installed (e.g., `chromedriver` for Chrome).
-
-3. **Debugging Tests**  
-   Run specific tests if required:
-```shell script
-rails test test/system/<specific_test>.rb
-```
-
----
-
-## **Run in Docker**
-
-This application has support for Docker-based deployment. Use the provided `Dockerfile`:
-
-1. **Build the Image**
-```shell script
-docker build -t school_data_manager .
-```
-
-2. **Run the Container**  
-   Ensure the Rails master key is passed if required:
-```shell script
-docker run -d -p 80:80 -e RAILS_MASTER_KEY=<your-master-key> --name school_data_manager school_data_manager
-```
-
----
-
-## **Deployment Notes**
-
-- **Production Assets:** Precompile assets with:
-```shell script
-rails assets:precompile
-```
-- **Environment-Specific Commands:** Run commands in the appropriate Rails environment by specifying `RAILS_ENV`:
-```shell script
-RAILS_ENV=production rails db:migrate
-```
-
-- **Ensure Secure Deployment:**
-  Refer to the [Rails Security Guide](https://guides.rubyonrails.org/security.html) to secure sensitive credentials. s! 🚀
