@@ -9,7 +9,7 @@ class Person < ApplicationRecord
   # authentication and checks if objects are empty.
 
   # Include default devise modules
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable,
          :recoverable, :rememberable, :trackable,
          :validatable
 
