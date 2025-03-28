@@ -10,6 +10,114 @@
  */
 
 // Custom bootstrap variables must be set or imported *before* bootstrap
+$primary: #2D3436;    // Deep charcoal for primary actions
+$secondary: #636E72;  // Muted gray for secondary elements
+$success: #00B894;    // Fresh mint green for success states
+$info: #74B9FF;       // Soft blue for information
+$warning: #FDCB6E;    // Warm yellow for warnings
+$danger: #FF7675;     // Coral red for errors/danger
+$light: #F5F6FA;      // Light gray for backgrounds
+$dark: #2D3436;       // Deep charcoal for dark mode
+
+// Custom theme colors
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "info": $info,
+  "warning": $warning,
+  "danger": $danger,
+  "light": $light,
+  "dark": $dark
+);
+
+// Typography
+$font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-size-base: 1rem;
+$line-height-base: 1.6;
+
+// Spacing
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * .25,
+  2: $spacer * .5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3,
+  6: $spacer * 4
+);
+
+// Border radius
+$border-radius: 0.5rem;
+$border-radius-sm: 0.25rem;
+$border-radius-lg: 0.75rem;
+
+// Shadows
+$box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+$box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+$box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.1);
+
+// Transitions
+$transition-base: all 0.2s ease-in-out;
+
+// Import Bootstrap
 @import "bootstrap";
 
 // Your custom styles below this line
+// Add some modern utility classes
+.shadow-hover {
+  transition: $transition-base;
+  &:hover {
+    box-shadow: $box-shadow-lg;
+  }
+}
+
+.btn {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: $border-radius;
+  transition: $transition-base;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.card {
+  border: none;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  transition: $transition-base;
+  
+  &:hover {
+    box-shadow: $box-shadow-lg;
+  }
+}
+
+.form-control {
+  border-radius: $border-radius;
+  border: 1px solid rgba($primary, 0.1);
+  padding: 0.75rem 1rem;
+  
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba($primary, 0.1);
+    border-color: $primary;
+  }
+}
+
+.navbar {
+  box-shadow: $box-shadow-sm;
+}
+
+.table {
+  th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+}
