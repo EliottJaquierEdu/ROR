@@ -89,7 +89,7 @@
                                title="<%= course.examinations.any? ? 'Has examination(s)' : '' %>">
                             <div class="small">
                               <strong>
-                                <%= course.subject.name %>
+                                <%= course.subject&.name || 'No Subject' %>
                                 <% if course.examinations.any? %>
                                   <i class="bi bi-journal-check text-primary"></i>
                                 <% end %>
@@ -111,7 +111,7 @@
                              title="<%= course.examinations.any? ? 'Has examination(s)' : '' %>">
                           <div class="small">
                             <strong>
-                              <%= course.subject.name %>
+                              <%= course.subject&.name || 'No Subject' %>
                               <% if course.examinations.any? %>
                                 <i class="bi bi-journal-check text-primary"></i>
                               <% end %>
