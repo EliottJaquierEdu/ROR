@@ -32,7 +32,12 @@ class Person {
   +datetime archived_at
   +datetime created_at
   +datetime updated_at
-  +Address address
+  +string full_name()
+  +boolean student?()
+  +boolean teacher?()
+  +boolean dean?()
+  +boolean can_view_grade?(grade)
+  +boolean can_manage_resources?()
 }
 
 class Teacher {
@@ -40,12 +45,18 @@ class Teacher {
   +TeacherStatus teacher_status
   +SchoolClass[] school_classes
   +Course[] courses
+  +Subject[] subjects
+}
+
+class Dean {
+
 }
 
 class Student {
   +StudentStatus student_status
-  +SchoolClass[] school_classes
   +Grade[] grades
+  +boolean has_sufficient_grades?(school_class_id)
+  +boolean has_warning_grades?(school_class_id)
 }
 
 class SchoolClass {
@@ -58,6 +69,7 @@ class SchoolClass {
   +datetime archived_at
   +datetime created_at
   +datetime updated_at
+  +integer student_count()
 }
 
 class Course {
@@ -71,14 +83,15 @@ class Course {
   +datetime archived_at
   +datetime created_at
   +datetime updated_at
+  +string weekday_name()
 }
 
 class Subject {
   +string name
-  +Course[] courses
   +datetime archived_at
   +datetime created_at
   +datetime updated_at
+  +integer course_count()
 }
 
 class Term {
@@ -98,6 +111,8 @@ class Examination {
   +datetime archived_at
   +datetime created_at
   +datetime updated_at
+  +string to_s()
+  +json as_json()
 }
 
 class Grade {
@@ -112,10 +127,10 @@ class Grade {
 
 class Room {
   +string name
-  +SchoolClass[] school_classes
   +datetime archived_at
   +datetime created_at
   +datetime updated_at
+  +integer class_count()
 }
 
 class TeacherStatus {
@@ -123,6 +138,7 @@ class TeacherStatus {
   +datetime archived_at
   +datetime created_at
   +datetime updated_at
+  +integer teacher_count()
 }
 
 class StudentStatus {
@@ -130,23 +146,25 @@ class StudentStatus {
   +datetime archived_at
   +datetime created_at
   +datetime updated_at
+  +integer student_count()
 }
 
-Address "1" o-- "1" Person
+' Relationships
+Address "1" *-- "1" Person
 Person "0..*" --o "1" StudentStatus
 Person "0..*" --o "1" TeacherStatus
-SchoolClass "0..*" -- "0..*" Person
-SchoolClass "0..*" --o "1" Room
-SchoolClass "0..*" --o "1" Teacher
-SchoolClass "1" o-- "0..*" Course
-Course "0..*" --o "1" Term
-Course "0..*" --o "1" Teacher
+SchoolClass "0..*" -- "0..*" Person: students >
+SchoolClass "1" *-- "0..*" Course
+SchoolClass "1" *-- "1" Room
+SchoolClass "0..1" --o "1" Person: master >
 Course "1" *-- "1" Subject
+Course "1" *-- "1" Term
+Course "1" *-- "1" Person: teacher >
 Examination "1" *-- "1" Course
 Grade "1" *-- "1" Examination
-Grade "1" *-- "1" Person
-
+Grade "1" *-- "1" Person: student >
 Teacher --|> Person
 Student --|> Person
+Dean --|> Teacher
 
 @enduml
