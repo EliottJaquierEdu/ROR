@@ -11,17 +11,9 @@
     </div>
   </div>
 
-  <% if current_person.dean? %>
-    <% if params[:show_archived] %>
-      <div class="alert alert-info">
-        Showing archived courses. <%= link_to "Show active courses", courses_path, class: "alert-link" %>
-      </div>
-    <% else %>
-      <div class="alert alert-info">
-        Showing active courses. <%= link_to "Show archived courses", courses_path(show_archived: true), class: "alert-link" %>
-      </div>
-    <% end %>
-  <% end %>
+  <%= render 'shared/archive_toggle', 
+             resource_path: courses_path,
+             resource_name: 'Course' %>
 
   <div class="card shadow-sm">
     <div class="card-body">
@@ -40,7 +32,7 @@
           </thead>
           <tbody>
             <% @courses.each do |course| %>
-              <tr>
+              <tr class="<%= 'table-secondary' if course.archived? %>">
                 <td><%= course.subject&.name %></td>
                 <td><%= course.term&.name %></td>
                 <td><%= course.school_class&.name %></td>

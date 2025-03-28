@@ -10,15 +10,9 @@
 </div>
 
 <% if current_person.dean? %>
-  <% if params[:show_archived] %>
-    <div class="alert alert-info">
-      Showing archived people. <%= link_to "Show active people", people_path(type: params[:type]), class: "alert-link" %>
-    </div>
-  <% else %>
-    <div class="alert alert-info">
-      Showing active people. <%= link_to "Show archived people", people_path(type: params[:type], show_archived: true), class: "alert-link" %>
-    </div>
-  <% end %>
+  <%= render 'shared/archive_toggle', 
+             resource_path: people_path(type: params[:type]),
+             resource_name: 'Person' %>
 <% end %>
 
 <div class="card shadow-sm mb-4">

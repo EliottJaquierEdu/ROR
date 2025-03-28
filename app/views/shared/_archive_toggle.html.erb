@@ -1,0 +1,23 @@
+<%# Usage: render 'shared/archive_toggle', resource_path: courses_path, resource_name: 'Course' %>
+
+<% if params[:show_archived] %>
+  <div class="alert alert-info d-flex justify-content-between align-items-center">
+    <div>
+      <i class="bi bi-archive-fill me-2"></i>
+      Showing archived <%= local_assigns[:resource_name].pluralize.downcase %>
+    </div>
+    <%= link_to url_for(controller: controller_name, action: :index, type: params[:type]), class: "btn btn-sm btn-outline-info" do %>
+      <i class="bi bi-arrow-left-circle"></i> Show Active <%= local_assigns[:resource_name].pluralize %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert alert-info d-flex justify-content-between align-items-center">
+    <div>
+      <i class="bi bi-calendar-check me-2"></i>
+      Showing active <%= local_assigns[:resource_name].pluralize.downcase %>
+    </div>
+    <%= link_to url_for(controller: controller_name, action: :index, type: params[:type], show_archived: true), class: "btn btn-sm btn-outline-info" do %>
+      Show Archived <%= local_assigns[:resource_name].pluralize %> <i class="bi bi-arrow-right-circle ms-1"></i>
+    <% end %>
+  </div>
+<% end %> 

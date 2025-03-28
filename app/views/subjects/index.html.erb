@@ -9,6 +9,12 @@
   <% end %>
 </div>
 
+<% if current_person.dean? %>
+  <%= render 'shared/archive_toggle', 
+             resource_path: subjects_path,
+             resource_name: 'Subject' %>
+<% end %>
+
 <div class="card shadow-sm">
   <div class="card-body">
     <div class="table-responsive">
