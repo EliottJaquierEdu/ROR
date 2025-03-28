@@ -86,6 +86,47 @@
             border: 1px solid black !important;
             background-color: transparent !important;
         }
+
+        /* Ensure collapsed content is visible when printing */
+        .collapse {
+            display: block !important;
+            height: auto !important;
+        }
+
+        /* Hide collapse indicators in print */
+        .term-header .bi-chevron-down {
+            display: none !important;
+        }
+
+        /* Remove pointer cursor and hover effects */
+        .term-header {
+            cursor: default !important;
+        }
+    }
+</style>
+
+<style>
+    .term-header {
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .term-header:hover {
+        background-color: #e9ecef !important;
+    }
+
+    .term-header .bi-chevron-down {
+        transition: transform 0.2s ease-in-out;
+        font-size: 1.1rem;
+        color: #6c757d;
+    }
+
+    .term-header[aria-expanded="false"] .bi-chevron-down {
+        transform: rotate(-90deg);
+    }
+
+    .term-header h6 {
+        font-weight: 600;
     }
 </style>
 
@@ -110,82 +151,101 @@
         <% grades_by_subject = group_term_grades_by_subject(all_term_grades) %>
         
         <%# Term Header %>
-        <div class="mb-4">
-          <h6 class="text-primary mb-3">
-            <i class="bi bi-calendar3"></i>
-            <%= term %>
-          </h6>
+        <div class="mb-4 term-section">
+          <div class="d-flex justify-content-between align-items-center term-header rounded p-3 bg-light border" 
+               data-bs-toggle="collapse" 
+               data-bs-target="#term-<%= term.parameterize %>" 
+               role="button"
+               aria-expanded="true">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-calendar3 text-primary"></i>
+              <h6 class="mb-0 text-primary"><%= term %></h6>
+              <span class="badge bg-primary ms-2">
+                <%= pluralize(all_term_grades.count, 'grade') %>
+              </span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <small class="text-muted me-2">
+                Avg: <span class="badge <%= grade_status_class(student.term_average(term)) %>">
+                  <%= format_grade(student.term_average(term)) %>
+                </span>
+              </small>
+              <i class="bi bi-chevron-down"></i>
+            </div>
+          </div>
           
-          <%# Term Grades Table %>
-          <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-              <thead class="table-light">
-                <tr>
-                  <th>Subject</th>
-                  <th>Examination</th>
-                  <th>Grade</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% grades_by_subject.each do |subject, subject_grades| %>
-                  <%# Check if these grades are from a failed year %>
-                  <% is_failed_year = subject_grades.any? { |g| student.failed_period_grades.include?(g) } %>
-                  
-                  <%# Display warning for failed year grades %>
-                  <% if is_failed_year %>
-                    <tr class="table-warning" style="opacity: 0.5;">
-                      <td colspan="4">
-                        <small class="text-muted">
-                          <i class="bi bi-exclamation-triangle"></i>
-                          The following grades are from a failed school year and do not count towards the overall performance:
-                        </small>
-                      </td>
-                    </tr>
-                  <% end %>
-                  
-                  <%# Display grades %>
-                  <% subject_grades.each do |grade| %>
-                    <tr style="<%= is_failed_year ? 'opacity: 0.5; background-color: #fff3cd;' : '' %>">
-                      <td><%= link_to subject.name, subject %></td>
-                      <td>
-                        <% if grade.examination %>
-                          <%= link_to grade.examination.title, grade.examination %>
-                        <% end %>
-                      </td>
-                      <td>
-                        <span class="badge <%= grade_status_class(grade.value) %>">
-                          <%= format_grade(grade.value) %>
+          <div id="term-<%= term.parameterize %>" class="collapse show">
+            <%# Term Grades Table %>
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Subject</th>
+                    <th>Examination</th>
+                    <th>Grade</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% grades_by_subject.each do |subject, subject_grades| %>
+                    <%# Check if these grades are from a failed year %>
+                    <% is_failed_year = subject_grades.any? { |g| student.failed_period_grades.include?(g) } %>
+                    
+                    <%# Display warning for failed year grades %>
+                    <% if is_failed_year %>
+                      <tr class="table-warning" style="opacity: 0.5;">
+                        <td colspan="4">
+                          <small class="text-muted">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            The following grades are from a failed school year and do not count towards the overall performance:
+                          </small>
+                        </td>
+                      </tr>
+                    <% end %>
+                    
+                    <%# Display grades %>
+                    <% subject_grades.each do |grade| %>
+                      <tr style="<%= is_failed_year ? 'opacity: 0.5; background-color: #fff3cd;' : '' %>">
+                        <td><%= link_to subject.name, subject %></td>
+                        <td>
+                          <% if grade.examination %>
+                            <%= link_to grade.examination.title, grade.examination %>
+                          <% end %>
+                        </td>
+                        <td>
+                          <span class="badge <%= grade_status_class(grade.value) %>">
+                            <%= format_grade(grade.value) %>
+                          </span>
+                        </td>
+                        <td><%= grade.effective_date&.strftime("%d %b %Y") %></td>
+                      </tr>
+                    <% end %>
+                    
+                    <%# Subject average row %>
+                    <tr class="<%= is_failed_year ? 'table-warning' : 'table-light' %>" <%= 'style="opacity: 0.5;"' if is_failed_year %>>
+                      <td colspan="2" class="text-end"><strong>Subject Average:</strong></td>
+                      <td colspan="2">
+                        <% average_grade = calculate_average_grade(subject_grades) %>
+                        <span class="badge <%= grade_status_class(average_grade) %>">
+                          <%= format_grade(average_grade) %>
                         </span>
                       </td>
-                      <td><%= grade.effective_date&.strftime("%d %b %Y") %></td>
                     </tr>
                   <% end %>
                   
-                  <%# Subject average row %>
-                  <tr class="<%= is_failed_year ? 'table-warning' : 'table-light' %>" <%= 'style="opacity: 0.5;"' if is_failed_year %>>
-                    <td colspan="2" class="text-end"><strong>Subject Average:</strong></td>
+                  <%# Term average row %>
+                  <tr class="table-secondary">
+                    <td colspan="2" class="text-end"><strong>Term Average:</strong></td>
                     <td colspan="2">
-                      <% average_grade = calculate_average_grade(subject_grades) %>
-                      <span class="badge <%= grade_status_class(average_grade) %>">
-                        <%= format_grade(average_grade) %>
+                      <% term_average = student.term_average(term) %>
+                      <span class="badge <%= grade_status_class(term_average) %>">
+                        <%= format_grade(term_average) %>
                       </span>
                     </td>
                   </tr>
-                <% end %>
-                
-                <%# Term average row %>
-                <tr class="table-secondary">
-                  <td colspan="2" class="text-end"><strong>Term Average:</strong></td>
-                  <td colspan="2">
-                    <% term_average = student.term_average(term) %>
-                    <span class="badge <%= grade_status_class(term_average) %>">
-                      <%= format_grade(term_average) %>
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       <% end %>
