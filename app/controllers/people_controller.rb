@@ -30,6 +30,11 @@ class PeopleController < ApplicationController
       @week_courses = data[:week_courses]
     elsif @person.student?
       @school_classes = data[:school_classes]
+      @week_courses = Course.joins(:school_class)
+                           .joins('INNER JOIN people_school_classes ON school_classes.id = people_school_classes.school_class_id')
+                           .where(people_school_classes: { person_id: @person.id })
+                           .where(start_at: @selected_week.beginning_of_week..@selected_week.end_of_week)
+                           .distinct
     end
   end
 
