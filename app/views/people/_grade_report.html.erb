@@ -121,7 +121,7 @@
                 <h6 class="card-subtitle mb-2 text-muted">Performance This Year</h6>
                 <div class="d-flex align-items-center">
                   <span class="h4 mb-0 me-2">
-                    <span class="badge <%= grade_status_class(student.current_year_average) %>">
+                    <span class="badge <%= grade_status_class(student.overall_average(student.school_classes.last.id)) %>">
                       <%= format_grade(student.current_year_average) %>
                     </span>
                   </span>
