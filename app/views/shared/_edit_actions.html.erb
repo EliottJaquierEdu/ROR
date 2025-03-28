@@ -12,8 +12,12 @@
     <% end %>
   <% end %>
   
-  <%= link_to index_path, class: "btn btn-light text-secondary hover-scale" do %>
+  <%= link_to index_path, class: "btn btn-light text-secondary hover-scale me-1" do %>
     <i class="bi bi-arrow-left"></i> <span class="ms-1">Back</span>
+  <% end %>
+
+  <% if respond_to?("can_archive_#{resource_name}?") && send("can_archive_#{resource_name}?", resource) %>
+    <%= render 'shared/archive_buttons', resource: resource %>
   <% end %>
 </div>
 

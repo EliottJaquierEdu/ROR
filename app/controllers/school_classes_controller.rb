@@ -72,7 +72,7 @@ class SchoolClassesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_school_class
-      @school_class = SchoolClass.find(params[:id])
+      @school_class = SchoolClass.without_default_scope.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
