@@ -1,7 +1,3 @@
-Voici la documentation mise à jour en incluant `uru` comme alternative à `rbenv` :
-
----
-
 # **School Data Manager**
 
 A Ruby on Rails application to manage school-related data, including addresses, people, teachers, students, school classes, courses, subjects, grades, and more.
@@ -89,7 +85,3 @@ rails server
    **Student Account:**
    - Email: `marie.favre@example.com`
    - Password: `password`
-
-4. **Environment Variables**
-    - Use `config/master.key` for Rails credentials.
-    - For production deployments, pass `RAILS_MASTER_KEY` to the Docker container.
