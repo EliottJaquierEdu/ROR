@@ -27,6 +27,12 @@ class People::SessionsController < Devise::SessionsController
       format.json { render json: { success: true } }
       format.turbo_stream { redirect_to after_sign_in_path_for(resource) }
     end
+  rescue Devise::FailureApp
+    self.resource = resource_class.new(sign_in_params)
+    clean_up_passwords(resource)
+    flash.now[:alert] = "Invalid email or password"
+    flash.now[:error] = "Invalid email or password"
+    render :new, status: :unprocessable_entity
   end
 
   protected
