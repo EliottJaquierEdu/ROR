@@ -1,5 +1,6 @@
 class StudentStatus < ApplicationRecord
   has_many :students
+  has_many :people
   validates :status, presence: true
   
   # String representation of a StudentStatus

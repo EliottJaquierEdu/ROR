@@ -41,10 +41,12 @@ class PeopleController < ApplicationController
   # GET /people/new
   def new
     @person = Person.new
+    @person.build_address
   end
 
   # GET /people/1/edit
   def edit
+    @person.build_address if @person.address.nil?
   end
 
   # POST /people or /people.json
@@ -103,7 +105,17 @@ class PeopleController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def person_params
-      params.require(:person).permit(:firstname, :lastname, :email, :type, :password, :password_confirmation)
+      params.require(:person).permit(
+        :firstname, 
+        :lastname, 
+        :email, 
+        :type, 
+        :password, 
+        :password_confirmation,
+        :student_status_id,
+        :teacher_status_id,
+        address_attributes: [:id, :street, :number, :zip, :town]
+      )
     end
 
     # Authorization methods

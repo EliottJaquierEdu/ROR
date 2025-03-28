@@ -10,76 +10,120 @@
     </div>
   <% end %>
 
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-light">
-      <h5 class="card-title mb-0">Personal Information</h5>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        <%= form.text_field :firstname, class: "form-control", placeholder: "First name" %>
+        <%= form.label :firstname %>
+      </div>
     </div>
-    <div class="card-body">
-      <div class="row g-3">
-        <div class="col-md-6">
-          <div class="form-floating mb-3">
-            <%= form.text_field :firstname, class: "form-control", placeholder: "First name" %>
-            <%= form.label :firstname %>
-          </div>
+    
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        <%= form.text_field :lastname, class: "form-control", placeholder: "Last name" %>
+        <%= form.label :lastname %>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        <%= form.email_field :email, class: "form-control", placeholder: "Email" %>
+        <%= form.label :email %>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        <%= form.password_field :password, class: "form-control", placeholder: "Password" %>
+        <%= form.label :password %>
+        <small class="text-muted">Leave blank if you don't want to change it</small>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        <%= form.password_field :password_confirmation, class: "form-control", placeholder: "Password confirmation" %>
+        <%= form.label :password_confirmation %>
+      </div>
+    </div>
+    
+    <% if current_person.dean? %>
+      <div class="col-md-6">
+        <div class="form-floating mb-3">
+          <%= form.select :type, 
+              [["Student", "Student"], ["Teacher", "Teacher"], ["Dean", "Dean"]], 
+              { include_blank: "Select type" }, 
+              { class: "form-select", onchange: "handleTypeChange(this.value)" } %>
+          <%= form.label :type %>
         </div>
-        
-        <div class="col-md-6">
-          <div class="form-floating mb-3">
-            <%= form.text_field :lastname, class: "form-control", placeholder: "Last name" %>
-            <%= form.label :lastname %>
-          </div>
-        </div>
-        
-        <div class="col-md-6">
-          <div class="form-floating mb-3">
-            <%= form.email_field :email, class: "form-control", placeholder: "Email" %>
-            <%= form.label :email %>
-          </div>
-        </div>
-        
-        <div class="col-md-6">
-          <div class="form-floating mb-3">
-            <%= form.password_field :password, class: "form-control", placeholder: "Password" %>
-            <%= form.label :password %>
-          </div>
-        </div>
-        
-        <div class="col-md-6">
-          <div class="form-floating mb-3">
-            <%= form.password_field :password_confirmation, class: "form-control", placeholder: "Password confirmation" %>
-            <%= form.label :password_confirmation %>
-          </div>
-        </div>
-        
-        <% if current_person.dean? %>
-          <div class="col-md-6">
-            <div class="form-floating mb-3">
-              <%= form.select :type, 
-                  [["Student", "Student"], ["Teacher", "Teacher"], ["Dean", "Dean"]], 
-                  { include_blank: "Select type" }, 
-                  { class: "form-select" } %>
-              <%= form.label :type %>
-            </div>
-          </div>
-        <% else %>
-          <%= form.hidden_field :type, value: @person.type %>
-        <% end %>
+      </div>
+    <% else %>
+      <%= form.hidden_field :type, value: @person.type %>
+    <% end %>
+
+    <%# Student Status Field %>
+    <div id="student_status_field" class="col-md-6" style="display: none;">
+      <div class="form-floating mb-3">
+        <%= form.select :student_status_id,
+            StudentStatus.where(archived_at: nil).map { |status| [status.status, status.id] },
+            { include_blank: "Select student status" },
+            { class: "form-select" } %>
+        <%= form.label :student_status_id, "Student Status" %>
+      </div>
+    </div>
+
+    <%# Teacher Status Field %>
+    <div id="teacher_status_field" class="col-md-6" style="display: none;">
+      <div class="form-floating mb-3">
+        <%= form.select :teacher_status_id,
+            TeacherStatus.where(archived_at: nil).map { |status| [status.status, status.id] },
+            { include_blank: "Select teacher status" },
+            { class: "form-select" } %>
+        <%= form.label :teacher_status_id, "Teacher Status" %>
       </div>
     </div>
   </div>
 
-  <% if can_view_address?(@person) %>
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-light">
-        <h5 class="card-title mb-0">Address</h5>
-      </div>
-      <div class="card-body">
-        <%= render "address_form", form: form, person: @person %>
-      </div>
-    </div>
-  <% end %>
+  <hr class="my-4">
 
-  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+  <%# Address Section %>
+  <div class="row g-3">
+    <div class="col-12">
+      <h5 class="mb-3">Address Information</h5>
+    </div>
+    
+    <%= form.fields_for :address do |address_form| %>
+      <div class="col-md-6">
+        <div class="form-floating mb-3">
+          <%= address_form.text_field :street, class: "form-control", placeholder: "Street" %>
+          <%= address_form.label :street %>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="form-floating mb-3">
+          <%= address_form.text_field :number, class: "form-control", placeholder: "Number" %>
+          <%= address_form.label :number %>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-floating mb-3">
+          <%= address_form.number_field :zip, class: "form-control", placeholder: "ZIP" %>
+          <%= address_form.label :zip %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-floating mb-3">
+          <%= address_form.text_field :town, class: "form-control", placeholder: "Town" %>
+          <%= address_form.label :town %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
     <%= form.submit class: "btn btn-primary" %>
     <%= link_to "Cancel", people_path, class: "btn btn-outline-secondary" %>
   </div>
@@ -87,14 +131,19 @@
 
 <script>
 function handleTypeChange(type) {
-  const studentFields = document.getElementById('student_status_field');
-  const teacherFields = document.getElementById('teacher_fields');
+  const studentStatusField = document.getElementById('student_status_field');
+  const teacherStatusField = document.getElementById('teacher_status_field');
 
-  studentFields.style.display = type === 'Student' ? 'block' : 'none';
-  teacherFields.style.display = (type === 'Teacher' || type === 'Dean') ? 'block' : 'none';
+  studentStatusField.style.display = 'none';
+  teacherStatusField.style.display = 'none';
+
+  if (type === 'Student') {
+    studentStatusField.style.display = 'block';
+  } else if (type === 'Teacher') {
+    teacherStatusField.style.display = 'block';
+  }
 }
 
-// Call on page load to set initial state
 document.addEventListener('DOMContentLoaded', function() {
   const typeSelect = document.querySelector('select[name="person[type]"]');
   if (typeSelect) {

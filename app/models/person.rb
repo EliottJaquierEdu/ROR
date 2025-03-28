@@ -16,8 +16,8 @@ class Person < ApplicationRecord
   # Scopes
   scope :teachers, -> { where(type: ['Teacher', 'Dean']) }
 
-  has_one :address, dependent: :destroy
-  accepts_nested_attributes_for :address, allow_destroy: true
+  has_one :address
+  accepts_nested_attributes_for :address
 
   has_and_belongs_to_many :school_classes, join_table: "people_school_classes"
 

@@ -1,5 +1,5 @@
 class TeacherStatus < ApplicationRecord
-  has_many :teachers, class_name: 'Person', foreign_key: 'teacher_status_id'
+  has_many :people
   validates :status, presence: true
   
   # String representation of a TeacherStatus
@@ -16,6 +16,6 @@ class TeacherStatus < ApplicationRecord
   
   # Helper method to get the number of teachers with this status
   def teacher_count
-    teachers.count
+    people.count
   end
 end
