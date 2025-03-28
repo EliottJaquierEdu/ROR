@@ -13,14 +13,16 @@
     </div>
   </div>
 
-  <% if params[:show_archived] %>
-    <div class="alert alert-info">
-      Showing archived courses. <%= link_to "Show active courses", courses_path, class: "alert-link" %>
-    </div>
-  <% else %>
-    <div class="alert alert-info">
-      Showing active courses. <%= link_to "Show archived courses", courses_path(show_archived: true), class: "alert-link" %>
-    </div>
+  <% if current_person.dean? %>
+    <% if params[:show_archived] %>
+      <div class="alert alert-info">
+        Showing archived courses. <%= link_to "Show active courses", courses_path, class: "alert-link" %>
+      </div>
+    <% else %>
+      <div class="alert alert-info">
+        Showing active courses. <%= link_to "Show archived courses", courses_path(show_archived: true), class: "alert-link" %>
+      </div>
+    <% end %>
   <% end %>
 
   <div class="card shadow-sm">

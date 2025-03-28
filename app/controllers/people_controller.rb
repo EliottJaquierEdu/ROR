@@ -10,7 +10,11 @@ class PeopleController < ApplicationController
   # GET /people or /people.json
   def index
     base_scope = helpers.visible_people_by_type(params[:type])
-    @people = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @people = if params[:show_archived]
+                base_scope.without_default_scope.where.not(archived_at: nil)
+              else
+                base_scope
+              end
     @people = @people.page(params[:page]).per(10) # Add pagination if you're using kaminari
   end
 

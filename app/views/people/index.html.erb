@@ -11,6 +11,18 @@
   <% end %>
 </div>
 
+<% if current_person.dean? %>
+  <% if params[:show_archived] %>
+    <div class="alert alert-info">
+      Showing archived people. <%= link_to "Show active people", people_path(type: params[:type]), class: "alert-link" %>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      Showing active people. <%= link_to "Show archived people", people_path(type: params[:type], show_archived: true), class: "alert-link" %>
+    </div>
+  <% end %>
+<% end %>
+
 <div class="card shadow-sm mb-4">
   <div class="card-body">
     <div class="d-flex gap-2">

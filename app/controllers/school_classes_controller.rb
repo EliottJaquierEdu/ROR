@@ -10,7 +10,11 @@ class SchoolClassesController < ApplicationController
   # GET /school_classes or /school_classes.json
   def index
     base_scope = helpers.visible_school_classes
-    @school_classes = params[:show_archived] ? base_scope.without_default_scope : base_scope
+    @school_classes = if params[:show_archived]
+                       base_scope.without_default_scope.where.not(archived_at: nil)
+                     else
+                       base_scope
+                     end
     @school_classes = @school_classes.page(params[:page]).per(10)
   end
 
