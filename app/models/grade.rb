@@ -12,6 +12,7 @@ class Grade < ApplicationRecord
   validates :effective_date, presence: true
   validates :student, presence: true
   validate :student_must_be_student
+  validates :person_id, uniqueness: { scope: :examination_id, message: "already has a grade for this examination" }
 
   # String representation of a Grade
   def to_s
