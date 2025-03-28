@@ -39,21 +39,21 @@
                           :id, 
                           :name, 
                           { include_blank: "Select term" }, 
-                          { class: "form-select" } %>
+                          { class: "form-select", required: true } %>
                       <%= form.label :term_id, "Term" %>
                     </div>
                   </div>
                   
                   <div class="col-md-6">
                     <div class="form-floating mb-3">
-                      <%= form.time_field :start_at, class: "form-control", placeholder: "Start time" %>
+                      <%= form.time_field :start_at, class: "form-control", placeholder: "Start time", required: true %>
                       <%= form.label :start_at, "Start Time" %>
                     </div>
                   </div>
                   
                   <div class="col-md-6">
                     <div class="form-floating mb-3">
-                      <%= form.time_field :end_at, class: "form-control", placeholder: "End time" %>
+                      <%= form.time_field :end_at, class: "form-control", placeholder: "End time", required: true %>
                       <%= form.label :end_at, "End Time" %>
                     </div>
                   </div>
@@ -71,7 +71,7 @@
                             ['Sunday', 0]
                           ]), 
                           { include_blank: "Select weekday" }, 
-                          { class: "form-select" } %>
+                          { class: "form-select", required: true } %>
                       <%= form.label :weekday, "Weekday" %>
                     </div>
                   </div>
@@ -83,7 +83,7 @@
                           :id, 
                           ->(sc) { "#{sc.name} (Year #{sc.year})" }, 
                           { include_blank: "Select class" }, 
-                          { class: "form-select" } %>
+                          { class: "form-select", required: true } %>
                       <%= form.label :school_class_id, "School Class" %>
                     </div>
                   </div>
@@ -95,7 +95,7 @@
                           :id, 
                           :name, 
                           { include_blank: "Select subject" }, 
-                          { class: "form-select" } %>
+                          { class: "form-select", required: true } %>
                       <%= form.label :subject_id, "Subject" %>
                     </div>
                   </div>
@@ -107,7 +107,7 @@
                           :id, 
                           :full_name, 
                           { include_blank: "Select teacher" }, 
-                          { class: "form-select" } %>
+                          { class: "form-select", required: true } %>
                       <%= form.label :teacher_id, "Teacher" %>
                     </div>
                   </div>
@@ -123,14 +123,14 @@
                 <div class="row g-3">
                   <div class="col-md-6">
                     <div class="form-floating mb-3">
-                      <%= form.date_field :start_date, class: "form-control", placeholder: "Start date" %>
+                      <%= form.date_field :start_date, class: "form-control", placeholder: "Start date", required: true %>
                       <%= form.label :start_date, "Start Date" %>
                     </div>
                   </div>
                   
                   <div class="col-md-6">
                     <div class="form-floating mb-3">
-                      <%= form.date_field :end_date, class: "form-control", placeholder: "End date" %>
+                      <%= form.date_field :end_date, class: "form-control", placeholder: "End date", required: true %>
                       <%= form.label :end_date, "End Date" %>
                     </div>
                   </div>
